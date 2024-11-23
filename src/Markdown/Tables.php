@@ -6,8 +6,6 @@ use Exception;
 
 trait Tables
 {
-
-
     /**
      * @throws Exception
      */

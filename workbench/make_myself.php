@@ -20,7 +20,7 @@ try {
     $markdownAssembler->writeMarkdown('README.md');
 
     MakeBadge::makeCoverageBadge(__DIR__.'/../build/logs/clover.xml', '32CD32')
-        ->store(__DIR__.'/../.github/coverage-badge.svg', BadgeStyle::Flat);
+        ->store(__DIR__.'/../.github/coverage-badge.svg', BadgeStyle::Plastic);
 } catch (Exception $e) {
     echo 'ERROR: '.$e->getMessage().PHP_EOL;
 }

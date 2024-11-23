@@ -98,6 +98,11 @@ EOM
         $this->blocks[] = self::TOC_FLAG;
     }
 
+    public function addText(string $content): void
+    {
+        $this->blocks[] = $content;
+    }
+
     public function writeMarkdown(string $filepath): void
     {
         $content = $this->sourceText;

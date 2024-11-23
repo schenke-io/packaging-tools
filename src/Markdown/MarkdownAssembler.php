@@ -16,6 +16,12 @@ class MarkdownAssembler
 {
     public const TOC_FLAG = '<!-- placeholder for the Table of contents -->';
 
+    protected const FILE_DELIMITER = [
+        'csv' => ',',
+        'tsv' => "\t",
+        'psv' => '|',
+    ];
+
     use ClassReflection;
     use TableOfContents;
     use Tables;

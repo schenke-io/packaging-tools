@@ -6,11 +6,7 @@ use Exception;
 
 trait Tables
 {
-    protected const FILE_DELIMITER = [
-        'csv' => ',',
-        'tsv' => "\t",
-        'psv' => '|',
-    ];
+
 
     /**
      * @throws Exception

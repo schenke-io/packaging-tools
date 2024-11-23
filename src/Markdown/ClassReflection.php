@@ -16,23 +16,29 @@ use ReflectionException;
 trait ClassReflection
 {
     /**
-     * @throws ReflectionException
+     * @return array<string,mixed>
+     *
      * @throws FileNotFoundException
+     * @throws ReflectionException
      */
     private function getClassDataFromFile(string $filepath): array
     {
-        $reflection = new ReflectionClass(
-            $this->getClassFromPath($filepath)
-        );
+        return $this->getClassDataFromClass($this->getClassFromPath($filepath));
     }
 
     /**
+     * @param  class-string  $classname
+     * @return array<string,mixed>
+     *
      * @throws ReflectionException
      */
     private function getClassDataFromClass(string $classname): array
     {
         $reflection = new ReflectionClass($classname);
         $doc = $reflection->getDocComment();
+        if ($doc === false) {
+            return [];
+        }
 
         $tags = new TagSet([
             new Summery,
@@ -94,6 +100,7 @@ trait ClassReflection
 
     /**
      * @throws ReflectionException
+     * @throws FileNotFoundException
      */
     public function addClassMarkdown(string $classname, int $headerLevel = 3): void
     {
@@ -103,34 +110,29 @@ trait ClassReflection
     /**
      * @throws FileNotFoundException
      */
-    private function getClassFromPath(string $filepath): string
+    protected function getClassFromPath(string $filepath): string
     {
         $tokens = token_get_all($this->filesystem->get($this->full($filepath)));
         $namespace = null;
         $class = null;
-        $inNamespace = false;
-        foreach ($tokens as $token) {
-            [$tokenId, $tokenValue] = $token;
+
+        foreach ($tokens as $tokenIndex => $token) {
+            [$tokenId, $tokenValue,$lineNr] = $token;
 
             if ($tokenId === T_NAMESPACE) {
-                $inNamespace = true;
+                $namespace = $tokens[$tokenIndex + 2][1];
 
                 continue;
             }
 
-            if ($inNamespace && $tokenId === T_STRING) {
-                $namespace = $tokenValue;
-                $inNamespace = false;
-                break;
-            }
-
-            if (! $class && $tokenId === T_CLASS) {
-                $class = $tokens[$token[1] + 1][1];
+            if ($tokenId === T_CLASS) {
+                print_r($tokenId);
+                print_r($tokenValue);
+                $class = $tokens[$tokenIndex + 2][1];
                 break;
             }
         }
-        echo sprintf("ns: %s  c: %s \n", $namespace, $class);
 
-        return '';
+        return "$namespace\\$class";
     }
 }

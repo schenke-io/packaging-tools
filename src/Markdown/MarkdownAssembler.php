@@ -9,6 +9,7 @@ use ReflectionException;
 
 /**
  * Assembler of a markdown file
+ *
  * @markdown
  */
 class MarkdownAssembler
@@ -23,6 +24,9 @@ class MarkdownAssembler
 
     protected readonly string $sourceText;
 
+    /**
+     * @var array<int,string>
+     */
     protected array $blocks = [];
 
     /**
@@ -41,7 +45,7 @@ class MarkdownAssembler
         if (! $filesystem->isDirectory($root)) {
             throw new Exception('invalid directory: '.$root);
         }
-        $this->root = realpath($root);
+        $this->root = realpath($root) ?: '';
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         $caller = $trace[0];
 
@@ -57,7 +61,7 @@ Do not edit manually as it will be overwritten.
 
 EOM
 
-            , basename($caller['file']), $caller['line'], $caller['class']
+            , basename($caller['file'] ?? ''), $caller['line'] ?? 0, $caller['class'] ?? ''
         );
 
     }

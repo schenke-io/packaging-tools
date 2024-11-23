@@ -1,6 +1,6 @@
 <!--
 
-This file was written by 'make_myself.php' line 13 using
+This file was written by 'make_myself.php' line 14 using
 SchenkeIo\PackagingTools\Markdown\MarkdownAssembler
 
 Do not edit manually as it will be overwritten.
@@ -17,7 +17,11 @@ Do not edit manually as it will be overwritten.
 
 ![](/.github/werkstatt.png)
 
+This package is a collection of tools to simplify the package and project development.
 
+The main elements are:
+- **Markdown** Assemble the readme.md file out of small markdown files, class comments and other sources
+- **Badge** build the badge custom or from coverage logfiles
 
 
 
@@ -53,16 +57,13 @@ use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
 try {
     $mda = new MarkdownAssembler(
         /* root directory of the project */, 
-        /* subdirectory of root for markdown include files */
+        /* subdirectory for markdown include files */
     );
     $mda->addMarkdown(/* relative */);
     $mda->addTableOfContents();
-    $mda->addMarkdown(/* relative */);
-    $mda->addMarkdown(/* relative */);
-    $mda->addMarkdown(/* relative */);
+    $mda->addMarkdown("workbench/resources/md/installation.md");
     $mda->addClassMarkdown(MarkdownAssembler::class);
 
-    $mda->addTableFromFile(/* csv file results in a table */);
 
     $mda->writeMarkdown("README.md");
 } catch (Exception $e) {
@@ -80,7 +81,7 @@ try {
 
 Assembler of a markdown file
 
-Explanation markdown assembler
+
 
 
 

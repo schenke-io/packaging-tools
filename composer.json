@@ -17,7 +17,7 @@
         "ext-curl": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
-        "badges/poser": "^2.0|^3.0",
+        "badges/poser": "^3.0",
         "illuminate/filesystem": "^10.0|^11.0",
         "jasny/phpdoc-parser": "^1.0"
     },
@@ -45,39 +45,25 @@
         "pint": "vendor/bin/pint",
         "low": "composer update --prefer-lowest --prefer-dist",
         "high": "composer update --prefer-stable --prefer-dist",
-        "make" : "php workbench/make_myself.php",
+        "docs" : "php workbench/make_myself.php",
         "check": [
-            "@data",
             "@docs",
             "@pint",
             "@analyse",
             "@coverage"
         ],
         "release": [
-            "@data",
             "@docs",
             "@pint",
-            "@low",
-            "@test",
-            "@high",
             "@analyse",
             "@coverage"
         ],
-        "post-autoload-dump": [],
-        "serve": [
-            "Composer\\Config::disableProcessTimeout"
-        ],
-        "lint": [
-            "@php vendor/bin/pint --ansi",
-            "@php vendor/bin/phpstan analyse --verbose --ansi"
-        ]
+        "post-autoload-dump": []
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "phpstan/extension-installer": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "pestphp/pest-plugin": true
         }
     },
     "minimum-stability": "stable",

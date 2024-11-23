@@ -34,6 +34,9 @@ trait Tables
         $this->addTableFromArray($data);
     }
 
+    /**
+     * @param  array<int,mixed>  $data
+     */
     public function addTableFromArray(array $data): void
     {
         /*

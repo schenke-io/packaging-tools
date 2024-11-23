@@ -2,6 +2,8 @@
 
 require 'vendor/autoload.php';
 
+use SchenkeIo\PackagingTools\Badges\BadgeStyle;
+use SchenkeIo\PackagingTools\Badges\MakeBadge;
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
 
 /*
@@ -16,6 +18,9 @@ try {
     $markdownAssembler->addClassMarkdown(MarkdownAssembler::class);
 
     $markdownAssembler->writeMarkdown('README.md');
+
+    MakeBadge::makeCoverageBadge(__DIR__.'/../build/logs/clover.xml', '32CD32')
+        ->store(__DIR__.'/../.github/coverage-badge.svg', BadgeStyle::Flat);
 } catch (Exception $e) {
     echo 'ERROR: '.$e->getMessage().PHP_EOL;
 }

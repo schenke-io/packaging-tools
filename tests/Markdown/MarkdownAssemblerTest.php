@@ -13,3 +13,22 @@ it('can build a markdown', function () {
     $mda->addMarkdown('');
     $mda->writeMarkdown('');
 });
+
+it('can find a classname', function () {
+    $filePath = 'Dummy.php';
+
+    $mda = new class extends MarkdownAssembler
+    {
+        public function __construct()
+        {
+            parent::__construct(__DIR__, '');
+        }
+
+        public function test($x)
+        {
+            return $this->getClassFromPath($x);
+        }
+    };
+
+    expect($mda->test($filePath))->toBe('Something\Special\Dummy');
+});

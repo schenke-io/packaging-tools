@@ -1,0 +1,85 @@
+{
+    "name": "schenke-io/packaging-tools",
+    "description": "Tools to simplify publishing github packages",
+    "type": "library",
+    "keywords": [
+        "schenke-io"
+    ],
+    "homepage": "https://github.com/schenke-io/packaging-tools",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "K.-U. Schenke"
+        }
+    ],
+    "require": {
+        "php": "^8.1|^8.2|^8.3",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-simplexml": "*",
+        "badges/poser": "^2.0|^3.0",
+        "illuminate/filesystem": "^10.0|^11.0",
+        "jasny/phpdoc-parser": "^1.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.18",
+        "mockery/mockery": "^1.5",
+        "pestphp/pest": "^1.22|^2.0|^3.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "spatie/ray": "^1.40"
+    },
+    "autoload": {
+        "psr-4": {
+            "SchenkeIo\\PackagingTools\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SchenkeIo\\PackagingTools\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "coverage": "vendor/bin/pest --coverage",
+        "pint": "vendor/bin/pint",
+        "low": "composer update --prefer-lowest --prefer-dist",
+        "high": "composer update --prefer-stable --prefer-dist",
+        "make" : "php workbench/make_myself.php",
+        "check": [
+            "@data",
+            "@docs",
+            "@pint",
+            "@analyse",
+            "@coverage"
+        ],
+        "release": [
+            "@data",
+            "@docs",
+            "@pint",
+            "@low",
+            "@test",
+            "@high",
+            "@analyse",
+            "@coverage"
+        ],
+        "post-autoload-dump": [],
+        "serve": [
+            "Composer\\Config::disableProcessTimeout"
+        ],
+        "lint": [
+            "@php vendor/bin/pint --ansi",
+            "@php vendor/bin/phpstan analyse --verbose --ansi"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

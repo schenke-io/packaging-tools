@@ -1,0 +1,9 @@
+{
+    "preset": "laravel",
+    "include": [
+        "workbench"
+    ],
+    "exclude": [
+        "__old"
+    ]
+}

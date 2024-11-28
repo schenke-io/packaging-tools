@@ -62,5 +62,12 @@ Start the setup:
   composer setup
 ```
 
+and check all available commands:
+
+```bash
+  composer setup help
+```
+
+
 
 

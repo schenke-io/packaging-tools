@@ -1,13 +1,20 @@
 
-## Installation
 
-Install the package with composer:
+## Assemble a markdown
 
-```php
-composer require schenke-io/packaging-tools
-```
+To assemble a markdown you need these things:
+- a directory with well named markdown files
+- documentation of classes and methods
+- csv files for tables 
+- a script
+  - which writes badges
+  - which read and assemble these files
 
-Use it as part of your package development.
+This script can be a script run by php itself or 
+a class file with a static method.
+
+
+
 
 ```php
 <?php
@@ -28,7 +35,7 @@ try {
     );
     $mda->addMarkdown(/* relative */);
     $mda->addTableOfContents();
-    $mda->addMarkdown("workbench/resources/md/installation.md");
+    $mda->addMarkdown("installation.md");
     $mda->addClassMarkdown(MarkdownAssembler::class);
 
 
@@ -41,3 +48,4 @@ try {
 
 
 ```
+

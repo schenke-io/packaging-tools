@@ -6,13 +6,14 @@ use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use ReflectionException;
+use SchenkeIo\PackagingTools\Setup\Base;
 
 /**
  * Assembler of a markdown file
  *
  * @markdown
  */
-class MarkdownAssembler
+class MarkdownAssembler extends Base
 {
     public const TOC_FLAG = '<!-- placeholder for the Table of contents -->';
 
@@ -22,11 +23,8 @@ class MarkdownAssembler
         'psv' => '|',
     ];
 
-    use ClassReflection;
     use TableOfContents;
     use Tables;
-
-    protected readonly string $root;
 
     protected readonly string $sourceText;
 
@@ -44,14 +42,10 @@ class MarkdownAssembler
      * @throws Exception
      */
     public function __construct(
-        string $root,
-        protected readonly string $mardownSourceDir,
+        protected readonly string $markdownSourceDir,
         protected Filesystem $filesystem = new Filesystem
     ) {
-        if (! $filesystem->isDirectory($root)) {
-            throw new Exception('invalid directory: '.$root);
-        }
-        $this->root = realpath($root) ?: '';
+        parent::__construct($filesystem);
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         $caller = $trace[0];
 
@@ -75,11 +69,22 @@ EOM
     /**
      * @throws ReflectionException
      * @throws FileNotFoundException
+     * @throws Exception
+     */
+    public function addClassMarkdown(string $classname): void
+    {
+        $this->classData[] = ClassReader::fromClass($classname)
+            ->getClassMarkdown($this->markdownSourceDir);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws FileNotFoundException
      */
     public function addClasses(string $glob): void
     {
-        foreach ($this->filesystem->glob($glob) as $file) {
-            $this->classData[] = $this->getClassDataFromFile($file);
+        foreach ($this->filesystem->glob($this->fullPath($glob)) as $file) {
+            $this->classData[] = ClassReader::fromPath($file)->getClassMarkdown($this->markdownSourceDir);
         }
     }
 
@@ -90,7 +95,10 @@ EOM
      */
     public function addMarkdown(string $filepath): void
     {
-        $this->blocks[] = $this->filesystem->get($this->fullMd($filepath));
+        $this->blocks[] = $this->filesystem
+            ->get(
+                $this->fullPath($this->markdownSourceDir.'/'.$filepath)
+            );
     }
 
     public function addTableOfContents(): void
@@ -115,16 +123,6 @@ EOM
             $content .= "\n\n\n";
 
         }
-        $this->filesystem->put($this->full($filepath), $content);
-    }
-
-    protected function fullMd(string $filepath): string
-    {
-        return $this->full($this->mardownSourceDir.DIRECTORY_SEPARATOR.$filepath);
-    }
-
-    protected function full(string $filepath): string
-    {
-        return $this->root.DIRECTORY_SEPARATOR.$filepath;
+        $this->filesystem->put($this->fullPath($filepath), $content);
     }
 }

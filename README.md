@@ -1,6 +1,6 @@
 <!--
 
-This file was written by 'make_myself.php' line 14 using
+This file was written by 'MakeMarkdown.php' line 21 using
 SchenkeIo\PackagingTools\Markdown\MarkdownAssembler
 
 Do not edit manually as it will be overwritten.
@@ -13,6 +13,7 @@ Do not edit manually as it will be overwritten.
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/schenke-io/packaging-tools/run-tests.yml?branch=main&label=tests&style=plastic)](https://github.com/schenke-io/packaging-tools/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/schenke-io/packaging-tools.svg?style=plastic)](https://packagist.org/packages/schenke-io/packaging-tools)
 ![](/.github/coverage-badge.svg)
+![](/.github/phpstan.svg)
 
 
 ![](/.github/werkstatt.png)
@@ -27,7 +28,6 @@ The main elements are:
 
 * [Packaging Tools](#packaging-tools)
   * [Installation](#installation)
-    * [MarkdownAssembler](#markdownassembler)
 
 
 
@@ -36,52 +36,31 @@ The main elements are:
 
 Install the package with composer:
 
-```php
-composer require schenke-io/packaging-tools
+```bash
+  composer require schenke-io/packaging-tools
 ```
 
-Use it as part of your package development.
+Add the setup command into `composer.json` under scripts.
 
-```php
-<?php
-
-
-require "vendor/autoload.php";
-
-use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
-
-/*
- * this scripts make the package itself and tests its functionality
- */
-
-try {
-    $mda = new MarkdownAssembler(
-        /* root directory of the project */, 
-        /* subdirectory for markdown include files */
-    );
-    $mda->addMarkdown(/* relative */);
-    $mda->addTableOfContents();
-    $mda->addMarkdown("workbench/resources/md/installation.md");
-    $mda->addClassMarkdown(MarkdownAssembler::class);
-
-
-    $mda->writeMarkdown("README.md");
-} catch (Exception $e) {
-    echo "ERROR: " . $e->getMessage() . PHP_EOL;
+```json
+{
+    
+    
+    "scripts": {
+        "setup": "SchenkeIo\\PackagingTools\\Setup::handle"    
+    }
+    
 }
 
-
-
-
 ```
 
 
 
-### MarkdownAssembler
+Start the setup:
 
-Assembler of a markdown file
-
-
+```bash
+  composer setup
+```
 
 
 

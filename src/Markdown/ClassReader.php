@@ -3,6 +3,7 @@
 namespace SchenkeIo\PackagingTools\Markdown;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Filesystem\Filesystem;
 use Jasny\PhpdocParser\PhpdocParser;
 use Jasny\PhpdocParser\Tag\DescriptionTag;
 use Jasny\PhpdocParser\Tag\FlagTag;
@@ -12,18 +13,63 @@ use Jasny\PhpdocParser\Tag\WordTag;
 use Jasny\PhpdocParser\TagSet;
 use ReflectionClass;
 use ReflectionException;
+use SchenkeIo\PackagingTools\Setup\Base;
 
-trait ClassReflection
+class ClassReader extends Base
 {
-    /**
-     * @return array<string,mixed>
-     *
-     * @throws FileNotFoundException
-     * @throws ReflectionException
-     */
-    private function getClassDataFromFile(string $filepath): array
+    public function __construct(public string $classname, Filesystem $filesystem = new Filesystem)
     {
-        return $this->getClassDataFromClass($this->getClassFromPath($filepath));
+        parent::__construct($filesystem);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public static function fromClass(string $classname): self
+    {
+        return new self($classname);
+    }
+
+    /**
+     * @throws FileNotFoundException
+     */
+    public static function fromPath(string $filepath): self
+    {
+        $base = new base;
+        $content = $base->filesystem->get($base->fullPath($filepath));
+        $namespace = '';
+        $class = '';
+        foreach (explode("\n", $content) as $line) {
+            if (preg_match('@^namespace (.*?);@', $line, $matches)) {
+                $namespace = $matches[1];
+            }
+            if ($namespace && preg_match('@^class ([a-zA-Z0-9_]*)@', $line, $matches)) {
+                $class = $matches[1];
+                break;
+            }
+        }
+
+        return new self("$namespace\\$class");
+    }
+
+    /**
+     * @throws ReflectionException|FileNotFoundException
+     */
+    public function getClassMarkdown(string $markdownSourceDir, int $headerLevel = 3): string
+    {
+        $classData = $this->getClassDataFromClass($this->classname);
+
+        $return = '';
+        $return .= str_repeat('#', $headerLevel).' '.$classData['short']."\n\n";
+        $return .= $classData['description']."\n";
+        if ($classData['markdown'] > 0) {
+            $return .= $this->filesystem->get(
+                $this->fullPath($markdownSourceDir.'/'.$classData['markdown-file'])
+            );
+        }
+
+        return $return;
+
     }
 
     /**
@@ -32,7 +78,7 @@ trait ClassReflection
      *
      * @throws ReflectionException
      */
-    private function getClassDataFromClass(string $classname): array
+    public function getClassDataFromClass(string $classname): array
     {
         $reflection = new ReflectionClass($classname);
         $doc = $reflection->getDocComment();
@@ -47,7 +93,7 @@ trait ClassReflection
             new MultiTag('sources', new WordTag('source')),
         ]);
         $classParts = explode('\\', $classname);
-        // reduce arry removing the first 2 parts
+        // reduce array removing the first 2 parts
         $classParts = array_slice($classParts, 2);
 
         $parser = new PhpdocParser($tags);
@@ -78,61 +124,5 @@ trait ClassReflection
         }
 
         return $return;
-    }
-
-    /**
-     * @throws ReflectionException|FileNotFoundException
-     */
-    protected function getClassMarkdown(string $classname, int $headerLevel = 3): string
-    {
-        $classData = $this->getClassDataFromClass($classname);
-
-        $return = '';
-        $return .= str_repeat('#', $headerLevel).' '.$classData['short']."\n\n";
-        $return .= $classData['description']."\n";
-        if ($classData['markdown'] > 0) {
-            $return .= $this->filesystem->get($this->fullMd($classData['markdown-file']));
-        }
-
-        return $return;
-
-    }
-
-    /**
-     * @throws ReflectionException
-     * @throws FileNotFoundException
-     */
-    public function addClassMarkdown(string $classname, int $headerLevel = 3): void
-    {
-        $this->blocks[] = $this->getClassMarkdown($classname, $headerLevel);
-    }
-
-    /**
-     * @throws FileNotFoundException
-     */
-    protected function getClassFromPath(string $filepath): string
-    {
-        $tokens = token_get_all($this->filesystem->get($this->full($filepath)));
-        $namespace = null;
-        $class = null;
-
-        foreach ($tokens as $tokenIndex => $token) {
-            [$tokenId, $tokenValue,$lineNr] = $token;
-
-            if ($tokenId === T_NAMESPACE) {
-                $namespace = $tokens[$tokenIndex + 2][1];
-
-                continue;
-            }
-
-            if ($tokenId === T_CLASS) {
-                print_r($tokenId);
-                print_r($tokenValue);
-                $class = $tokens[$tokenIndex + 2][1];
-                break;
-            }
-        }
-
-        return "$namespace\\$class";
     }
 }

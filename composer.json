@@ -19,13 +19,15 @@
         "ext-simplexml": "*",
         "badges/poser": "^3.0",
         "illuminate/filesystem": "^10.0|^11.0",
-        "jasny/phpdoc-parser": "^1.0"
+        "jasny/phpdoc-parser": "^1.0",
+        "nette/neon": "^3.0",
+        "nette/schema": "^1.3"
     },
     "require-dev": {
         "laravel/pint": "^1.18",
         "mockery/mockery": "^1.5",
-        "pestphp/pest": "^1.22|^2.0|^3.0",
-        "phpstan/phpstan-phpunit": "^1.0",
+        "pestphp/pest": "^3.5",
+        "phpstan/phpstan-phpunit": "^1.4",
         "spatie/ray": "^1.40"
     },
     "autoload": {
@@ -35,30 +37,35 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "SchenkeIo\\PackagingTools\\Tests\\": "tests/"
+            "SchenkeIo\\PackagingTools\\Tests\\": "tests/",
+            "SchenkeIo\\PackagingTools\\Workbench\\": "workbench/"
         }
     },
     "scripts": {
-        "analyse": "vendor/bin/phpstan analyse",
+        "setup": "SchenkeIo\\PackagingTools\\Setup::handle",
+        "analyse": "./vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
         "coverage": "vendor/bin/pest --coverage",
         "pint": "vendor/bin/pint",
+        "markdown": "SchenkeIo\\PackagingTools\\Workbench\\MakeMarkdown::run",
         "low": "composer update --prefer-lowest --prefer-dist",
-        "high": "composer update --prefer-stable --prefer-dist",
-        "docs" : "php workbench/make_myself.php",
+        "stable": "composer update --prefer-stable --prefer-dist",
+        "add": [
+            "composer require --dev phpstan/phpstan-phpunit",
+            "composer require --dev laravel/pint",
+            "composer require --dev pestphp/pest"
+        ],
         "check": [
-            "@docs",
+            "@markdown",
             "@pint",
-            "@analyse",
-            "@coverage"
+            "@test"
         ],
         "release": [
-            "@docs",
+            "@markdown",
             "@pint",
             "@analyse",
             "@coverage"
-        ],
-        "post-autoload-dump": []
+        ]
     },
     "config": {
         "sort-packages": true,

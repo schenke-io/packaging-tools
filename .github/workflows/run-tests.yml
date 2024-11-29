@@ -1,11 +1,11 @@
 name: Tests
 
-on: [ push, pull_request ]
+on: [ push ]
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-    if: ${{ github.event_name == 'push' && !github.event.head_commit.message.startsWith('Merge pull request') && !github.ref.startsWith('refs/tags/') }}
+    if: ${{ github.event_name == 'push' &&  ! startsWith(github.ref,'refs/tags/') }}
     strategy:
       fail-fast: true
       matrix:

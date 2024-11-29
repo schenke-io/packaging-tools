@@ -1,0 +1,5 @@
+pint: true
+markdown:  SchenkeIo\PackagingTools\Workbench\MakeMarkdown::run
+analyse: true
+coverage: true
+test: pest

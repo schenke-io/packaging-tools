@@ -118,8 +118,8 @@ key-value-pairs.
 | markdown | defaults to false, includes command to start the make file |
 | pint     | true or false to control the use of Laravel Pint           |
 | test     | defaults to 'pest', can be false or 'phpunit               |
-| check    | group of scripts                                           |
-| release  | group of scripts                                           |
+| check    | group of scripts: pint, test, markdown                     |
+| release  | group of scripts: pint, analyse, coverage, markdown        |
 
 
 

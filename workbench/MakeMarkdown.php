@@ -2,7 +2,7 @@
 
 namespace SchenkeIo\PackagingTools\Workbench;
 
-require __DIR__ . './../vendor/autoload.php'; // important
+require __DIR__.'./../vendor/autoload.php'; // important
 
 use Exception;
 use SchenkeIo\PackagingTools\Badges\BadgeStyle;

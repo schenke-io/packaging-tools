@@ -17,7 +17,7 @@ class GroupDefinition implements Definition
      */
     public function schema(): Schema
     {
-        return Expect::anyOf(...$this->tasks);
+        return Expect::arrayOf(Expect::anyOf(...$this->tasks))->default($this->tasks);
     }
 
     /**
@@ -25,7 +25,7 @@ class GroupDefinition implements Definition
      */
     public function explain(): string
     {
-        return 'group of scripts';
+        return 'group of scripts: '.implode(', ', $this->tasks);
     }
 
     /**

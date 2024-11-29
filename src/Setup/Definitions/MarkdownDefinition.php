@@ -40,7 +40,7 @@ class MarkdownDefinition implements Definition
     public function commands(Config $config): string|array
     {
         if ($config->config->markdown) {
-            return $config->config->markdown->script;
+            return $config->config->markdown;
         } else {
             return [];
         }

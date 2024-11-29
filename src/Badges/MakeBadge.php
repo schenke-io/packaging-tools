@@ -23,6 +23,7 @@ class MakeBadge extends Base
 
     /**
      * free definition of a badge with subject, status and color
+     *
      * @throws \Exception
      */
     public static function define(string $subject, string $status, string $color): self
@@ -33,9 +34,6 @@ class MakeBadge extends Base
     /**
      * makes a coverage badge from clover.xml
      *
-     * @param string $cloverPath
-     * @param string $color
-     * @return self
      * @throws FileNotFoundException
      */
     public static function makeCoverageBadge(string $cloverPath, string $color): self
@@ -66,10 +64,6 @@ class MakeBadge extends Base
 
     /**
      * stores the badge ina  given format in a svg file
-     *
-     * @param string $filepath
-     * @param BadgeStyle $badgeStyle
-     * @return void
      */
     public function store(string $filepath, BadgeStyle $badgeStyle): void
     {

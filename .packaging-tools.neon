@@ -1,5 +1,16 @@
-pint: true
-markdown:  SchenkeIo\PackagingTools\Workbench\MakeMarkdown::run
 analyse: true
 coverage: true
+markdown: SchenkeIo\PackagingTools\Workbench\MakeMarkdown::run
+pint: true
 test: pest
+check:
+	- pint
+	- test
+	- markdown
+
+release:
+	- pint
+	- analyse
+	- coverage
+	- markdown
+

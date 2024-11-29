@@ -21,6 +21,11 @@ class Composer extends Base
     public Requirements $requirements;
 
     /**
+     * @var array<int,string>
+     */
+    protected array $runLines = [];
+
+    /**
      * @throws \Exception
      */
     public function __construct(protected Filesystem $filesystem = new Filesystem)
@@ -73,10 +78,12 @@ class Composer extends Base
         $packages = $task->definition()->packages($config)->data();
         foreach ($packages as $key => $names) {
             foreach ($names as $name) {
-                if (str_ends_with($key, '-dev')) {
-                    $this->neededPackages[] = "composer require --dev $name";
-                } else {
-                    $this->neededPackages[] = "composer require $name";
+                if (! isset($this->composer[$key][$name])) {
+                    if (str_ends_with($key, '-dev')) {
+                        $this->neededPackages[] = "composer require --dev $name";
+                    } else {
+                        $this->neededPackages[] = "composer require $name";
+                    }
                 }
             }
         }

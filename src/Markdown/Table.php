@@ -3,35 +3,44 @@
 namespace SchenkeIo\PackagingTools\Markdown;
 
 use Exception;
+use Illuminate\Filesystem\Filesystem;
 
-trait Tables
+class Table
 {
+    protected const FILE_DELIMITER = [
+        'csv' => ',',
+        'tsv' => "\t",
+        'psv' => '|',
+    ];
+
     /**
      * @throws Exception
      */
-    public function addTableFromFile(string $filename): void
+    public function getTableFromFile(string $filename, Filesystem $filesystem = new Filesystem): string
     {
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
         if (! isset(self::FILE_DELIMITER[$extension])) {
             throw new Exception("File extension '{$extension}' not supported");
         }
-        $content = $this->filesystem->get($filename);
-        $this->addTableFromCsvString($content, self::FILE_DELIMITER[$extension]);
+        $content = $filesystem->get($filename);
+
+        return $this->addTableFromCsvString($content, self::FILE_DELIMITER[$extension]);
     }
 
-    public function addTableFromCsvString(string $csv, string $delimiter): void
+    public function addTableFromCsvString(string $csv, string $delimiter): string
     {
         $data = [];
         foreach (explode("\n", $csv) as $line) {
             $data[] = str_getcsv($line, $delimiter);
         }
-        $this->addTableFromArray($data);
+
+        return $this->getTableFromArray($data);
     }
 
     /**
      * @param  array<int,mixed>  $data
      */
-    public function addTableFromArray(array $data): void
+    public function getTableFromArray(array $data): string
     {
         /*
          * calculate the max width per column
@@ -42,14 +51,9 @@ trait Tables
                 $widths[$col] = max($widths[$col] ?? 0, strlen($value));
             }
         }
-        $colDivider = ' | ';
-        $totalWidth =
-            array_sum($widths) +  // widest content of all
-            (count($widths) - 1) * (strlen($colDivider)) +  // inner column space
-            2 * 2; // space for start/end
 
         // build the format mask
-        $mask = '| '.implode($colDivider, array_map(fn ($x) => "%-{$x}s", $widths))." |\n";
+        $mask = '| '.implode(' | ', array_map(fn ($x) => "%-{$x}s", $widths))." |\n";
         $md = '';
         foreach ($data as $rowIndex => $row) {
             $row = array_pad($row, count($widths), '');
@@ -63,6 +67,7 @@ trait Tables
                 $md .= "\n";
             }
         }
-        $this->blocks[] = $md;
+
+        return $md;
     }
 }

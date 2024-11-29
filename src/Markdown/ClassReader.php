@@ -61,15 +61,43 @@ class ClassReader extends Base
 
         $return = '';
         $return .= str_repeat('#', $headerLevel).' '.$classData['short']."\n\n";
-        $return .= $classData['description']."\n";
+        $return .= $classData['description']."\n\n";
         if ($classData['markdown'] > 0) {
             $return .= $this->filesystem->get(
                 $this->fullPath($markdownSourceDir.'/'.$classData['markdown-file'])
             );
         }
+        if (count($classData['methods']) > 0) {
+            $return .= str_repeat('#', $headerLevel + 1).' Public methods of '.$classData['short']."\n\n";
+            /*
+             * build the main table
+             */
+            $table[] = ['method', 'description'];
+            foreach ($classData['methods'] as $shortMethod => $methodData) {
+                $table[] = [$shortMethod, $methodData['description'] ?? '-'];
+            }
+            $return .= (new Table)->getTableFromArray($table);
+            /*
+             * find method markdowns
+             */
+            foreach ($classData['methods'] as $shortMethod => $methodData) {
+                if ($methodData['markdown'] > 0) {
+                    $return .= str_repeat('#', $headerLevel + 1)." Details of $shortMethod()\n\n";
+                    $return .= $this->filesystem->get(
+                        $this->fullPath(
+                            $markdownSourceDir.
+                            '/'.
+                            substr($classData['markdown-file'], 0, -3).
+                            '/'.
+                            "$shortMethod.md"
+                        )
+                    );
+                }
+            }
+
+        }
 
         return $return;
-
     }
 
     /**
@@ -117,9 +145,16 @@ class ClassReader extends Base
                 $tags = new TagSet([
                     new Summery,
                     new DescriptionTag(''),
+                    new FlagTag('markdown'),
                 ]);
                 $parser = new PhpdocParser($tags);
-                $return['methods'][$methodName] = $parser->parse($method->getDocComment());
+                $return['methods'][$methodName] = array_merge([
+                    'summery' => 'empty',
+                    'description' => '',
+                    'markdown' => 0,
+                ],
+                    $parser->parse($method->getDocComment())
+                );
             }
         }
 

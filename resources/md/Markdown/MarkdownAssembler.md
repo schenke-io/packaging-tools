@@ -1,6 +1,6 @@
 
 
-## Assemble a markdown
+### How to assemble a markdown
 
 To assemble a markdown you need these things:
 - a directory with well named markdown files
@@ -29,16 +29,15 @@ use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
  */
 
 try {
-    $mda = new MarkdownAssembler(
-        /* root directory of the project */, 
-        /* subdirectory for markdown include files */
-    );
-    $mda->addMarkdown(/* relative */);
+    $mda = new MarkdownAssembler(/* subdirectory for markdown include files */);
+    $mda->addMarkdown(/* relative to markdown directory */);
     $mda->addTableOfContents();
+    // relative to markdown directory
     $mda->addMarkdown("installation.md");
+    // makes markdown from a class phpdoc
     $mda->addClassMarkdown(MarkdownAssembler::class);
 
-
+    // path relative to root directory
     $mda->writeMarkdown("README.md");
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . PHP_EOL;

@@ -22,6 +22,7 @@ class MakeMarkdown
             $markdownAssembler->addMarkdown('header.md');
             $markdownAssembler->addTableOfContents();
             $markdownAssembler->addMarkdown('installation.md');
+            $markdownAssembler->addMarkdown('concept.md');
             $markdownAssembler->addClassMarkdown(MarkdownAssembler::class);
 
             $markdownAssembler->writeMarkdown('README.md');

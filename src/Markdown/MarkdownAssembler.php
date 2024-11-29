@@ -17,14 +17,7 @@ class MarkdownAssembler extends Base
 {
     public const TOC_FLAG = '<!-- placeholder for the Table of contents -->';
 
-    protected const FILE_DELIMITER = [
-        'csv' => ',',
-        'tsv' => "\t",
-        'psv' => '|',
-    ];
-
     use TableOfContents;
-    use Tables;
 
     protected readonly string $sourceText;
 
@@ -32,11 +25,6 @@ class MarkdownAssembler extends Base
      * @var array<int,string>
      */
     protected array $blocks = [];
-
-    /**
-     * @var ClassData[]
-     */
-    protected array $classData = [];
 
     /**
      * @throws Exception
@@ -67,29 +55,33 @@ EOM
     }
 
     /**
+     * Extracts documentation of a class in Markdown format
+     *
      * @throws ReflectionException
      * @throws FileNotFoundException
      * @throws Exception
      */
     public function addClassMarkdown(string $classname): void
     {
-        $this->classData[] = ClassReader::fromClass($classname)
+        $this->blocks[] = ClassReader::fromClass($classname)
             ->getClassMarkdown($this->markdownSourceDir);
     }
 
     /**
+     * Uses a glob function to find many classes and extract their documentations
+     *
      * @throws ReflectionException
      * @throws FileNotFoundException
      */
     public function addClasses(string $glob): void
     {
         foreach ($this->filesystem->glob($this->fullPath($glob)) as $file) {
-            $this->classData[] = ClassReader::fromPath($file)->getClassMarkdown($this->markdownSourceDir);
+            $this->blocks[] = ClassReader::fromPath($file)->getClassMarkdown($this->markdownSourceDir);
         }
     }
 
     /**
-     * Adds a markdown component file
+     * Adds a markdown file.
      *
      * @throws FileNotFoundException
      */
@@ -101,16 +93,55 @@ EOM
             );
     }
 
+    /**
+     * add a table of content for the full file
+     */
     public function addTableOfContents(): void
     {
         $this->blocks[] = self::TOC_FLAG;
     }
 
+    /**
+     * adds markdown text
+     */
     public function addText(string $content): void
     {
         $this->blocks[] = $content;
     }
 
+    /**
+     * read a csv file and converts it into a table
+     *
+     * @markdown
+     *
+     * @throws Exception
+     */
+    public function addTableFromFile(string $filepath, Filesystem $filesystem = new Filesystem): void
+    {
+        $this->blocks[] = (new Table)->getTableFromFile($filepath, $filesystem);
+    }
+
+    /**
+     * takes a csv string and converts it into a table
+     */
+    public function addTableFromCsvString(string $csv, string $delimiter): void
+    {
+        $this->blocks[] = (new Table)->addTableFromCsvString($csv, $delimiter);
+    }
+
+    /**
+     * takes an array and converts it into a table
+     *
+     * @markdown
+     */
+    public function addTableFromArray(array $data): void
+    {
+        $this->blocks[] = (new Table)->getTableFromArray($data);
+    }
+
+    /**
+     * writes all added elements into one file
+     */
     public function writeMarkdown(string $filepath): void
     {
         $content = $this->sourceText;

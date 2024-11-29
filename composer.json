@@ -50,21 +50,17 @@
         "markdown": "SchenkeIo\\PackagingTools\\Workbench\\MakeMarkdown::run",
         "low": "composer update --prefer-lowest --prefer-dist",
         "stable": "composer update --prefer-stable --prefer-dist",
-        "add": [
-            "composer require --dev phpstan/phpstan-phpunit",
-            "composer require --dev laravel/pint",
-            "composer require --dev pestphp/pest"
-        ],
+        "add": [],
         "check": [
-            "@markdown",
             "@pint",
-            "@test"
+            "@test",
+            "@markdown"
         ],
         "release": [
-            "@markdown",
             "@pint",
             "@analyse",
-            "@coverage"
+            "@coverage",
+            "@markdown"
         ]
     },
     "config": {

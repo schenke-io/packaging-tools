@@ -29,7 +29,7 @@ Start the setup:
   composer setup
 ```
 
-and check all available commands:
+and check all available setup parameters:
 
 ```bash
   composer setup help

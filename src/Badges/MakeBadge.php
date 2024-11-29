@@ -7,6 +7,9 @@ use Illuminate\Filesystem\Filesystem;
 use PUGX\Poser\Poser;
 use SchenkeIo\PackagingTools\Setup\Base;
 
+/**
+ * makes badges in various formats and from many sources
+ */
 class MakeBadge extends Base
 {
     public function __construct(
@@ -18,11 +21,23 @@ class MakeBadge extends Base
         parent::__construct($this->filesystem);
     }
 
+    /**
+     * free definition of a badge with subject, status and color
+     * @throws \Exception
+     */
     public static function define(string $subject, string $status, string $color): self
     {
         return new self($subject, $status, $color);
     }
 
+    /**
+     * makes a coverage badge from clover.xml
+     *
+     * @param string $cloverPath
+     * @param string $color
+     * @return self
+     * @throws FileNotFoundException
+     */
     public static function makeCoverageBadge(string $cloverPath, string $color): self
     {
         $me = new self('Coverage', '', $color);
@@ -34,6 +49,8 @@ class MakeBadge extends Base
     }
 
     /**
+     * makes a PHPStan badge from its config file
+     *
      * @throws FileNotFoundException
      * @throws \Exception
      */
@@ -47,6 +64,13 @@ class MakeBadge extends Base
         return $me;
     }
 
+    /**
+     * stores the badge ina  given format in a svg file
+     *
+     * @param string $filepath
+     * @param BadgeStyle $badgeStyle
+     * @return void
+     */
     public function store(string $filepath, BadgeStyle $badgeStyle): void
     {
         $poser = new Poser([$badgeStyle->render()]);

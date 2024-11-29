@@ -15,12 +15,7 @@ class MarkdownDefinition implements Definition
      */
     public function schema(): Schema
     {
-        return Expect::anyOf(false,
-            Expect::structure([
-                'script' => Expect::string()->required(),
-                'target' => Expect::string()->required(),
-            ])
-        )->default(false);
+        return Expect::anyOf(false, Expect::string()->required())->default(false);
     }
 
     /**
@@ -28,7 +23,7 @@ class MarkdownDefinition implements Definition
      */
     public function explain(): string
     {
-        return "defaults to false, active with an array of 'script' and 'target' values";
+        return 'defaults to false, includes command to start the make file';
     }
 
     /**

@@ -2,12 +2,13 @@
 
 namespace SchenkeIo\PackagingTools\Workbench;
 
-require __DIR__.'./../vendor/autoload.php'; // important
+require __DIR__ . './../vendor/autoload.php'; // important
 
 use Exception;
 use SchenkeIo\PackagingTools\Badges\BadgeStyle;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
+use SchenkeIo\PackagingTools\Setup\Tasks;
 
 /*
  * this scripts make the package itself and tests its functionality
@@ -23,7 +24,16 @@ class MakeMarkdown
             $markdownAssembler->addTableOfContents();
             $markdownAssembler->addMarkdown('installation.md');
             $markdownAssembler->addMarkdown('concept.md');
+            $markdownAssembler->addMarkdown('configuration.md');
+            $table[] = ['key', 'description'];
+            foreach (Tasks::cases() as $task) {
+                $table[] = [$task->value, $task->definition()->explain()];
+            }
+            $markdownAssembler->addTableFromArray($table);
+
+            $markdownAssembler->addMarkdown('classes.md');
             $markdownAssembler->addClassMarkdown(MarkdownAssembler::class);
+            $markdownAssembler->addClassMarkdown(MakeBadge::class);
 
             $markdownAssembler->writeMarkdown('README.md');
 
@@ -32,7 +42,7 @@ class MakeMarkdown
             MakeBadge::makePhpStanBadge('phpstan.neon')
                 ->store('.github/phpstan.svg', BadgeStyle::Plastic);
         } catch (Exception $e) {
-            echo 'ERROR: '.$e->getMessage().PHP_EOL;
+            echo sprintf("ERROR: %s  (%s %d)\n", $e->getMessage(), $e->getFile(), $e->getLine());
         }
 
     }

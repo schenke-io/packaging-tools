@@ -1,6 +1,6 @@
 <!--
 
-This file was written by 'MakeMarkdown.php' line 21 using
+This file was written by 'MakeMarkdown.php' line 22 using
 SchenkeIo\PackagingTools\Markdown\MarkdownAssembler
 
 Do not edit manually as it will be overwritten.
@@ -30,12 +30,15 @@ The main elements are:
 * [Packaging Tools](#packaging-tools)
   * [Installation](#installation)
   * [Concept](#concept)
-  * [Main classes](#main-classes)
+  * [Configuration](#configuration)
+  * [Classes](#classes)
     * [MarkdownAssembler](#markdownassembler)
-    * [How to assemble a markdown](#how-to-assemble-a-markdown)
+      * [How to assemble a markdown](#how-to-assemble-a-markdown)
       * [Public methods of MarkdownAssembler](#public-methods-of-markdownassembler)
       * [Details of addTableFromFile()](#details-of-addtablefromfile())
       * [Details of addTableFromArray()](#details-of-addtablefromarray())
+    * [MakeBadge](#makebadge)
+      * [Public methods of MakeBadge](#public-methods-of-makebadge)
 
 
 
@@ -93,7 +96,35 @@ This package follows the following concept:
 - missing files are explained with full path
 
 
-## Main classes
+
+
+
+
+## Configuration
+
+Each package is controlled by a config file
+`.packaging-tools.neon` . NEON files can be
+written as YAML or JSON but additionally with comments.
+
+The format can be easily schema verified and is used here as simple
+key-value-pairs.
+
+
+
+| key      | description                                                |
+|----------|------------------------------------------------------------|
+| analyse  | true or false to control the use of PHPStan                |
+| coverage | true or false to control the use of test coverage          |
+| markdown | defaults to false, includes command to start the make file |
+| pint     | true or false to control the use of Laravel Pint           |
+| test     | defaults to 'pest', can be false or 'phpunit               |
+| check    | group of scripts                                           |
+| release  | group of scripts                                           |
+
+
+
+
+## Classes
 
 
 
@@ -104,7 +135,7 @@ Assembler of a markdown file
 
 
 
-### How to assemble a markdown
+#### How to assemble a markdown
 
 To assemble a markdown you need these things:
 - a directory with well named markdown files
@@ -169,14 +200,49 @@ try {
 
 The following extensions for the file are implemented: 
 
-| Extension | Delimiter |
-|-----------|-----------|
-| *.csv     | ,         |
-| *.psv     | \|        |
-| *.tsv     | \t        |
+| Extension | Delimiter | Details             |
+|-----------|-----------|---------------------|
+| *.csv     | ,         | comma seperated     |
+| *.psv     | \|        | pipe seperated      |
+| *.tsv     | \t        | tabulator seperated |
 
 #### Details of addTableFromArray()
 
+The array is expected to have this format:
+
+```php
+$arary = [
+    ['header 1','header 2','header 3'],
+    ['cell 1:1','cell 1:2','cell 1:3'],
+    ['cell 2:1','cell 2:2','cell 2:3'],
+    ['cell 3:1','cell 3:2','cell 3:3'],
+];
+
+```
+
+and would be rendered like this:
+
+| header 1 | header 2 | header 3 |  
+|----------|----------|----------|
+| cell 1:1 | cell 1:2 | cell 1:3 |
+| cell 2:1 | cell 2:2 | cell 2:3 |
+| cell 3:1 | cell 3:2 | cell 3:3 |
+
+
+
+
+### MakeBadge
+
+makes badges in various formats and from many sources
+
+#### Public methods of MakeBadge
+
+| method            | description                                               |
+|-------------------|-----------------------------------------------------------|
+| define            | free definition of a badge with subject, status and color |
+| makeCoverageBadge | makes a coverage badge from clover.xml                    |
+| makePhpStanBadge  | makes a PHPStan badge from its config file                |
+| store             | stores the badge ina  given format in a svg file          |
 
 
 

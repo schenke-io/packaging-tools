@@ -1,7 +1,5 @@
 pint: true
-markdown:
-    script: SchenkeIo\PackagingTools\Workbench\MakeMarkdown::run
-    target: README.md
+markdown:  SchenkeIo\PackagingTools\Workbench\MakeMarkdown::run
 analyse: true
 coverage: true
 test: pest

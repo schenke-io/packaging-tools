@@ -12,5 +12,3 @@ This package follows the following concept:
 - missing files are explained with full path
 
 
-## Main classes
-

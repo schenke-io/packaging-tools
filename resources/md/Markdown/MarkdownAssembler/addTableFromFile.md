@@ -1,8 +1,8 @@
 The following extensions for the file are implemented: 
 
-| Extension | Delimiter |
-|-----------|-----------|
-| *.csv     | ,         |
-| *.psv     | \|        |
-| *.tsv     | \t        |
+| Extension | Delimiter | Details             |
+|-----------|-----------|---------------------|
+| *.csv     | ,         | comma seperated     |
+| *.psv     | \|        | pipe seperated      |
+| *.tsv     | \t        | tabulator seperated |
 

@@ -13,11 +13,12 @@ use SchenkeIo\PackagingTools\Setup\Base;
 class MakeBadge extends Base
 {
     public function __construct(
-        protected string $subject,
-        protected string $status,
-        protected string $color,
+        protected string     $subject,
+        protected string     $status,
+        protected string     $color,
         protected Filesystem $filesystem = new Filesystem
-    ) {
+    )
+    {
         parent::__construct($this->filesystem);
     }
 
@@ -40,7 +41,7 @@ class MakeBadge extends Base
     {
         $me = new self('Coverage', '', $color);
         $coverage = $me->getCoverage($cloverPath);
-        $me->status = $coverage.'%';
+        $me->status = $coverage . '%';
         echo "Coverage badge: $coverage / $color\n";
 
         return $me;
@@ -63,7 +64,7 @@ class MakeBadge extends Base
     }
 
     /**
-     * stores the badge ina  given format in a svg file
+     * stores the badge in a given format in a svg file
      */
     public function store(string $filepath, BadgeStyle $badgeStyle): void
     {
@@ -88,7 +89,7 @@ class MakeBadge extends Base
             }
         }
 
-        return (int) round($elements > 0 ? 100 * $coveredElements / $elements : 0, 0);
+        return (int)round($elements > 0 ? 100 * $coveredElements / $elements : 0, 0);
 
     }
 

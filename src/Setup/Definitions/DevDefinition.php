@@ -8,14 +8,14 @@ use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\Definition;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
-class CoverageDefinition implements Definition
+class DevDefinition implements Definition
 {
     /**
      * return the schema of the configuration for this Definition
      */
     public function schema(): Schema
     {
-        return Expect::bool(false);
+        return Expect::arrayOf('string');
     }
 
     /**
@@ -23,7 +23,7 @@ class CoverageDefinition implements Definition
      */
     public function explainConfig(): string
     {
-        return 'true or false to control the use of test coverage';
+        return 'opens a console select for all commands in composer and in artisan commands if found';
     }
 
     /**
@@ -31,28 +31,18 @@ class CoverageDefinition implements Definition
      */
     public function packages(Config $config): Requirements
     {
-        return match ($config->config->coverage) {
-            default => new Requirements,
-            'pest' => Requirements::dev('pestphp/pest'),
-            'phpunit' => Requirements::dev('phpunit/phpunit'),
-        };
-
+        return new Requirements;
     }
 
     /**
      * line or lines which will be executed when the script is called
+     *
+     *
+     * @return string|array<int,string>
      */
     public function commands(Config $config): string|array
     {
-        if ($config->config->coverage) {
-            return match ($config->config->test) {
-                default => [],
-                'pest' => 'vendor/bin/pest --coverage',
-                'phpunit' => 'vendor/bin/phpunit --coverage'
-            };
-        } else {
-            return [];
-        }
+        return 'SchenkeIo\\PackagingTools\\DeveloperMenu::handle';
     }
 
     /**
@@ -60,6 +50,6 @@ class CoverageDefinition implements Definition
      */
     public function explainUse(): string
     {
-        return 'run test with coverage';
+        return 'run the helper menu';
     }
 }

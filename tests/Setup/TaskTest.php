@@ -12,7 +12,7 @@ it('has full defined tasks', function (Tasks $case) {
 
     $config = new Config($filesystem);
 
-    expect($case->definition()->explain())->toBeString()
+    expect($case->definition()->explainConfig())->toBeString()
         ->and($case->definition()->packages($config))->toBeInstanceOf(Requirements::class);
 
     // assert($case->definition()->explain())->is

@@ -21,7 +21,7 @@ class TestDefinition implements Definition
     /**
      * return help text for this config key
      */
-    public function explain(): string
+    public function explainConfig(): string
     {
         return "defaults to 'pest', can be false or 'phpunit";
     }
@@ -48,5 +48,13 @@ class TestDefinition implements Definition
             'pest' => 'vendor/bin/pest',
             'phpunit' => 'vendor/bin/phpunit'
         };
+    }
+
+    /**
+     * return help text for dev menu
+     */
+    public function explainUse(): string
+    {
+        return 'run the test suite';
     }
 }

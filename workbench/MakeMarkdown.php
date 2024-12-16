@@ -27,7 +27,7 @@ class MakeMarkdown
             $markdownAssembler->addMarkdown('configuration.md');
             $table[] = ['key', 'description'];
             foreach (Tasks::cases() as $task) {
-                $table[] = [$task->value, $task->definition()->explain()];
+                $table[] = [$task->value, $task->definition()->explainConfig()];
             }
             $markdownAssembler->addTableFromArray($table);
 

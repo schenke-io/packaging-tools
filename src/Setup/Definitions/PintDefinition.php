@@ -21,7 +21,7 @@ class PintDefinition implements Definition
     /**
      * return help text for this config key
      */
-    public function explain(): string
+    public function explainConfig(): string
     {
         return 'true or false to control the use of Laravel Pint';
     }
@@ -40,5 +40,13 @@ class PintDefinition implements Definition
     public function commands(Config $config): string|array
     {
         return 'vendor/bin/pint';
+    }
+
+    /**
+     * return help text for dev menu
+     */
+    public function explainUse(): string
+    {
+        return 'format the source code';
     }
 }

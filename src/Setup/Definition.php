@@ -14,7 +14,12 @@ interface Definition
     /**
      * return help text for this config key
      */
-    public function explain(): string;
+    public function explainConfig(): string;
+
+    /**
+     * return help text for dev menu
+     */
+    public function explainUse(): string;
 
     /**
      * return the list of required packages

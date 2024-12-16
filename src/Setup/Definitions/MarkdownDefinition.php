@@ -21,7 +21,7 @@ class MarkdownDefinition implements Definition
     /**
      * return help text for this config key
      */
-    public function explain(): string
+    public function explainConfig(): string
     {
         return 'defaults to false, includes command to start the make file';
     }
@@ -44,5 +44,13 @@ class MarkdownDefinition implements Definition
         } else {
             return [];
         }
+    }
+
+    /**
+     * return help text for dev menu
+     */
+    public function explainUse(): string
+    {
+        return 'write markdown file';
     }
 }

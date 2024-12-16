@@ -9,6 +9,7 @@ enum Tasks: string
     case Markdown = 'markdown';
     case Pint = 'pint';
     case Test = 'test';
+    case Dev = 'dev';
 
     // groups
 
@@ -25,6 +26,7 @@ enum Tasks: string
             self::Test => new Definitions\TestDefinition,
             self::Check => new Definitions\GroupDefinition(['pint', 'test', 'markdown']),
             self::Release => new Definitions\GroupDefinition(['pint', 'analyse', 'coverage', 'markdown']),
+            self::Dev => new Definitions\DevDefinition,
         };
     }
 

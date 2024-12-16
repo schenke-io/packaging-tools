@@ -32,12 +32,35 @@ class Composer extends Base
     {
         parent::__construct($this->filesystem);
         $this->requirements = new Requirements;
-        $this->composer = json_decode($this->composerjsonContent, true);
+        $this->composer = json_decode($this->composerJsonContent, true);
         /*
          * add some special commands
          */
         $this->composer['scripts']['low'] = 'composer update --prefer-lowest --prefer-dist';
         $this->composer['scripts']['stable'] = 'composer update --prefer-stable --prefer-dist';
+    }
+
+    public static function getCommands(): array
+    {
+        $return = [];
+        $me = new self;
+        foreach (array_keys($me->composer['scripts']) as $command) {
+            if (str_starts_with($command, 'post-install')) {
+                continue;
+            }
+            if ($command === 'dev') {
+                continue;
+            }
+            $task = Tasks::tryFrom($command);
+            $command = "composer $command";
+            if ($task) {
+                $return[$command] = "$command - ".$task->definition()->explainUse();
+            } else {
+                $return[$command] = $command;
+            }
+        }
+
+        return $return;
     }
 
     public function save(): void

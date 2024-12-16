@@ -13,4 +13,6 @@ release:
 	- analyse
 	- coverage
 	- markdown
-
+dev:
+    - run:me
+    - victor

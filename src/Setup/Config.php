@@ -37,8 +37,6 @@ class Config extends Base
             } catch (Exception $e) {
                 echo 'Invalid configuration file: '.$e->getMessage()."\n";
             }
-        } else {
-            $data = [];
         }
         $processor = new Processor;
         $this->config = $processor->process($this->getSchema(), $data);

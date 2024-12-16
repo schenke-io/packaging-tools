@@ -111,15 +111,16 @@ key-value-pairs.
 
 
 
-| key      | description                                                |
-|----------|------------------------------------------------------------|
-| analyse  | true or false to control the use of PHPStan                |
-| coverage | true or false to control the use of test coverage          |
-| markdown | defaults to false, includes command to start the make file |
-| pint     | true or false to control the use of Laravel Pint           |
-| test     | defaults to 'pest', can be false or 'phpunit               |
-| check    | group of scripts: pint, test, markdown                     |
-| release  | group of scripts: pint, analyse, coverage, markdown        |
+| key      | description                                                                          |
+|----------|--------------------------------------------------------------------------------------|
+| analyse  | true or false to control the use of PHPStan                                          |
+| coverage | true or false to control the use of test coverage                                    |
+| markdown | defaults to false, includes command to start the make file                           |
+| pint     | true or false to control the use of Laravel Pint                                     |
+| test     | defaults to 'pest', can be false or 'phpunit                                         |
+| dev      | opens a console select for all commands in composer and in artisan commands if found |
+| check    | group of scripts: pint, test, markdown                                               |
+| release  | group of scripts: pint, analyse, coverage, markdown                                  |
 
 
 
@@ -242,7 +243,7 @@ makes badges in various formats and from many sources
 | define            | free definition of a badge with subject, status and color |
 | makeCoverageBadge | makes a coverage badge from clover.xml                    |
 | makePhpStanBadge  | makes a PHPStan badge from its config file                |
-| store             | stores the badge ina  given format in a svg file          |
+| store             | stores the badge in a given format in a svg file          |
 
 
 

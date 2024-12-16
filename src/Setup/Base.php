@@ -12,7 +12,7 @@ class Base
 
     public readonly string $composerJsonPath;
 
-    public readonly string $composerjsonContent;
+    public readonly string $composerJsonContent;
 
     /**
      * @throws \Exception
@@ -27,8 +27,8 @@ class Base
         if (! $this->filesystem->exists($this->composerJsonPath)) {
             throw new \Exception('composer.json not found: '.$this->composerJsonPath);
         }
-        $this->composerjsonContent = $this->filesystem->get($this->composerJsonPath);
-        $composerJson = json_decode($this->composerjsonContent, true);
+        $this->composerJsonContent = $this->filesystem->get($this->composerJsonPath);
+        $composerJson = json_decode($this->composerJsonContent, true);
         $type = $composerJson['type'] ?? '';
         $this->sourceRoot = $type == 'project' ? 'app' : 'src';
     }

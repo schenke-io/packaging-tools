@@ -23,7 +23,7 @@ class GroupDefinition implements Definition
     /**
      * return help text for this config key
      */
-    public function explain(): string
+    public function explainConfig(): string
     {
         return 'group of scripts: '.implode(', ', $this->tasks);
     }
@@ -51,5 +51,13 @@ class GroupDefinition implements Definition
         }
 
         return $return;
+    }
+
+    /**
+     * return help text for dev menu
+     */
+    public function explainUse(): string
+    {
+        return 'run all scripts: '.implode(', ', $this->tasks);
     }
 }

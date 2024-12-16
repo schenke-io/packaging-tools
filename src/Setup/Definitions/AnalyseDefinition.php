@@ -21,7 +21,7 @@ class AnalyseDefinition implements Definition
     /**
      * return help text for this config key
      */
-    public function explain(): string
+    public function explainConfig(): string
     {
         return 'true or false to control the use of PHPStan';
     }
@@ -50,5 +50,13 @@ class AnalyseDefinition implements Definition
         } else {
             return './vendor/bin/phpstan analyse';
         }
+    }
+
+    /**
+     * return help text for dev menu
+     */
+    public function explainUse(): string
+    {
+        return 'run a automatic test program';
     }
 }

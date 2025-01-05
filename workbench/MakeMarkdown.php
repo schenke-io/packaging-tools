@@ -37,7 +37,7 @@ class MakeMarkdown
 
             $markdownAssembler->writeMarkdown('README.md');
 
-            MakeBadge::makeCoverageBadge('build/logs/clover.xml', '32CD32')
+            MakeBadge::makeCoverageBadge('build/logs/clover.xml')
                 ->store('.github/coverage-badge.svg', BadgeStyle::Plastic);
             MakeBadge::makePhpStanBadge('phpstan.neon')
                 ->store('.github/phpstan.svg', BadgeStyle::Plastic);

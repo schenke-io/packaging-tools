@@ -36,10 +36,18 @@ class MakeBadge extends Base
      *
      * @throws FileNotFoundException
      */
-    public static function makeCoverageBadge(string $cloverPath, string $color): self
+    public static function makeCoverageBadge(string $cloverPath): self
     {
-        $me = new self('Coverage', '', $color);
+        $me = new self('Coverage', '', '');
         $coverage = $me->getCoverage($cloverPath);
+        if ($coverage > 90) {
+            $color = '7FFF00';
+        } elseif ($coverage < 70) {
+            $color = 'FF0000';
+        } else {
+            $color = 'FFFF00';
+        }
+        $me->color = $color;
         $me->status = $coverage.'%';
         echo "Coverage badge: $coverage / $color\n";
 

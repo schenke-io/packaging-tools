@@ -36,7 +36,11 @@ class ClassReader extends Base
     public static function fromPath(string $filepath): self
     {
         $base = new base;
-        $content = $base->filesystem->get($base->fullPath($filepath));
+        if(! str_starts_with($filepath,'/')){
+            // relative path
+            $filepath = $base->fullPath($filepath);
+        }
+        $content = $base->filesystem->get($filepath);
         $namespace = '';
         $class = '';
         foreach (explode("\n", $content) as $line) {

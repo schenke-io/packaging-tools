@@ -40,8 +40,8 @@ class ClassReader extends Base
             if (preg_match('@^namespace (.*?);@', $line, $matches)) {
                 $namespace = $matches[1];
             }
-            if ($namespace && preg_match('@^class ([a-zA-Z0-9_]*)@', $line, $matches)) {
-                $class = $matches[1];
+            if ($namespace && preg_match('@^(readonly class|class) ([a-zA-Z0-9_]*)@', $line, $matches)) {
+                $class = $matches[2];
                 break;
             }
         }

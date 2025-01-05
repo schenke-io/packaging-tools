@@ -9,10 +9,6 @@ use SchenkeIo\PackagingTools\Setup\Base;
 
 /**
  * makes badges in various formats and from many sources
- *
- * @a 123
- *
- * @test 5sgdfglkdg kggdflgd lfg fg
  */
 class MakeBadge extends Base
 {

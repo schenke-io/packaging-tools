@@ -1,6 +1,6 @@
 <!--
 
-This file was written by 'MakeMarkdown.php' line 22 using
+This file was written by 'MakeMarkdown.php' line 23 using
 SchenkeIo\PackagingTools\Markdown\MarkdownAssembler
 
 Do not edit manually as it will be overwritten.
@@ -39,6 +39,7 @@ The main elements are:
       * [Details of addTableFromArray()](#details-of-addtablefromarray())
     * [MakeBadge](#makebadge)
       * [Public methods of MakeBadge](#public-methods-of-makebadge)
+    * [ClassData](#classdata)
 
 
 
@@ -244,6 +245,13 @@ makes badges in various formats and from many sources
 | makeCoverageBadge | makes a coverage badge from clover.xml                    |
 | makePhpStanBadge  | makes a PHPStan badge from its config file                |
 | store             | stores the badge in a given format in a svg file          |
+
+
+
+### ClassData
+
+
+
 
 
 

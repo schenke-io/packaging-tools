@@ -107,9 +107,6 @@ class ClassReader extends Base
     {
         $reflection = new ReflectionClass($classname);
         $doc = $reflection->getDocComment();
-        if ($doc === false) {
-            return [];
-        }
 
         $classParts = explode('\\', $classname);
         // reduce array removing the first 2 parts
@@ -120,12 +117,13 @@ class ClassReader extends Base
             'description' => '',
             'sources' => [],
             'markdown' => 0,
-        ], PhpDocExtractor::getFrom($doc));
+        ], PhpDocExtractor::getFrom($doc ?: ''));
         $return['classname'] = $classname;
         $return['short'] = $reflection->getShortName();
         $return['filePath'] = $reflection->getFileName();
         $return['isFinal'] = $reflection->isFinal();
         $return['markdown-file'] = implode('/', $classParts).'.md';
+        $return['methods'] = [];
         /*
          * add public method names
          */

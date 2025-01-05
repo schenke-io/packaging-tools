@@ -7,6 +7,7 @@ require __DIR__.'./../vendor/autoload.php'; // important
 use Exception;
 use SchenkeIo\PackagingTools\Badges\BadgeStyle;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
+use SchenkeIo\PackagingTools\Markdown\ClassData;
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
 use SchenkeIo\PackagingTools\Setup\Tasks;
 
@@ -34,6 +35,7 @@ class MakeMarkdown
             $markdownAssembler->addMarkdown('classes.md');
             $markdownAssembler->addClassMarkdown(MarkdownAssembler::class);
             $markdownAssembler->addClassMarkdown(MakeBadge::class);
+            $markdownAssembler->addClassMarkdown(ClassData::class); // empty
 
             $markdownAssembler->writeMarkdown('README.md');
 

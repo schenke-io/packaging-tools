@@ -4,13 +4,6 @@ namespace SchenkeIo\PackagingTools\Markdown;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
-use Jasny\PhpdocParser\PhpdocParser;
-use Jasny\PhpdocParser\Tag\DescriptionTag;
-use Jasny\PhpdocParser\Tag\FlagTag;
-use Jasny\PhpdocParser\Tag\MultiTag;
-use Jasny\PhpdocParser\Tag\Summery;
-use Jasny\PhpdocParser\Tag\WordTag;
-use Jasny\PhpdocParser\TagSet;
 use ReflectionClass;
 use ReflectionException;
 use SchenkeIo\PackagingTools\Setup\Base;
@@ -36,7 +29,7 @@ class ClassReader extends Base
     public static function fromPath(string $filepath): self
     {
         $base = new base;
-        if(! str_starts_with($filepath,'/')){
+        if (! str_starts_with($filepath, '/')) {
             // relative path
             $filepath = $base->fullPath($filepath);
         }
@@ -65,7 +58,7 @@ class ClassReader extends Base
 
         $return = '';
         $return .= str_repeat('#', $headerLevel).' '.$classData['short']."\n\n";
-        $return .= $classData['description']."\n\n";
+        $return .= $classData['summary']."\n\n";
         if ($classData['markdown'] > 0) {
             $return .= $this->filesystem->get(
                 $this->fullPath($markdownSourceDir.'/'.$classData['markdown-file'])
@@ -76,9 +69,9 @@ class ClassReader extends Base
             /*
              * build the main table
              */
-            $table[] = ['method', 'description'];
+            $table[] = ['method', 'summary'];
             foreach ($classData['methods'] as $shortMethod => $methodData) {
-                $table[] = [$shortMethod, $methodData['description'] ?? '-'];
+                $table[] = [$shortMethod, $methodData['summary'] ?? '-'];
             }
             $return .= (new Table)->getTableFromArray($table);
             /*
@@ -118,23 +111,16 @@ class ClassReader extends Base
             return [];
         }
 
-        $tags = new TagSet([
-            new Summery,
-            new DescriptionTag(''),
-            new FlagTag('markdown'),
-            new MultiTag('sources', new WordTag('source')),
-        ]);
         $classParts = explode('\\', $classname);
         // reduce array removing the first 2 parts
         $classParts = array_slice($classParts, 2);
 
-        $parser = new PhpdocParser($tags);
         $return = array_merge([
-            'summery' => 'empty',
+            'summary' => 'empty',
             'description' => '',
             'sources' => [],
             'markdown' => 0,
-        ], $parser->parse($doc));
+        ], PhpDocExtractor::getFrom($doc));
         $return['classname'] = $classname;
         $return['short'] = $reflection->getShortName();
         $return['filePath'] = $reflection->getFileName();
@@ -146,18 +132,12 @@ class ClassReader extends Base
         foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
             if (! str_starts_with($methodName, '_')) {
-                $tags = new TagSet([
-                    new Summery,
-                    new DescriptionTag(''),
-                    new FlagTag('markdown'),
-                ]);
-                $parser = new PhpdocParser($tags);
                 $return['methods'][$methodName] = array_merge([
-                    'summery' => 'empty',
+                    'summary' => 'empty',
                     'description' => '',
                     'markdown' => 0,
                 ],
-                    $parser->parse($method->getDocComment())
+                    PhpDocExtractor::getFrom($method->getDocComment())
                 );
             }
         }

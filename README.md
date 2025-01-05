@@ -186,7 +186,7 @@ try {
 
 #### Public methods of MarkdownAssembler
 
-| method                | description                                                                |
+| method                | summary                                                                    |
 |-----------------------|----------------------------------------------------------------------------|
 | addClassMarkdown      | Extracts documentation of a class in Markdown format                       |
 | addClasses            | Uses a glob function to find many classes and extract their documentations |
@@ -238,7 +238,7 @@ makes badges in various formats and from many sources
 
 #### Public methods of MakeBadge
 
-| method            | description                                               |
+| method            | summary                                                   |
 |-------------------|-----------------------------------------------------------|
 | define            | free definition of a badge with subject, status and color |
 | makeCoverageBadge | makes a coverage badge from clover.xml                    |

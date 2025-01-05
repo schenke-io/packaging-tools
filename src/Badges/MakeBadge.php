@@ -9,6 +9,10 @@ use SchenkeIo\PackagingTools\Setup\Base;
 
 /**
  * makes badges in various formats and from many sources
+ *
+ * @a 123
+ *
+ * @test 5sgdfglkdg kggdflgd lfg fg
  */
 class MakeBadge extends Base
 {
@@ -41,11 +45,11 @@ class MakeBadge extends Base
         $me = new self('Coverage', '', '');
         $coverage = $me->getCoverage($cloverPath);
         if ($coverage > 90) {
-            $color = '7FFF00';
+            $color = '27AE60';
         } elseif ($coverage < 70) {
-            $color = 'FF0000';
+            $color = 'C0392B';
         } else {
-            $color = 'FFFF00';
+            $color = 'F1C40F';
         }
         $me->color = $color;
         $me->status = $coverage.'%';

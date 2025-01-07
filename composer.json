@@ -18,8 +18,7 @@
         "ext-json": "*",
         "ext-simplexml": "*",
         "badges/poser": "^3.0",
-        "illuminate/filesystem": "^10.0|^11.0",
-        "laravel/prompts": "^0.3.2",
+        "illuminate/filesystem": "^10.0|^11.33",
         "nette/neon": "^3.0",
         "nette/schema": "^1.3"
     },

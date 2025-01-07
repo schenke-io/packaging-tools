@@ -2,7 +2,6 @@
 
 namespace SchenkeIo\PackagingTools;
 
-use Laravel\Prompts\SearchPrompt;
 use SchenkeIo\PackagingTools\Setup\Composer;
 use SchenkeIo\PackagingTools\Setup\Config;
 
@@ -14,21 +13,18 @@ class DeveloperMenu
             Composer::getCommands(),
             self::getArtisanCommands()
         );
-        $command = (new SearchPrompt(
-            label: 'Search for the user that should receive the mail',
-            options: fn ($search) => array_filter($commands, fn ($command) => str_contains($command, $search))
+        // todo find good selector
 
-        ))->prompt();
-        if ($command) {
-            echo "**$command**\n";
-
-            try {
-                self::runShellCommand($command);
-            } catch (\RuntimeException $e) {
-                echo 'Error: '.$e->getMessage()."\n";
-                exit(1); // Indicate failure to Composer
-            }
-        }
+        //        if ($command) {
+        //            echo "**$command**\n";
+        //
+        //            try {
+        //                self::runShellCommand($command);
+        //            } catch (\RuntimeException $e) {
+        //                echo 'Error: '.$e->getMessage()."\n";
+        //                exit(1); // Indicate failure to Composer
+        //            }
+        //        }
     }
 
     private static function getArtisanCommands(): array

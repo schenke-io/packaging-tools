@@ -8,7 +8,7 @@ use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\Definition;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
-class DevDefinition implements Definition
+class MenuDefinition implements Definition
 {
     /**
      * return the schema of the configuration for this Definition

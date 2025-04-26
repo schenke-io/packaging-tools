@@ -10,8 +10,7 @@ enum Tasks: string
     case Pint = 'pint';
     case Test = 'test';
 
-    // was dev, now dev-menu, conflict with Laravel command
-    case DevMenu = 'dev-menu';
+    case Menu = 'menu';
 
     // groups
 
@@ -28,7 +27,7 @@ enum Tasks: string
             self::Test => new Definitions\TestDefinition,
             self::Check => new Definitions\GroupDefinition(['pint', 'test', 'markdown']),
             self::Release => new Definitions\GroupDefinition(['pint', 'analyse', 'coverage', 'markdown']),
-            self::DevMenu => new Definitions\DevDefinition,
+            self::Menu => new Definitions\MenuDefinition,
         };
     }
 

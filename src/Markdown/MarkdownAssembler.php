@@ -5,7 +5,10 @@ namespace SchenkeIo\PackagingTools\Markdown;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
-use ReflectionException;
+use SchenkeIo\PackagingTools\Markdown\Traits\MarkdownBadges;
+use SchenkeIo\PackagingTools\Markdown\Traits\MarkdownClasses;
+use SchenkeIo\PackagingTools\Markdown\Traits\MarkdownTables;
+use SchenkeIo\PackagingTools\Markdown\Traits\TableOfContents;
 use SchenkeIo\PackagingTools\Setup\Base;
 
 /**
@@ -17,6 +20,9 @@ class MarkdownAssembler extends Base
 {
     public const TOC_FLAG = '<!-- placeholder for the Table of contents -->';
 
+    use MarkdownBadges;
+    use MarkdownClasses;
+    use MarkdownTables;
     use TableOfContents;
 
     protected readonly string $sourceText;
@@ -55,32 +61,6 @@ EOM
     }
 
     /**
-     * Extracts documentation of a class in Markdown format
-     *
-     * @throws ReflectionException
-     * @throws FileNotFoundException
-     * @throws Exception
-     */
-    public function addClassMarkdown(string $classname): void
-    {
-        $this->blocks[] = ClassReader::fromClass($classname)
-            ->getClassMarkdown($this->markdownSourceDir);
-    }
-
-    /**
-     * Uses a glob function to find many classes and extract their documentations
-     *
-     * @throws ReflectionException
-     * @throws FileNotFoundException
-     */
-    public function addClasses(string $glob): void
-    {
-        foreach ($this->filesystem->glob($this->fullPath($glob)) as $file) {
-            $this->blocks[] = ClassReader::fromPath($file)->getClassMarkdown($this->markdownSourceDir);
-        }
-    }
-
-    /**
      * Adds a markdown file.
      *
      * @throws FileNotFoundException
@@ -107,36 +87,6 @@ EOM
     public function addText(string $content): void
     {
         $this->blocks[] = $content;
-    }
-
-    /**
-     * read a csv file and converts it into a table
-     *
-     * @markdown
-     *
-     * @throws Exception
-     */
-    public function addTableFromFile(string $filepath, Filesystem $filesystem = new Filesystem): void
-    {
-        $this->blocks[] = (new Table)->getTableFromFile($filepath, $filesystem);
-    }
-
-    /**
-     * takes a csv string and converts it into a table
-     */
-    public function addTableFromCsvString(string $csv, string $delimiter): void
-    {
-        $this->blocks[] = (new Table)->addTableFromCsvString($csv, $delimiter);
-    }
-
-    /**
-     * takes an array and converts it into a table
-     *
-     * @markdown
-     */
-    public function addTableFromArray(array $data): void
-    {
-        $this->blocks[] = (new Table)->getTableFromArray($data);
     }
 
     /**

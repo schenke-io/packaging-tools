@@ -1,6 +1,6 @@
 <?php
 
-namespace SchenkeIo\PackagingTools\Markdown;
+namespace SchenkeIo\PackagingTools\Markdown\Traits;
 
 trait TableOfContents
 {

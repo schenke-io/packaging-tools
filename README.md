@@ -6,17 +6,21 @@ SchenkeIo\PackagingTools\Markdown\MarkdownAssembler
 Do not edit manually as it will be overwritten.
 
 -->
-
 # Packaging Tools
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/schenke-io/packaging-tools?style=plastic)](https://packagist.org/packages/schenke-io/packaging-tools)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/schenke-io/packaging-tools/run-tests.yml?branch=main&label=tests&style=plastic)](https://github.com/schenke-io/packaging-tools/actions?query=workflow%3Arun-tests+branch%3Amain)
+
+
+[![Latest Version](https://img.shields.io/packagist/v/schenke-io/packaging-tools?style=plastic)](https://packagist.org/packages/schenke-io/packaging-tools)
+[![Test](https://img.shields.io/github/actions/workflow/status/schenke-io/packaging-tools/run-tests.yml?style=plastic&branch=main&label=tests)](https://github.com/schenke-io/packaging-tools/actions/workflows/%3Arun-tests.yml%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/schenke-io/packaging-tools.svg?style=plastic)](https://packagist.org/packages/schenke-io/packaging-tools)
-![](/.github/coverage-badge.svg)
-![](/.github/phpstan.svg)
+[![](.github/coverage-badge.svg)]()
+[![](.github/phpstan.svg)]()
 
 
-![](/.github/werkstatt.png)
+[![](.github/werkstatt.png)]()
+
+
+
 
 This package is a collection of tools to simplify the package and project development.
 
@@ -189,15 +193,21 @@ try {
 
 | method                | summary                                                                    |
 |-----------------------|----------------------------------------------------------------------------|
-| addClassMarkdown      | Extracts documentation of a class in Markdown format                       |
-| addClasses            | Uses a glob function to find many classes and extract their documentations |
 | addMarkdown           | Adds a markdown file.                                                      |
 | addTableOfContents    | add a table of content for the full file                                   |
 | addText               | adds markdown text                                                         |
+| writeMarkdown         | writes all added elements into one file                                    |
+| storeVersionBadge     |                                                                            |
+| storeTestBadge        |                                                                            |
+| storeDownloadBadge    |                                                                            |
+| storeLocalBadge       |                                                                            |
+| addLocalImage         |                                                                            |
+| addBadges             |                                                                            |
+| addClassMarkdown      | Extracts documentation of a class in Markdown format                       |
+| addClasses            | Uses a glob function to find many classes and extract their documentations |
 | addTableFromFile      | read a csv file and converts it into a table                               |
 | addTableFromCsvString | takes a csv string and converts it into a table                            |
 | addTableFromArray     | takes an array and converts it into a table                                |
-| writeMarkdown         | writes all added elements into one file                                    |
 #### Details of addTableFromFile()
 
 The following extensions for the file are implemented: 

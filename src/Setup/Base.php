@@ -14,6 +14,8 @@ class Base
 
     public readonly string $composerJsonContent;
 
+    public readonly string $projectName;
+
     /**
      * @throws \Exception
      */
@@ -30,6 +32,7 @@ class Base
         $this->composerJsonContent = $this->filesystem->get($this->composerJsonPath);
         $composerJson = json_decode($this->composerJsonContent, true);
         $type = $composerJson['type'] ?? '';
+        $this->projectName = $composerJson['name'] ?? '';
         $this->sourceRoot = $type == 'project' ? 'app' : 'src';
     }
 

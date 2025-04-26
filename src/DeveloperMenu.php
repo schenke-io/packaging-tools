@@ -30,7 +30,7 @@ class DeveloperMenu
     private static function getArtisanCommands(): array
     {
         $return = [];
-        foreach ((new Config)->config->dev as $command) {
+        foreach ((new Config)->config->menu as $command) {
             $return["php artisan $command"] = $command;
         }
 

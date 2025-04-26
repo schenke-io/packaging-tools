@@ -21,7 +21,18 @@ class MakeMarkdown
     {
         try {
             $markdownAssembler = new MarkdownAssembler('resources/md');
+
+            $markdownAssembler->addText('# Packaging Tools');
+            $markdownAssembler->storeVersionBadge();
+            $markdownAssembler->storeTestBadge('run-tests.yml');
+            $markdownAssembler->storeDownloadBadge();
+            $markdownAssembler->storeLocalBadge('', '.github/coverage-badge.svg');
+            $markdownAssembler->storeLocalBadge('', '.github/phpstan.svg');
+            $markdownAssembler->addBadges();
+
+            $markdownAssembler->addLocalImage('', '.github/werkstatt.png');
             $markdownAssembler->addMarkdown('header.md');
+
             $markdownAssembler->addTableOfContents();
             $markdownAssembler->addMarkdown('installation.md');
             $markdownAssembler->addMarkdown('concept.md');

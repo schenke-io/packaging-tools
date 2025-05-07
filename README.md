@@ -207,6 +207,7 @@ try {
 | addClassMarkdown          | Extracts documentation of a class in Markdown format                       |
 | addClasses                | Uses a glob function to find many classes and extract their documentations |
 | addCustomClassMarkdown    | adds a custom text using $callback(array $classData)                       |
+| getClassData              | return the class documentation data as array                               |
 | addTableFromFile          | read a csv file and converts it into a table                               |
 | addTableFromCsvString     | takes a csv string and converts it into a table                            |
 | addTableFromArray         | takes an array and converts it into a table                                |

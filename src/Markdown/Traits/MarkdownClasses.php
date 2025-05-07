@@ -2,6 +2,7 @@
 
 namespace SchenkeIo\PackagingTools\Markdown\Traits;
 
+use Closure;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use ReflectionException;
@@ -33,5 +34,15 @@ trait MarkdownClasses
         foreach ($this->filesystem->glob($this->fullPath($glob)) as $file) {
             $this->blocks[] = ClassReader::fromPath($file)->getClassMarkdown($this->markdownSourceDir);
         }
+    }
+
+    /**
+     * adds a custom text using $callback(array $classData)
+     *
+     * @throws ReflectionException
+     */
+    public function addCustomClassMarkdown(string $classname, Closure $callback): void
+    {
+        $this->blocks[] = $callback(ClassReader::fromClass($classname)->getClassDataFromClass($classname));
     }
 }

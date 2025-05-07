@@ -191,23 +191,25 @@ try {
 
 #### Public methods of MarkdownAssembler
 
-| method                | summary                                                                    |
-|-----------------------|----------------------------------------------------------------------------|
-| addMarkdown           | Adds a markdown file.                                                      |
-| addTableOfContents    | add a table of content for the full file                                   |
-| addText               | adds markdown text                                                         |
-| writeMarkdown         | writes all added elements into one file                                    |
-| storeVersionBadge     |                                                                            |
-| storeTestBadge        |                                                                            |
-| storeDownloadBadge    |                                                                            |
-| storeLocalBadge       |                                                                            |
-| addLocalImage         |                                                                            |
-| addBadges             |                                                                            |
-| addClassMarkdown      | Extracts documentation of a class in Markdown format                       |
-| addClasses            | Uses a glob function to find many classes and extract their documentations |
-| addTableFromFile      | read a csv file and converts it into a table                               |
-| addTableFromCsvString | takes a csv string and converts it into a table                            |
-| addTableFromArray     | takes an array and converts it into a table                                |
+| method                    | summary                                                                    |
+|---------------------------|----------------------------------------------------------------------------|
+| addMarkdown               | Adds a markdown file.                                                      |
+| addTableOfContents        | add a table of content for the full file                                   |
+| addText                   | adds markdown text                                                         |
+| writeMarkdown             | writes all added elements into one file                                    |
+| storeVersionBadge         | stores a version badge from packagist in the badge buffer                  |
+| storeTestBadge            | stores a test badge from GitHub actions in the badge buffer                |
+| storeDownloadBadge        | stores a download badge from packagist in the badge buffer                 |
+| storeLocalBadge           | stores a local badge in the badge buffer                                   |
+| storeForgeDeploymentBadge | stores a forge deployment badge from Laravel Forge in the badge buffer     |
+| addLocalImage             | adds a link to a local image to markdown file                              |
+| addBadges                 | adds all stored badges into the markdown file                              |
+| addClassMarkdown          | Extracts documentation of a class in Markdown format                       |
+| addClasses                | Uses a glob function to find many classes and extract their documentations |
+| addCustomClassMarkdown    | adds a custom text using $callback(array $classData)                       |
+| addTableFromFile          | read a csv file and converts it into a table                               |
+| addTableFromCsvString     | takes a csv string and converts it into a table                            |
+| addTableFromArray         | takes an array and converts it into a table                                |
 #### Details of addTableFromFile()
 
 The following extensions for the file are implemented: 

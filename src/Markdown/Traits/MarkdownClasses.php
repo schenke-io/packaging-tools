@@ -43,6 +43,16 @@ trait MarkdownClasses
      */
     public function addCustomClassMarkdown(string $classname, Closure $callback): void
     {
-        $this->blocks[] = $callback(ClassReader::fromClass($classname)->getClassDataFromClass($classname));
+        $this->blocks[] = $callback($this->getClassData($classname));
+    }
+
+    /**
+     * return the class documentation data as array
+     *
+     * @throws ReflectionException
+     */
+    public function getClassData(string $classname): array
+    {
+        return ClassReader::fromClass($classname)->getClassDataFromClass($classname);
     }
 }

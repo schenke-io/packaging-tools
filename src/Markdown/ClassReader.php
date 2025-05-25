@@ -114,15 +114,21 @@ class ClassReader extends Base
          */
         foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
-            if (! str_starts_with($methodName, '_')) {
-                $return['methods'][$methodName] = array_merge([
-                    'summary' => 'empty',
-                    'description' => '',
-                    'markdown' => 0,
-                ],
-                    PhpDocExtractor::getFrom($method->getDocComment())
-                );
+            if ($method->getDeclaringClass()->getName() !== $reflection->getName()) {
+                continue;
             }
+            if (str_starts_with($methodName, '_')) {
+                continue;
+            }
+            // now we have all public method without _ prefix defined in this class
+            $return['methods'][$methodName] = array_merge([
+                'summary' => 'empty',
+                'description' => '',
+                'markdown' => 0,
+            ],
+                PhpDocExtractor::getFrom($method->getDocComment())
+            );
+
         }
 
         return $return;

@@ -44,6 +44,18 @@ class ClassReader extends Base
         $return = '';
         $return .= str_repeat('#', $headerLevel).' '.$classData['short']."\n\n";
         $return .= $classData['summary']."\n\n";
+
+        $properties = [];
+        foreach ($classData['property'] as $propertyLine) {
+            if (preg_match('/^(.*?)\$(.*?) (.*)/', $propertyLine, $matches)) {
+                $properties[] = sprintf("* \$%s: %s\n", $matches[2], $matches[3]);
+            }
+        }
+        if (count($properties) > 0) {
+            $return .= str_repeat('#', $headerLevel + 1)." Properties\n\n";
+            $return .= implode("\n", $properties);
+        }
+
         if ($classData['markdown'] > 0) {
             $return .= $this->filesystem->get(
                 $this->fullPath($markdownSourceDir.'/'.$classData['markdown-file'])

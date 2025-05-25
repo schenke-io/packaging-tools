@@ -50,6 +50,7 @@ trait MarkdownClasses
      * return the class documentation data as array
      *
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getClassData(string $classname): array
     {

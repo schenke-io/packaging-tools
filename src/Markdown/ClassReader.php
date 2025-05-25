@@ -4,6 +4,7 @@ namespace SchenkeIo\PackagingTools\Markdown;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
+use Nette\PhpGenerator\PhpFile;
 use ReflectionClass;
 use ReflectionException;
 use SchenkeIo\PackagingTools\Setup\Base;
@@ -28,25 +29,9 @@ class ClassReader extends Base
      */
     public static function fromPath(string $filepath): self
     {
-        $base = new base;
-        if (! str_starts_with($filepath, '/')) {
-            // relative path
-            $filepath = $base->fullPath($filepath);
-        }
-        $content = $base->filesystem->get($filepath);
-        $namespace = '';
-        $class = '';
-        foreach (explode("\n", $content) as $line) {
-            if (preg_match('@^namespace (.*?);@', $line, $matches)) {
-                $namespace = $matches[1];
-            }
-            if ($namespace && preg_match('@^(readonly class|class) ([a-zA-Z0-9_]*)@', $line, $matches)) {
-                $class = $matches[2];
-                break;
-            }
-        }
+        $file = PhpFile::fromCode(file_get_contents($filepath));
 
-        return new self("$namespace\\$class");
+        return new self(array_key_first($file->getClasses()));
     }
 
     /**

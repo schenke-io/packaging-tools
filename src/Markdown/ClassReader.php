@@ -45,17 +45,31 @@ class ClassReader extends Base
         $return .= str_repeat('#', $headerLevel).' '.$classData['short']."\n\n";
         $return .= $classData['summary']."\n\n";
 
+        /*
+         * Properties
+         */
         $properties = [];
-        foreach ($classData['property'] as $propertyLine) {
+        foreach ($classData['property'] ?? [] as $propertyLine) {
             if (preg_match('/^(.*?)\$(.*?) (.*)/', $propertyLine, $matches)) {
-                $properties[] = sprintf("* \$%s: %s\n", $matches[2], $matches[3]);
+                $properties[] = sprintf("* __\$%s:__ %s\n", $matches[2], $matches[3]);
             }
         }
         if (count($properties) > 0) {
             $return .= str_repeat('#', $headerLevel + 1)." Properties\n\n";
             $return .= implode("\n", $properties);
         }
-
+        /*
+         * Methods from header overwrite the docs on the method itself (usefull for traits)
+         */
+        $methods = [];
+        foreach ($classData['method'] ?? [] as $methodLine) {
+            if (preg_match('/^(.*?)\(\)(.*)/', $methodLine, $matches)) {
+                $methods[trim($matches[1])] = trim($matches[2]);
+            }
+        }
+        /*
+         * external files
+         */
         if ($classData['markdown'] > 0) {
             $return .= $this->filesystem->get(
                 $this->fullPath($markdownSourceDir.'/'.$classData['markdown-file'])
@@ -68,7 +82,8 @@ class ClassReader extends Base
              */
             $table[] = ['method', 'summary'];
             foreach ($classData['methods'] as $shortMethod => $methodData) {
-                $table[] = [$shortMethod, $methodData['summary'] ?? '-'];
+                $details = strlen($methodData['summary']) > 3 ? $methodData['summary'] : $methods[$shortMethod] ?? '-';
+                $table[] = [$shortMethod, $details];
             }
             $return .= (new Table)->getTableFromArray($table);
             /*

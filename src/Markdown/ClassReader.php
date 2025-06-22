@@ -141,7 +141,7 @@ class ClassReader extends Base
          */
         foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
-            if ($method->getDeclaringClass()->getName() !== $reflection->getName()) {
+            if ($method->getDeclaringClass()->getName() !== $reflection->getName() && ! $method->getDeclaringClass()->isTrait()) {
                 continue;
             }
             if (str_starts_with($methodName, '_')) {

@@ -141,9 +141,18 @@ class ClassReader extends Base
          */
         foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
-            if ($method->getDeclaringClass()->getName() !== $reflection->getName() && ! $method->getDeclaringClass()->isTrait()) {
+            $declaringClass = $method->getDeclaringClass();
+
+            // Exclude methods that are not declared in the current class or its parents (not traits)
+            if ($declaringClass->getName() !== $reflection->getName() && ! $declaringClass->isTrait()) {
                 continue;
             }
+
+            // Exclude methods that come from a trait
+            if ($declaringClass->isTrait()) {
+                continue;
+            }
+
             if (str_starts_with($methodName, '_')) {
                 continue;
             }

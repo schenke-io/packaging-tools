@@ -64,11 +64,11 @@ trait MarkdownBadges
     /**
      * stores a forge deployment badge from Laravel Forge in the badge buffer
      */
-    public function storeForgeDeploymentBadge(string $hash, int $server, int $site, BadgeStyle $badgeStyle = BadgeStyle::Plastic): void
+    public function storeForgeDeploymentBadge(string $hash, int $server, int $site, int $date = 0, int $label = 0, BadgeStyle $badgeStyle = BadgeStyle::Plastic): void
     {
         $text = 'Laravel Forge Site Deployment Status';
-        $shieldUrl = sprintf('https://forge.laravel.com/site-badges/%s&style=%s', $hash, $badgeStyle->style());
-        $src = sprintf('https://img.shields.io/endpoint?url=%s', urlencode($shieldUrl));
+        $shieldUrl = sprintf('https://forge.laravel.com/site-badges/%s?date=%d&label=%d', $hash, $date, $label);
+        $src = sprintf('https://img.shields.io/endpoint?url=%s&style=%s', urlencode($shieldUrl), $badgeStyle->style());
         $url = sprintf('https://forge.laravel.com/servers/%d/sites/%d', $server, $site);
         $this->storeBadgeLink($text, $src, $url);
     }

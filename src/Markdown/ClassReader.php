@@ -71,7 +71,7 @@ class ClassReader extends Base
          * external files
          */
         if ($classData['markdown'] > 0) {
-            $return .= $this->filesystem->get(
+            $return .= self::$filesystem->get(
                 $this->fullPath($markdownSourceDir.'/'.$classData['markdown-file'])
             );
         }
@@ -92,7 +92,7 @@ class ClassReader extends Base
             foreach ($classData['methods'] as $shortMethod => $methodData) {
                 if ($methodData['markdown'] > 0) {
                     $return .= str_repeat('#', $headerLevel + 1)." Details of $shortMethod()\n\n";
-                    $return .= $this->filesystem->get(
+                    $return .= self::$filesystem->get(
                         $this->fullPath(
                             $markdownSourceDir.
                             '/'.

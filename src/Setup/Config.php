@@ -24,16 +24,16 @@ class Config extends Base
         */
 
         $configFile = $this->projectRoot.'/'.self::CONFIG_BASE;
-        if (! $this->filesystem->exists($configFile)) {
+        if (! self::$filesystem->exists($configFile)) {
             $configFile = dirname($this->projectRoot).'/'.self::CONFIG_BASE;
-            if (! $this->filesystem->exists($configFile)) {
+            if (! self::$filesystem->exists($configFile)) {
                 $configFile = '';
             }
         }
         $data = [];
         if ($configFile !== '') {
             try {
-                $data = Neon::decode($this->filesystem->get($configFile));
+                $data = Neon::decode(self::$filesystem->get($configFile));
             } catch (Exception $e) {
                 echo 'Invalid configuration file: '.$e->getMessage()."\n";
             }
@@ -94,14 +94,14 @@ txt;
 
     protected function writeConfig(): void
     {
-        if ($this->filesystem->exists($this->fullPath(self::CONFIG_BASE))) {
+        if (self::$filesystem->exists($this->fullPath(self::CONFIG_BASE))) {
             echo sprintf("config file %s already exists.\n", self::CONFIG_BASE);
 
             return;
         }
         $processor = new Processor;
         $neon = Neon::encode($processor->process($this->getSchema(), []), true);
-        $this->filesystem->put(self::CONFIG_BASE, $neon);
+        self::$filesystem->put(self::CONFIG_BASE, $neon);
     }
 
     protected function getSchema(): Schema

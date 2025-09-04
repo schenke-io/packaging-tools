@@ -37,7 +37,7 @@ class MarkdownAssembler extends Base
      */
     public function __construct(
         protected readonly string $markdownSourceDir,
-        protected Filesystem $filesystem = new Filesystem
+        Filesystem $filesystem = new Filesystem
     ) {
         parent::__construct($filesystem);
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
@@ -67,7 +67,7 @@ EOM
      */
     public function addMarkdown(string $filepath): void
     {
-        $this->blocks[] = $this->filesystem
+        $this->blocks[] = self::$filesystem
             ->get(
                 $this->fullPath($this->markdownSourceDir.'/'.$filepath)
             );
@@ -104,6 +104,6 @@ EOM
             $content .= "\n\n\n";
 
         }
-        $this->filesystem->put($this->fullPath($filepath), $content);
+        self::$filesystem->put($this->fullPath($filepath), $content);
     }
 }

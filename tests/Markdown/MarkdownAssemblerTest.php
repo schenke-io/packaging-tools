@@ -10,7 +10,10 @@ it('can build a markdown', function () {
     $filesystem->shouldReceive('isDirectory')->once()->andReturn(true);
     $filesystem->shouldReceive('put')->once();
 
-    $mda = new MarkdownAssembler('', $filesystem);
+    // set the static filesystem for the tests
+    setStaticFileSystem($filesystem);
+
+    $mda = new MarkdownAssembler('');
     $mda->addMarkdown('');
     $mda->writeMarkdown('');
 });

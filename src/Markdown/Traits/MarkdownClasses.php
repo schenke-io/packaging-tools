@@ -31,7 +31,7 @@ trait MarkdownClasses
      */
     public function addClasses(string $glob): void
     {
-        foreach ($this->filesystem->glob($this->fullPath($glob)) as $file) {
+        foreach (self::$filesystem->glob($this->fullPath($glob)) as $file) {
             $this->blocks[] = ClassReader::fromPath($file)->getClassMarkdown($this->markdownSourceDir);
         }
     }

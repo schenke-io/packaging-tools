@@ -16,9 +16,9 @@ class MakeBadge extends Base
         protected string $subject,
         protected string $status,
         protected string $color,
-        protected Filesystem $filesystem = new Filesystem
+        Filesystem $filesystem = new Filesystem
     ) {
-        parent::__construct($this->filesystem);
+        parent::__construct($filesystem);
     }
 
     /**
@@ -78,7 +78,7 @@ class MakeBadge extends Base
         $poser = new Poser([$badgeStyle->render()]);
 
         $svg = $poser->generate($this->subject, $this->status, $this->color, $badgeStyle->style());
-        $this->filesystem->put($this->fullPath($filepath), $svg);
+        self::$filesystem->put($this->fullPath($filepath), $svg);
     }
 
     /**
@@ -86,7 +86,7 @@ class MakeBadge extends Base
      */
     private function getCoverage(string $filepath): int
     {
-        $content = $this->filesystem->get($this->fullPath($filepath));
+        $content = self::$filesystem->get($this->fullPath($filepath));
         $elements = 1;
         $coveredElements = 0;
         foreach (explode("\n", $content) as $line) {
@@ -105,7 +105,7 @@ class MakeBadge extends Base
      */
     private function getPhpStan(string $filepath): string
     {
-        $content = $this->filesystem->get($this->fullPath($filepath));
+        $content = self::$filesystem->get($this->fullPath($filepath));
         foreach (explode("\n", $content) as $line) {
             if (preg_match('@^ +level: +(\d+)@', $line, $matches)) {
                 return $matches[1];

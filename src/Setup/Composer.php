@@ -11,8 +11,6 @@ class Composer extends Base
      */
     public array $composer = [];
 
-    protected bool $isDirty = false;
-
     /**
      * @var array<int,string>
      */
@@ -28,9 +26,9 @@ class Composer extends Base
     /**
      * @throws \Exception
      */
-    public function __construct(protected Filesystem $filesystem = new Filesystem)
+    public function __construct(Filesystem $filesystem = new Filesystem)
     {
-        parent::__construct($this->filesystem);
+        parent::__construct($filesystem);
         $this->requirements = new Requirements;
         $this->composer = json_decode($this->composerJsonContent, true);
         /*
@@ -65,7 +63,7 @@ class Composer extends Base
 
     public function save(): void
     {
-        $this->filesystem->put(
+        self::$filesystem->put(
             $this->composerJsonPath,
             json_encode(
                 $this->composer,

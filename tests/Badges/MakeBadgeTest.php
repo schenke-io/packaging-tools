@@ -10,6 +10,11 @@ it('it can make badges', function ($case) {
     $filesystem->shouldReceive('exists')->once()->andReturn(true);
     $filesystem->shouldReceive('get')->once()->andReturn('');
     $filesystem->shouldReceive('put')->once();
-    $makeBadge = new MakeBadge('s', 's', '112233', $filesystem);
+
+    // set the static filesystem for the tests
+    setStaticFileSystem($filesystem);
+
+    $makeBadge = new MakeBadge('s', 's', '112233');
     $makeBadge->store('', $case);
+
 })->with(BadgeStyle::cases());

@@ -1,6 +1,7 @@
 <?php
 
 use SchenkeIo\PackagingTools\Badges\BadgeStyle;
+use SchenkeIo\PackagingTools\Setup\Base;
 
 uses(BadgeStyle::class);
 
@@ -43,7 +44,10 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function setStaticFileSystem($filesystem): void
 {
-    // ..
+    // set the static filesystem for the tests
+    (new ReflectionClass(Base::class))
+        ->getProperty('filesystem')
+        ->setValue(null, $filesystem);
 }

@@ -10,7 +10,10 @@ it('has full defined tasks', function (Tasks $case) {
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('get')->andReturn('[]');
 
-    $config = new Config($filesystem);
+    // set the static filesystem for the tests
+    setStaticFileSystem($filesystem);
+
+    $config = new Config;
 
     expect($case->definition()->explainConfig())->toBeString()
         ->and($case->definition()->packages($config))->toBeInstanceOf(Requirements::class);

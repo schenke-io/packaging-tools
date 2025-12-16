@@ -257,6 +257,7 @@ makes badges in various formats and from many sources
 | define            | free definition of a badge with subject, status and color |
 | makeCoverageBadge | makes a coverage badge from clover.xml                    |
 | makePhpStanBadge  | makes a PHPStan badge from its config file                |
+| info              | short text about the badge                                |
 | store             | stores the badge in a given format in a svg file          |
 
 

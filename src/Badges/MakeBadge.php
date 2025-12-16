@@ -12,6 +12,8 @@ use SchenkeIo\PackagingTools\Setup\Base;
  */
 class MakeBadge extends Base
 {
+    protected string $info = '';
+
     public function __construct(
         protected string $subject,
         protected string $status,
@@ -49,7 +51,7 @@ class MakeBadge extends Base
         }
         $me->color = $color;
         $me->status = $coverage.'%';
-        echo "Coverage badge: $coverage / $color\n";
+        $me->info = "Coverage badge: $coverage / $color";
 
         return $me;
     }
@@ -65,20 +67,30 @@ class MakeBadge extends Base
         $me = new self('PHPStan', '', $color);
         $level = $me->getPhpStan($phpStanNeonPath);
         $me->status = $level;
-        echo "PHPstan badge: $level / $color\n";
+        $me->info = "PHPstan badge: $level / $color";
 
         return $me;
     }
 
     /**
+     * short text about the badge
+     */
+    public function info(): string
+    {
+        return $this->info;
+    }
+
+    /**
      * stores the badge in a given format in a svg file
      */
-    public function store(string $filepath, BadgeStyle $badgeStyle): void
+    public function store(string $filepath, BadgeStyle $badgeStyle): self
     {
         $poser = new Poser([$badgeStyle->render()]);
 
         $svg = $poser->generate($this->subject, $this->status, $this->color, $badgeStyle->style());
         self::$filesystem->put($this->fullPath($filepath), $svg);
+
+        return $this;
     }
 
     /**

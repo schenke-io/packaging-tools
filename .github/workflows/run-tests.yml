@@ -17,7 +17,7 @@ jobs:
         php: [ 8.2, 8.3 ]
         laravel: [  12.* ]
         stability: [ prefer-lowest, prefer-stable ]
-  
+
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -49,4 +49,4 @@ jobs:
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: vendor/bin/pest --parallel
+        run: vendor/bin/pest 

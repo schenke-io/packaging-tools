@@ -29,13 +29,15 @@ use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
  */
 
 try {
-    $mda = new MarkdownAssembler(/* subdirectory for markdown include files */);
-    $mda->addMarkdown(/* relative to markdown directory */);
+    $mda = new MarkdownAssembler('workbench/resources/md');
+    $mda->addMarkdown("header.md");
     $mda->addTableOfContents();
     // relative to markdown directory
     $mda->addMarkdown("installation.md");
-    // makes markdown from a class phpdoc
-    $mda->addClassMarkdown(MarkdownAssembler::class);
+    // makes markdown from all classes in src/
+    $mda->classes()->all();
+    // or from a single class
+    $mda->classes()->add(MarkdownAssembler::class);
 
     // path relative to root directory
     $mda->writeMarkdown("README.md");

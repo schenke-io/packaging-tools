@@ -25,8 +25,8 @@ it('reports everything up to date when no deltas exist', function () {
         }
         if (str_ends_with($path, '.packaging-tools.neon')) {
             return 'test: pest
-quick: false
-release: false';
+quick: []
+release: []';
         }
 
         return '';
@@ -54,7 +54,7 @@ it('reports c2p delta', function () {
             ]);
         }
         if (str_ends_with($path, '.packaging-tools.neon')) {
-            return 'test: false';
+            return 'test: ""';
         }
 
         return '';
@@ -68,7 +68,7 @@ it('reports c2p delta', function () {
     Config::$silent = true;
     $output = ob_get_clean();
 
-    expect($output)->toContain("run 'composer setup config' to do these changes in '.packaging-tools.neon':");
+    expect($output)->toContain("run 'composer setup config' to add these keys to '.packaging-tools.neon':");
 });
 
 it('reports p2c script delta', function () {
@@ -97,8 +97,8 @@ it('reports p2c script delta', function () {
     Config::$silent = true;
     $output = ob_get_clean();
 
-    expect($output)->toContain("run 'composer setup update' to do these changes in 'composer.json':")
-        ->and($output)->toContain(' - script ');
+    expect($output)->toContain("run 'composer setup update' to add these elements to 'composer.json':")
+        ->and($output)->toContain(' - add script ');
 });
 
 it('reports p2c package delta', function () {
@@ -126,6 +126,6 @@ it('reports p2c package delta', function () {
     Config::$silent = true;
     $output = ob_get_clean();
 
-    expect($output)->toContain("run 'composer setup update' to do these changes in 'composer.json':")
-        ->and($output)->toContain(' - package ');
+    expect($output)->toContain("run 'composer setup update' to add these elements to 'composer.json':")
+        ->and($output)->toContain(' - add package ');
 });

@@ -12,7 +12,7 @@
     </testsuites>
     <coverage>
         <report>
-            <text outputFile="build/coverage.txt" showOnlySummary="true" showUncoveredFiles="true"/>
+            <text outputFile="build/coverage.txt" showOnlySummary="false" showUncoveredFiles="true"/>
             <clover outputFile="build/logs/clover.xml"/>
         </report>
     </coverage>

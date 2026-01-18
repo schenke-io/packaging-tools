@@ -69,3 +69,15 @@ it('Classes piece can use glob to add classes', function () {
 
     expect($md)->toContain('### MarkdownAssembler');
 });
+
+it('Classes piece can use all() to add classes', function () {
+    $classes = new Classes;
+    $classes->all();
+
+    $reflection = new ReflectionClass($classes);
+    $property = $reflection->getProperty('buffer');
+    $property->setAccessible(true);
+    $buffer = $property->getValue($classes);
+
+    expect($buffer)->toContain(['type' => 'glob', 'value' => 'src/**/*.php']);
+});

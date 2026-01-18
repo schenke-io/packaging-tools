@@ -36,7 +36,7 @@ class CoverageDefinition extends BaseDefinition
      */
     public function explainConfig(): string
     {
-        return 'false = disabled, or provide the relative path to the clover.xml file';
+        return 'false = disabled, true = enabled (adds --coverage to the test runner)';
     }
 
     /**
@@ -44,15 +44,7 @@ class CoverageDefinition extends BaseDefinition
      */
     protected function getPackages(Config $config): Requirements
     {
-        /**
-         * check config for coverage settings
-         */
-        return match ($config->config->coverage) {
-            default => new Requirements,
-            'pest' => Requirements::dev('pestphp/pest'),
-            'phpunit' => Requirements::dev('phpunit/phpunit'),
-        };
-
+        return new Requirements;
     }
 
     /**

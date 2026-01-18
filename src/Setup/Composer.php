@@ -50,10 +50,14 @@ class Composer
         $this->requirements = new Requirements;
         $this->composer = json_decode($this->projectContext->composerJsonContent, true);
         /*
-         * add some special commands
+         * add some special commands if not already present
          */
-        $this->composer['scripts']['low'] = 'composer update --prefer-lowest --prefer-dist';
-        $this->composer['scripts']['stable'] = 'composer update --prefer-stable --prefer-dist';
+        if (empty($this->composer['scripts']['low'])) {
+            $this->composer['scripts']['low'] = 'composer update --prefer-lowest --prefer-dist';
+        }
+        if (empty($this->composer['scripts']['stable'])) {
+            $this->composer['scripts']['stable'] = 'composer update --prefer-stable --prefer-dist';
+        }
     }
 
     /**
@@ -189,9 +193,14 @@ class Composer
             }
             $current = $this->composer['scripts'][$name] ?? null;
             if ($current !== $expected) {
+                if (is_null($current) || $current === '' || $current === [] || $current === false) {
+                    $status = 'missing';
+                } else {
+                    $status = 'discrepancy';
+                }
                 $pending[$name] = [
                     'expected' => $expected,
-                    'status' => is_null($current) ? 'missing' : 'different',
+                    'status' => $status,
                 ];
             }
         }

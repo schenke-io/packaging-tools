@@ -105,7 +105,10 @@ class CloverCoverageDriver implements BadgeDriverInterface
         }
 
         $dom = new \DOMDocument;
-        if (! @$dom->loadXML($content)) {
+        $previous = libxml_use_internal_errors(true);
+        $result = $dom->loadXML($content);
+        libxml_use_internal_errors($previous);
+        if (! $result) {
             return 0;
         }
         $xpath = new \DOMXPath($dom);

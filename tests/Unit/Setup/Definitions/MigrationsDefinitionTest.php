@@ -51,15 +51,6 @@ describe('commands', function () {
         expect($commands[1])->toBe('SchenkeIo\PackagingTools\Setup\MigrationCleaner::clean');
     });
 
-    test('returns generate and clean commands if migrations is a table list', function () {
-        $definition = new MigrationsDefinition;
-        $config = new Config(['migrations' => ['users', 'posts']], new ProjectContext);
-        $commands = $definition->commands($config);
-        expect($commands)->toBeArray()->toHaveCount(2);
-        expect($commands[0])->toContain('migrate:generate')->toContain('--tables=users,posts');
-        expect($commands[1])->toBe('SchenkeIo\PackagingTools\Setup\MigrationCleaner::clean');
-    });
-
     test('returns generate and clean commands if migrations is a connection:table string', function () {
         $definition = new MigrationsDefinition;
         $config = new Config(['migrations' => 'mysql:users,posts'], new ProjectContext);
@@ -69,6 +60,12 @@ describe('commands', function () {
             ->toContain('--connection=mysql')
             ->toContain('--tables=users,posts');
         expect($commands[1])->toBe('SchenkeIo\PackagingTools\Setup\MigrationCleaner::clean');
+    });
+
+    test('reaches null branch if task name is different', function () {
+        $definition = new MigrationsDefinition('pint');
+        $config = new Config(['pint' => true, 'migrations' => null], new ProjectContext);
+        expect($definition->commands($config))->toBe([]);
     });
 });
 

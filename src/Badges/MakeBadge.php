@@ -2,12 +2,12 @@
 
 namespace SchenkeIo\PackagingTools\Badges;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use PUGX\Poser\Calculator\TextSizeCalculatorInterface;
 use PUGX\Poser\Poser;
 use SchenkeIo\PackagingTools\Contracts\BadgeDriverInterface;
 use SchenkeIo\PackagingTools\Enums\BadgeStyle;
 use SchenkeIo\PackagingTools\Enums\BadgeType;
+use SchenkeIo\PackagingTools\Enums\SetupMessages;
 use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
@@ -64,7 +64,7 @@ class MakeBadge
                 try {
                     $badge = self::fromDriver($type->getDriver(), $path, $projectContext);
                     $badge->store();
-                    Config::output(sprintf(' INFO  Badge generated: %s', $badge->info()));
+                    Config::output(SetupMessages::infoBadgeGenerated, $badge->info());
                 } catch (\Exception $e) {
                     // Silently skip
                 }
@@ -78,8 +78,6 @@ class MakeBadge
      * @param  string  $subject  The subject (left side)
      * @param  string  $status  The status (right side)
      * @param  string  $color  The color
-     *
-     * @throws PackagingToolException
      */
     public static function define(string $subject, string $status, string $color): self
     {
@@ -92,8 +90,6 @@ class MakeBadge
      * @param  BadgeDriverInterface  $driver  The driver to use
      * @param  string  $path  The path to the source data
      * @param  ProjectContext|null  $projectContext  Optional project context
-     *
-     * @throws FileNotFoundException
      */
     public static function fromDriver(BadgeDriverInterface $driver, string $path, ?ProjectContext $projectContext = null): self
     {

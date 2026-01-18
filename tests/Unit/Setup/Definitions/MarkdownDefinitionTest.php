@@ -21,7 +21,7 @@ it('can explain the config', function () {
 
 it('can return required packages', function () {
     $definition = new MarkdownDefinition;
-    $config = new Config(['markdown' => false]);
+    $config = new Config(['markdown' => null]);
     $requirements = $definition->packages($config);
     expect($requirements)->toBeInstanceOf(Requirements::class);
 });
@@ -35,7 +35,7 @@ it('can return commands when markdown is configured', function () {
 
 it('can return empty array when markdown is not configured', function () {
     $definition = new MarkdownDefinition;
-    $config = new Config(['markdown' => false]);
+    $config = new Config(['markdown' => null]);
     $commands = $definition->commands($config);
     expect($commands)->toBeArray();
     expect($commands)->toBeEmpty();

@@ -1,8 +1,9 @@
 [![Coverage](workbench/resources/md/svg/coverage.svg)]()
 [![PHPStan](workbench/resources/md/svg/phpstan.svg)]()
-[![Latest Version](https://img.shields.io/packagist/v/schenke-io/packaging-tools?style=plastic)](https://packagist.org/packages/schenke-io/packaging-tools)
-[![Test](https://img.shields.io/github/actions/workflow/status/schenke-io/packaging-tools/run-tests.yml?style=plastic&branch=main&label=tests)](https://github.com/schenke-io/packaging-tools/actions?query=workflow%3Arun-tests.yml+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/schenke-io/packaging-tools?style=plastic)](https://packagist.org/packages/schenke-io/packaging-tools)
+[![License](https://img.shields.io/github/license/schenke-io/packaging-tools?style=flat)](https://github.com/schenke-io/packaging-tools/blob/main/LICENSE.md)
+[![Latest Version](https://img.shields.io/packagist/v/schenke-io/packaging-tools?style=flat)](https://packagist.org/packages/schenke-io/packaging-tools)
+[![Tests](https://github.com/schenke-io/packaging-tools/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/schenke-io/packaging-tools/actions/workflows/run-tests.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/schenke-io/packaging-tools?style=flat)](https://packagist.org/packages/schenke-io/packaging-tools)
 
 <!--
 ********************************************************************************
@@ -19,8 +20,6 @@
 ![cover](workbench/resources/md/cover.png)
 
 # Packaging Tools
-
-[![](.github/werkstatt.png)]()
 
 This package is a collection of tools to simplify the package and project development.
 
@@ -60,6 +59,9 @@ The main elements are:
   * [Classes](#classes)
     * [Automatic Documentation](#automatic-documentation)
     * [Best Practices for Class Documentation](#best-practices-for-class-documentation)
+    * [Using @markdown for Extended Documentation](#using-@markdown-for-extended-documentation)
+      * [Class-level @markdown](#class-level-@markdown)
+      * [Method-level @markdown](#method-level-@markdown)
     * [MarkdownAssembler](#markdownassembler)
       * [How to assemble a markdown](#how-to-assemble-a-markdown)
       * [Public methods of MarkdownAssembler](#public-methods-of-markdownassembler)
@@ -67,13 +69,6 @@ The main elements are:
       * [Public methods of MakeBadge](#public-methods-of-makebadge)
     * [Config](#config)
       * [Public methods of Config](#public-methods-of-config)
-    * [Composer](#composer)
-      * [Public methods of Composer](#public-methods-of-composer)
-    * [TaskRegistry](#taskregistry)
-      * [Public methods of TaskRegistry](#public-methods-of-taskregistry)
-    * [ProjectContext](#projectcontext)
-      * [Public methods of ProjectContext](#public-methods-of-projectcontext)
-    * [ClassData](#classdata)
 
 ## Installation
 
@@ -144,12 +139,12 @@ The following keys are supported in `.packaging-tools.neon`:
 | `analyse` | `bool` | Enables PHPStan static analysis | `analyse: true` |
 | `coverage` | `bool` | Enables code coverage reporting during tests | `coverage: true` |
 | `infection` | `bool` | Enables mutation testing with Infection | `infection: true` |
-| `markdown` | `string` | The command to run for Markdown assembly | `markdown: php workbench/MakeMarkdown.php` |
-| `migrations` | `string\|array` | Configuration for migration generation | `migrations: mysql:users,posts` |
+| `markdown` | `string\|null` | The command to run for Markdown assembly | `markdown: php workbench/MakeMarkdown.php` |
+| `migrations` | `string\|null` | Configuration for migration generation | `migrations: mysql:users,posts` |
 | `pint` | `bool` | Enables code styling with Laravel Pint | `pint: true` |
-| `quick` | `bool\|array` | Group task: `pint`, `test`, `markdown` | `quick: true` |
-| `release` | `bool\|array` | Group task for pre-release checks | `release: true` |
-| `test` | `string\|false` | Test runner: `pest`, `phpunit` or `false` | `test: pest` |
+| `quick` | `array` | Group task: `pint`, `test`, `markdown` | `quick: [pint, test, markdown]` |
+| `release` | `array` | Group task for pre-release checks | `release: [pint, analyse, coverage, markdown]` |
+| `test` | `string` | Test runner: `pest`, `phpunit` or `''` | `test: pest` |
 | `customTasks`| `array` | Mapping of custom task names to commands | `customTasks: { my-task: "ls -la" }` |
 
 ### Detailed Key Purpose
@@ -164,10 +159,10 @@ Requires a test runner to be configured. It adds coverage flags to the test comm
 Runs mutation testing to check the quality of your tests. Requires `infection/infection` to be installed.
 
 #### `markdown`
-Points to the script that assembles your documentation. Usually `php workbench/MakeMarkdown.php`.
+Points to the script that assembles your documentation. Usually `php workbench/MakeMarkdown.php`. Use `null` to disable.
 
 #### `migrations`
-Uses `kitloong/laravel-migrations-generator`. Can be a string in the format `connection:table1,table2` or an array of tables for the default connection.
+Uses `kitloong/laravel-migrations-generator`. Can be a string in the format `connection:table1,table2`. Use `null` to disable.
 
 #### `pint`
 Uses Laravel Pint to ensure your code follows the project's styling rules.
@@ -179,7 +174,7 @@ A shortcut to run essential checks quickly. By default it runs `pint`, `test` an
 A comprehensive check before releasing a new version. It typically runs `pint`, `analyse`, `test`, `coverage`, `infection` and `markdown`.
 
 #### `test`
-Selects the testing framework. Supported values are `pest` and `phpunit`. Set to `false` to disable tests.
+Selects the testing framework. Supported values are `pest` and `phpunit`. Use an empty string `''` to disable tests.
 
 #### `customTasks`
 Allows you to define your own tasks that can be run via `composer setup <task-name>`.
@@ -187,6 +182,18 @@ Allows you to define your own tasks that can be run via `composer setup <task-na
 ### Schema Validation
 
 All tasks in `packaging-tools` define their own configuration schema using `nette/schema`. This ensures that your configuration is always valid and provides helpful error messages if something is misconfigured.
+
+| key        | description                                                                                      |
+|------------|--------------------------------------------------------------------------------------------------|
+| analyse    | false = disabled, true = enabled (uses phpstan/phpstan-phpunit or larastan/larastan)             |
+| coverage   | false = disabled, true = enabled (adds --coverage to the test runner)                            |
+| infection  | false = disabled, true = enabled (requires infection/infection)                                  |
+| markdown   | null = disabled, string = enabled (command to assemble Markdown files)                           |
+| migrations | null = disabled, connection:table1,table2 = enabled (with connection and tables)                 |
+| pint       | false = disabled, true = enabled (uses laravel/pint)                                             |
+| quick      | an array of scripts to include in this group: pint, test, markdown                               |
+| release    | an array of scripts to include in this group: pint, analyse, test, coverage, infection, markdown |
+| test       | '' = disabled, 'pest' or 'phpunit' = enabled                                                     |
 
 ## Database Migrations
 
@@ -230,6 +237,16 @@ Alternatively, you can call it from PHP:
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
 
 MakeBadge::auto();
+
+// generate specific badges with auto-detected paths:
+MakeBadge::makeCoverageBadge();
+MakeBadge::makePhpStanBadge();
+MakeBadge::makeInfectionBadge();
+
+// or with explicit paths:
+MakeBadge::makeCoverageBadge('path/to/clover.xml');
+MakeBadge::makePhpStanBadge('path/to/phpstan.neon');
+MakeBadge::makeInfectionBadge('path/to/infection-report.json');
 ```
 
 The `auto()` method iterates through all supported badge types and attempts to detect the necessary source files or configurations automatically.
@@ -273,18 +290,6 @@ MakeBadge::define('My Subject', 'Success', '27AE60')
     ->store('resources/md/svg/my-badge.svg');
 ```
 
-| key        | description                                                                          |
-|------------|--------------------------------------------------------------------------------------|
-| analyse    | false = disabled, true = enabled (uses phpstan/phpstan-phpunit or larastan/larastan) |
-| coverage   | false = disabled, or provide the relative path to the clover.xml file                |
-| infection  | false = disabled, true = enabled (requires infection/infection)                      |
-| markdown   | false = disabled, true = enabled (assembles Markdown files from resources/md)        |
-| migrations | false = disabled, connection:table1,table2 = enabled (with connection and tables)    |
-| pint       | false = disabled, true = enabled (uses laravel/pint)                                 |
-| quick      | false = disabled, true = enabled (runs tests with --stop-on-failure)                 |
-| release    | false = disabled, true = enabled (uses various tools to prepare a release)           |
-| test       | false = disabled, true = enabled (runs pest)                                         |
-
 ## Classes
 
 The tool can automatically document your package classes by parsing their PHPDoc blocks.
@@ -295,6 +300,9 @@ When using the `MarkdownAssembler`, you can include documentation for all your c
 
 ```php
 $assembler->classes()->all();
+
+// or document a single class:
+$assembler->classes()->add(MyClass::class);
 ```
 
 This will:
@@ -317,6 +325,43 @@ class MyClass { ... }
 ```
 
 The assembler looks for at least a few lines of description to ensure quality documentation.
+
+### Using @markdown for Extended Documentation
+
+Sometimes, class or method documentation is too extensive for a single PHPDoc block. You can use the `@markdown` tag to include external Markdown files into your class documentation.
+
+#### Class-level @markdown
+
+If you add `@markdown` to your class-level PHPDoc, the tool will look for a Markdown file named after the class's namespace path.
+
+- **Convention:** The path is formed by taking the full namespace, excluding the first two components (usually the vendor and package name), and appending `.md`.
+- **Example:** `SchenkeIo\PackagingTools\Markdown\MarkdownAssembler` becomes `Markdown/MarkdownAssembler.md`.
+- **Base Directory:** These paths are relative to the markdown source directory passed to the `MarkdownAssembler` constructor.
+
+```php
+/**
+ * Class Summary
+ *
+ * @markdown
+ */
+class MarkdownAssembler { ... }
+```
+
+#### Method-level @markdown
+
+Similarly, you can use `@markdown` on individual public methods.
+
+- **Convention:** The tool looks for a `.md` file in a subdirectory named after the class (using the same convention as above).
+- **Example:** `MarkdownAssembler::init()` will look for `Markdown/MarkdownAssembler/init.md`.
+
+```php
+/**
+ * Method Summary
+ *
+ * @markdown
+ */
+public function init() { ... }
+```
 
 ### MarkdownAssembler
 
@@ -353,13 +398,15 @@ use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
  */
 
 try {
-    $mda = new MarkdownAssembler(/* subdirectory for markdown include files */);
-    $mda->addMarkdown(/* relative to markdown directory */);
+    $mda = new MarkdownAssembler('workbench/resources/md');
+    $mda->addMarkdown("header.md");
     $mda->addTableOfContents();
     // relative to markdown directory
     $mda->addMarkdown("installation.md");
-    // makes markdown from a class phpdoc
-    $mda->addClassMarkdown(MarkdownAssembler::class);
+    // makes markdown from all classes in src/
+    $mda->classes()->all();
+    // or from a single class
+    $mda->classes()->add(MarkdownAssembler::class);
 
     // path relative to root directory
     $mda->writeMarkdown("README.md");
@@ -377,6 +424,7 @@ try {
 | method             | summary                                  |
 |--------------------|------------------------------------------|
 | init               | -                                        |
+| skipWrittenBy      | -                                        |
 | autoHeader         | -                                        |
 | addMarkdown        | Adds a markdown file.                    |
 | addTableOfContents | add a table of content for the full file |
@@ -414,56 +462,13 @@ Handles the configuration for the packaging tools.
 
 | method          | summary                                                                  |
 |-----------------|--------------------------------------------------------------------------|
-| getMarkdownDir  | -                                                                        |
-| output          | -                                                                        |
+| getMarkdownDir  | returns the directory where Markdown source files are located            |
+| output          | outputs a message to the console unless silent mode is active            |
 | doConfiguration | Entry point for configuration updates                                    |
 | getC2pDeltas    | returns a list of deltas from composer.json to configuration             |
 | writeConfig     | writes a default configuration file if it doesn't exist or merges deltas |
 
-### Composer
 
-Handles interactions with composer.json.
+---
 
-#### Public methods of Composer
-
-| method               | summary                                                                                        |
-|----------------------|------------------------------------------------------------------------------------------------|
-| save                 | persists the modified composer.json back to disk                                               |
-| hasPackage           | checks if a package is already present in composer.json                                        |
-| packageFound         | checks if a package is already present in composer.json                                        |
-| getToolsFromComposer | scans composer.json for known tool packages and returns their configuration states             |
-| setCommands          | updates a script entry in composer.json for a given task                                       |
-| setPackages          | checks for missing packages required by a task and adds them to a list for installation        |
-| setAddPackages       | adds the collected missing packages installation commands to the 'add' script in composer.json |
-| getPendingScripts    | returns an array of scripts that are missing or different in composer.json                     |
-| getPendingPackages   | returns an array of packages that are missing in composer.json                                 |
-
-### TaskRegistry
-
-Registry for all available setup tasks.
-
-#### Public methods of TaskRegistry
-
-| method       | summary                                                    |
-|--------------|------------------------------------------------------------|
-| registerTask | -                                                          |
-| getAllTasks  | -                                                          |
-| getTask      | returns a specific task by name, or null if it's not found |
-
-### ProjectContext
-
-Provides context and metadata for the current project.
-
-#### Public methods of ProjectContext
-
-| method             | summary                                                              |
-|--------------------|----------------------------------------------------------------------|
-| getEnv             | -                                                                    |
-| fullPath           | converts a relative path into a full absolute path from project root |
-| isPublicRepository | -                                                                    |
-| runProcess         | -                                                                    |
-
-### ClassData
-
-Data transfer object for class metadata.
-
+Markdown file generated by [schenke-io/packaging-tools](https://github.com/schenke-io/packaging-tools)

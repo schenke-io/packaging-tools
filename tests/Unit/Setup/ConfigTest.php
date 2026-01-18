@@ -111,6 +111,97 @@ it('Config writeConfig skips if file exists and no data', function () {
     expect($output)->toContain('config file .packaging-tools.neon is already up to date.');
 });
 
+it('Config constructor handles stdClass data', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($p) => str_ends_with($p, 'composer.json')))->andReturn(json_encode(['name' => 'test/project']));
+    $projectContext = new ProjectContext($filesystem);
+
+    $data = new stdClass;
+    $data->pint = true;
+
+    $config = new Config($data, $projectContext);
+    expect($config->config->pint)->toBeTrue();
+});
+
+it('getMarkdownDir returns resources/md if workbench dir missing', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturnUsing(function ($p) {
+        return ! str_ends_with($p, 'workbench/resources/md');
+    });
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project', 'scripts' => []]));
+
+    $projectContext = new ProjectContext($filesystem);
+
+    $config = new Config([], $projectContext);
+    expect($config->getMarkdownDir($projectContext))->toBe('resources/md');
+});
+
+it('merges config when deltas exist', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(
+        json_encode(['name' => 'test/project', 'require-dev' => ['laravel/pint' => '*']]), // composer.json
+        '' // .packaging-tools.neon
+    );
+    $filesystem->shouldReceive('put')->atLeast()->once()->andReturn(true);
+
+    $projectContext = new ProjectContext($filesystem);
+
+    ob_start();
+    Config::$silent = false;
+    Config::doConfiguration($projectContext, ['config']);
+    $output = ob_get_clean();
+    Config::$silent = true;
+
+    expect($output)->toContain('merge these keys');
+});
+
+it('outputs message when no packages to install', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(
+        json_encode(['name' => 'test/project', 'require-dev' => ['laravel/pint' => '*']]), // composer.json
+        "pint: true\ntest: ''" // .packaging-tools.neon
+    );
+    $filesystem->shouldReceive('put')->andReturn(true);
+    $projectContext = new ProjectContext($filesystem);
+
+    ob_start();
+    Config::$silent = false;
+    Config::doConfiguration($projectContext, ['update']);
+    $output = ob_get_clean();
+    Config::$silent = true;
+
+    expect($output)->toContain('No missing packages found');
+});
+
+it('updates existing neon file with deltas', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(
+        json_encode(['name' => 'test/project', 'require-dev' => ['laravel/pint' => '*']]), // composer.json
+        'test: pest' // .packaging-tools.neon
+    );
+    $filesystem->shouldReceive('put')->with(Mockery::on(fn ($p) => str_ends_with($p, '.packaging-tools.neon')), Mockery::on(fn ($c) => str_contains($c, 'pint: true')))->once()->andReturn(true);
+    $filesystem->shouldReceive('put')->with(Mockery::on(fn ($p) => str_ends_with($p, 'composer.json')), Mockery::any())->andReturn(true);
+
+    $projectContext = new ProjectContext($filesystem);
+
+    ob_start();
+    Config::$silent = false;
+    Config::doConfiguration($projectContext, ['config']);
+    $output = ob_get_clean();
+    Config::$silent = true;
+
+    expect($output)->toContain('updated');
+});
+
 class CustomTask extends \SchenkeIo\PackagingTools\Setup\Definitions\BaseDefinition
 {
     public function schema(): \Nette\Schema\Schema
@@ -199,4 +290,134 @@ it('merges deltas in writeConfig', function () {
     ob_start();
     $config->writeConfig($projectContext);
     ob_get_clean();
+});
+
+it('does not report discrepancies', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturnUsing(function ($path) {
+        if (str_ends_with($path, 'composer.json')) {
+            return json_encode([
+                'name' => 'test/project',
+                'scripts' => ['test' => 'old-command'],
+                'require-dev' => ['pestphp/pest' => '^3.0'],
+            ]);
+        }
+        if (str_ends_with($path, '.packaging-tools.neon')) {
+            return 'test: pest';
+        }
+
+        return '';
+    });
+
+    $oldArgv = $_SERVER['argv'];
+    $_SERVER['argv'] = ['vendor/bin/packaging-tools', 'setup']; // no params = show what to do
+
+    $projectContext = new ProjectContext($filesystem);
+
+    ob_start();
+    Config::$silent = false;
+    Config::doConfiguration($projectContext);
+    Config::$silent = true;
+    $output = ob_get_clean();
+
+    $_SERVER['argv'] = $oldArgv;
+
+    expect($output)->not->toContain('differs from recommendations')
+        ->and($output)->toContain('Everything is up to date.');
+});
+
+it('suggests adding missing scripts', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturnUsing(function ($path) {
+        if (str_ends_with($path, 'composer.json')) {
+            return json_encode([
+                'name' => 'test/project',
+                'scripts' => [],
+            ]);
+        }
+        if (str_ends_with($path, '.packaging-tools.neon')) {
+            return 'test: pest';
+        }
+
+        return '';
+    });
+
+    $oldArgv = $_SERVER['argv'];
+    $_SERVER['argv'] = ['vendor/bin/packaging-tools', 'setup']; // no params = show what to do
+
+    $projectContext = new ProjectContext($filesystem);
+
+    ob_start();
+    Config::$silent = false;
+    Config::doConfiguration($projectContext);
+    Config::$silent = true;
+    $output = ob_get_clean();
+
+    $_SERVER['argv'] = $oldArgv;
+
+    expect($output)->toContain('add script test');
+});
+
+it('getC2pDeltas detects mismatch between composer.json and neon', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturnUsing(function ($path) {
+        if (str_ends_with($path, 'composer.json')) {
+            return json_encode([
+                'require-dev' => [
+                    'pestphp/pest' => '^3.0',
+                ],
+            ]);
+        }
+        if (str_ends_with($path, '.packaging-tools.neon')) {
+            return 'test: phpunit'; // mismatch
+        }
+
+        return '';
+    });
+    $projectContext = new ProjectContext($filesystem);
+
+    $config = new Config(null, $projectContext);
+    $deltas = $config->getC2pDeltas();
+
+    expect($deltas)->toHaveKey('test', 'pest');
+});
+
+it('suggests adding missing packages', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturnUsing(function ($path) {
+        if (str_ends_with($path, 'composer.json')) {
+            return json_encode([
+                'name' => 'test/project',
+                'require-dev' => [],
+            ]);
+        }
+        if (str_ends_with($path, '.packaging-tools.neon')) {
+            return 'test: pest';
+        }
+
+        return '';
+    });
+
+    $oldArgv = $_SERVER['argv'];
+    $_SERVER['argv'] = ['vendor/bin/packaging-tools', 'setup'];
+
+    $projectContext = new ProjectContext($filesystem);
+
+    ob_start();
+    Config::$silent = false;
+    Config::doConfiguration($projectContext);
+    Config::$silent = true;
+    $output = ob_get_clean();
+
+    $_SERVER['argv'] = $oldArgv;
+
+    expect($output)->toContain('add package pestphp/pest');
 });

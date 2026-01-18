@@ -41,3 +41,18 @@ it('throws projectRootNotSet', function () {
     $e = PackagingToolException::projectRootNotSet();
     expect($e->getMessage())->toBe('Project root is not set');
 });
+
+it('throws privateRepositoryNotSupported', function () {
+    $e = PackagingToolException::privateRepositoryNotSupported('my/project');
+    expect($e->getMessage())->toContain('my/project');
+});
+
+it('throws workflowNotFound', function () {
+    $e = PackagingToolException::workflowNotFound('path');
+    expect($e->getMessage())->toBe('Workflow file not found at: path');
+});
+
+it('throws pathDetectionFailed', function () {
+    $e = PackagingToolException::pathDetectionFailed('badge-type');
+    expect($e->getMessage())->toContain('badge-type');
+});

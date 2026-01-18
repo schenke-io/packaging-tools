@@ -45,3 +45,13 @@ it('can remove requirements', function () {
         'require-dev' => [],
     ]);
 });
+
+it('can access packages via magic getter', function () {
+    $req = new Requirements;
+    $req->addRequire('package/a');
+    $req->addRequireDev('package/b');
+
+    expect($req->requirePackages)->toBe(['package/a'])
+        ->and($req->devPackages)->toBe(['package/b'])
+        ->and($req->unknown)->toBeNull();
+});

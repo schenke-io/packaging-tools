@@ -28,7 +28,7 @@ class TestDefinition extends BaseDefinition
      */
     public function schema(): Schema
     {
-        return Expect::anyOf(false, 'pest', 'phpunit')->default('pest');
+        return Expect::anyOf('pest', 'phpunit', '')->default('pest');
     }
 
     /**
@@ -36,7 +36,7 @@ class TestDefinition extends BaseDefinition
      */
     public function explainConfig(): string
     {
-        return 'false = disabled, true = enabled (runs pest)';
+        return "'' = disabled, 'pest' or 'phpunit' = enabled";
     }
 
     /**
@@ -48,9 +48,9 @@ class TestDefinition extends BaseDefinition
          * check config for test settings
          */
         return match ($config->config->test) {
-            default => new Requirements,
             'pest' => Requirements::dev('pestphp/pest'),
             'phpunit' => Requirements::dev('phpunit/phpunit'),
+            default => new Requirements,
         };
     }
 
@@ -63,9 +63,9 @@ class TestDefinition extends BaseDefinition
          * check config for test settings and return appropriate command
          */
         return match ($config->config->test) {
-            default => [],
             'pest' => 'vendor/bin/pest',
-            'phpunit' => 'vendor/bin/phpunit'
+            'phpunit' => 'vendor/bin/phpunit',
+            default => [],
         };
     }
 

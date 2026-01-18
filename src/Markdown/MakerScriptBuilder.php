@@ -92,6 +92,7 @@ class MakerScriptBuilder
 namespace $namespace;
 
 use Illuminate\Console\Command;
+use SchenkeIo\PackagingTools\Enums\SetupMessages;
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
 
 class MakeMarkdown extends Command
@@ -106,7 +107,7 @@ class MakeMarkdown extends Command
         \$assembler->addTableOfContents()
 $componentCalls            ->writeMarkdown('README.md');
 
-        \$this->info('README.md generated successfully!');
+        \$this->info(SetupMessages::readmeGenerated->value);
     }
 }
 PHP;
@@ -139,6 +140,7 @@ PHP;
 require_once __DIR__ . '/vendor/autoload.php';
 
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
+use SchenkeIo\PackagingTools\Enums\SetupMessages;
 use SchenkeIo\PackagingTools\Setup\Config;
 
 \$assembler = new MarkdownAssembler('$markdownDir');
@@ -146,7 +148,7 @@ use SchenkeIo\PackagingTools\Setup\Config;
 \$assembler->addTableOfContents()
 $componentCalls    ->writeMarkdown('README.md');
 
-Config::output("README.md generated successfully!");
+Config::output(SetupMessages::readmeGenerated);
 PHP;
         $this->projectContext->filesystem->put($this->projectContext->fullPath($path), $content);
 

@@ -3,6 +3,7 @@
 namespace SchenkeIo\PackagingTools\Setup;
 
 use Illuminate\Support\Facades\File;
+use SchenkeIo\PackagingTools\Enums\SetupMessages;
 
 /**
  * Cleans up generated migration files.
@@ -18,10 +19,10 @@ class MigrationCleaner
      *
      * This method is designed to be called either directly or as a composer script.
      */
-    public static function clean(mixed $event = null): int
+    public static function clean(mixed $event = null, ?ProjectContext $projectContext = null): int
     {
         $count = 0;
-        $projectContext = new ProjectContext;
+        $projectContext = $projectContext ?? new ProjectContext;
         $directory = $projectContext->fullPath('database/migrations');
 
         if (! File::isDirectory($directory)) {
@@ -39,7 +40,7 @@ class MigrationCleaner
             $cleanedContent = preg_replace('/connection\s*\(\s*[\'"][^\'"]*[\'"]\s*\)\s*->/', '', $content);
             if (is_string($cleanedContent) && $content !== $cleanedContent) {
                 File::put($file->getRealPath(), $cleanedContent);
-                Config::output('Cleaned connection calls from: '.$file->getFilename());
+                Config::output(SetupMessages::cleanedConnectionCalls, $file->getFilename());
                 $count++;
             }
         }

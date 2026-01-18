@@ -46,3 +46,10 @@ test('commands returns empty array if coverage is disabled', function () {
     $commands = $definition->commands($config);
     expect($commands)->toBe([]);
 });
+
+test('commands returns empty array if test runner is unknown', function () {
+    $config = new Config(['coverage' => true, 'test' => ''], new ProjectContext);
+    $definition = new CoverageDefinition;
+    $commands = $definition->commands($config);
+    expect($commands)->toBe([]);
+});

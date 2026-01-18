@@ -132,6 +132,7 @@ it('can use autoHeader with public repo', function () {
     $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project', 'description' => 'test desc']));
     $filesystem->shouldReceive('exists')->andReturn(true);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('files')->andReturn([]);
     $projectContext = Mockery::mock(ProjectContext::class, [$filesystem])->makePartial();
     $projectContext->shouldReceive('isPublicRepository')->andReturn(true);
 
@@ -163,5 +164,52 @@ it('can add an image', function () {
 
     $mda = new MarkdownAssembler('src_dir', $projectContext);
     $mda->image('alt', 'path', 'url');
+    expect(true)->toBeTrue();
+});
+
+it('autoHeader handles missing cover.png', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project', 'description' => 'test desc']));
+    $filesystem->shouldReceive('exists')->andReturnUsing(function ($path) {
+        if (str_contains($path, 'cover.png')) {
+            return false;
+        }
+
+        return true;
+    });
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('files')->andReturn([]);
+    $projectContext = Mockery::mock(ProjectContext::class, [$filesystem])->makePartial();
+    $projectContext->shouldReceive('isPublicRepository')->andReturn(true);
+
+    $mda = new MarkdownAssembler('src_dir', $projectContext);
+    $mda->autoHeader();
+    $filesystem->shouldReceive('put')->once()->with(Mockery::any(), Mockery::on(function ($content) {
+        return str_contains($content, '<!-- cover.png not found in markdown directory -->');
+    }));
+    ob_start();
+    $mda->writeMarkdown('output.md');
+    ob_get_clean();
+});
+
+it('getInitialContent handles composer description and missing title block', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project', 'description' => 'test desc']));
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('files')->andReturn([]);
+    $projectContext = new ProjectContext($filesystem);
+
+    $mda = new MarkdownAssembler('src_dir', $projectContext);
+    $filesystem->shouldReceive('put')->once()->with(Mockery::any(), Mockery::on(function ($content) {
+        return str_contains($content, '> test desc');
+    }));
+    ob_start();
+    $mda->writeMarkdown('output.md');
+    ob_get_clean();
+});
+
+it('can be instantiated with default project context', function () {
+    $mda = new MarkdownAssembler('src_dir');
     expect(true)->toBeTrue();
 });

@@ -10,15 +10,15 @@ coverage: true
 
 
 # false = disabled, true = enabled (requires infection/infection)
-infection: true
+infection: false
 
 
-# false = disabled, true = enabled (assembles Markdown files from resources/md)
+# null = disabled, true = enabled (assembles Markdown files from resources/md)
 markdown: SchenkeIo\PackagingTools\Workbench\MakeMarkdown::run
 
 
-# false = disabled, connection:table1,table2 = enabled (with connection and tables)
-migrations: false
+# null = disabled, connection:table1,table2 = enabled (with connection and tables)
+migrations: null
 
 
 # false = disabled, true = enabled (uses laravel/pint)

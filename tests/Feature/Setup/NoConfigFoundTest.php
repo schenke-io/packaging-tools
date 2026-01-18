@@ -89,6 +89,6 @@ it('creates the config file from composer when running config command and no fil
 
     $_SERVER['argv'] = $oldArgv;
 
-    expect($output)->toContain('Merging these keys from composer.json into .packaging-tools.neon:');
-    expect($output)->toContain(' - test: "pest"');
+    expect($output)->toContain('merge these keys from composer.json into .packaging-tools.neon:');
+    expect($output)->toContain(' - add test: "pest"');
 });

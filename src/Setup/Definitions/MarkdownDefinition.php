@@ -27,7 +27,7 @@ class MarkdownDefinition extends BaseDefinition
      */
     public function schema(): Schema
     {
-        return Expect::anyOf(false, Expect::string()->required())->default(false);
+        return Expect::anyOf(Expect::null(), Expect::string())->default(null);
     }
 
     /**
@@ -35,7 +35,7 @@ class MarkdownDefinition extends BaseDefinition
      */
     public function explainConfig(): string
     {
-        return 'false = disabled, true = enabled (assembles Markdown files from resources/md)';
+        return 'null = disabled, string = enabled (command to assemble Markdown files)';
     }
 
     /**
@@ -46,7 +46,7 @@ class MarkdownDefinition extends BaseDefinition
         /**
          * return the configured command
          */
-        return $config->config->markdown;
+        return $config->config->markdown ?? [];
     }
 
     /**

@@ -21,10 +21,19 @@ it('removes connection calls from migration files', function () {
 
     File::shouldReceive('isDirectory')->andReturn(true);
     File::shouldReceive('allFiles')->andReturn([$mockFile]);
-    File::shouldReceive('get')->with('/path/to/migration.php')
-        ->andReturn("Schema::connection('mysql')->create('users', function (Blueprint \$table) {");
 
-    File::shouldReceive('put')->once()->with('/path/to/migration.php', "Schema::create('users', function (Blueprint \$table) {");
+    // Test multiple regex variations
+    $content = "Schema::connection('mysql')->create('users', function (Blueprint \$table) {
+        Schema::connection(\"sqlite\") ->create('posts');
+        Schema::connection ( 'other' )->table('roles');
+    ";
+    $expected = "Schema::create('users', function (Blueprint \$table) {
+        Schema::create('posts');
+        Schema::table('roles');
+    ";
+
+    File::shouldReceive('get')->with('/path/to/migration.php')->andReturn($content);
+    File::shouldReceive('put')->once()->with('/path/to/migration.php', $expected);
 
     expect(MigrationCleaner::clean())->toBe(1);
 });

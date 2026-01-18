@@ -15,6 +15,9 @@ use PUGX\Poser\Render\SvgPlasticRender;
  * This enumeration defines the available visual styles for the generated badges.
  * It provides methods to retrieve the corresponding renderer from the PUGX Poser
  * library and the string representation of the style.
+ *
+ * Each style corresponds to a specific SVG layout used by Shields.io-like
+ * badges (flat, plastic, etc.).
  */
 enum BadgeStyle
 {

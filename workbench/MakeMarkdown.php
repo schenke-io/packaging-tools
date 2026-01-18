@@ -6,11 +6,8 @@ require_once __DIR__.'/../vendor/autoload.php'; // important
 
 use Exception;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
-use SchenkeIo\PackagingTools\Markdown\ClassData;
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
-use SchenkeIo\PackagingTools\Setup\Composer;
 use SchenkeIo\PackagingTools\Setup\Config;
-use SchenkeIo\PackagingTools\Setup\ProjectContext;
 use SchenkeIo\PackagingTools\Setup\TaskRegistry;
 
 /*
@@ -31,14 +28,11 @@ class MakeMarkdown
                 ->test('run-tests.yml')
                 ->download();
 
-            $markdownAssembler->image('', '.github/werkstatt.png')
-                ->addMarkdown('header.md');
+            $markdownAssembler->addMarkdown('header.md');
             $markdownAssembler->toc();
             $markdownAssembler->addMarkdown('installation.md')
                 ->addMarkdown('concept.md')
-                ->addMarkdown('configuration.md')
-                ->addMarkdown('migrations.md')
-                ->addMarkdown('badges.md');
+                ->addMarkdown('configuration.md');
 
             $table[] = ['key', 'description'];
             $taskRegistry = new TaskRegistry;
@@ -47,15 +41,14 @@ class MakeMarkdown
             }
             $markdownAssembler->tables()->fromArray($table);
 
+            $markdownAssembler->addMarkdown('migrations.md')
+                ->addMarkdown('badges.md');
+
             $markdownAssembler->addMarkdown('classes.md')
                 ->classes()
                 ->add(MarkdownAssembler::class)
                 ->add(MakeBadge::class)
-                ->add(Config::class)
-                ->add(Composer::class)
-                ->add(TaskRegistry::class)
-                ->add(ProjectContext::class)
-                ->add(ClassData::class);
+                ->add(Config::class);
 
             $markdownAssembler->writeMarkdown('README.md');
 

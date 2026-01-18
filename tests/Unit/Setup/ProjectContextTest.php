@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Http;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
 
 it('can initialize ProjectContext', function () {
@@ -40,44 +39,6 @@ it('handles unknown owner/repo', function () {
 
     expect($context->repoOwner)->toBe('unknown')
         ->and($context->repoName)->toBe('just-a-name');
-});
-
-it('detects public repository', function () {
-    $filesystem = Mockery::mock(Filesystem::class);
-    $filesystem->shouldReceive('isDirectory')->andReturn(true);
-    $filesystem->shouldReceive('exists')->andReturn(true);
-    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'owner/public-repo']));
-
-    Http::shouldReceive('head')->once()
-        ->with('https://github.com/owner/public-repo')
-        ->andReturn(Mockery::mock(\Illuminate\Http\Client\Response::class, ['successful' => true]));
-
-    $context = new ProjectContext($filesystem);
-    expect($context->isPublicRepository())->toBeTrue();
-});
-
-it('detects private repository', function () {
-    $filesystem = Mockery::mock(Filesystem::class);
-    $filesystem->shouldReceive('isDirectory')->andReturn(true);
-    $filesystem->shouldReceive('exists')->andReturn(true);
-    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'owner/private-repo']));
-
-    Http::shouldReceive('head')->once()
-        ->with('https://github.com/owner/private-repo')
-        ->andReturn(Mockery::mock(\Illuminate\Http\Client\Response::class, ['successful' => false]));
-
-    $context = new ProjectContext($filesystem);
-    expect($context->isPublicRepository())->toBeFalse();
-});
-
-it('returns false for public check if owner is unknown', function () {
-    $filesystem = Mockery::mock(Filesystem::class);
-    $filesystem->shouldReceive('isDirectory')->andReturn(true);
-    $filesystem->shouldReceive('exists')->andReturn(true);
-    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'no-owner']));
-
-    $context = new ProjectContext($filesystem);
-    expect($context->isPublicRepository())->toBeFalse();
 });
 
 it('fails if project root is not a directory', function () {
@@ -146,4 +107,35 @@ it('can get env values', function () {
         ->and($context->getEnv('KEY2'))->toBe('VALUE2')
         ->and($context->getEnv('KEY3'))->toBe('VALUE3')
         ->and($context->getEnv('NON_EXISTENT', 'default'))->toBe('default');
+});
+
+it('can run a process', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn('{}');
+
+    $context = new ProjectContext($filesystem);
+
+    ob_start();
+    $result = $context->runProcess('echo "hello"');
+    $output = ob_get_clean();
+
+    expect(trim($output))->toBe('hello')
+        ->and($result)->toBeTrue();
+});
+
+it('returns false when a process fails', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn('{}');
+
+    $context = new ProjectContext($filesystem);
+
+    ob_start();
+    $result = $context->runProcess('exit 1');
+    ob_get_clean();
+
+    expect($result)->toBeFalse();
 });

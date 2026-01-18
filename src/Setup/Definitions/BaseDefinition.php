@@ -8,6 +8,15 @@ use SchenkeIo\PackagingTools\Setup\Requirements;
 
 /**
  * Base class for all task definitions to reduce boilerplate.
+ *
+ * This abstract class provides a common foundation for defining setup tasks.
+ * It handles the task naming convention (derived from the class name),
+ * manages whether a task is enabled based on the project configuration,
+ * and provides default implementations for package requirements and commands.
+ *
+ * Usage:
+ * Inherit from this class and implement getPackages() and/or getCommands()
+ * to define the specific requirements and actions for a new setup task.
  */
 abstract class BaseDefinition implements SetupDefinitionInterface
 {

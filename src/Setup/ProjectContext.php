@@ -3,7 +3,6 @@
 namespace SchenkeIo\PackagingTools\Setup;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Http;
 use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 
 /**
@@ -11,14 +10,12 @@ use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
  *
  * This class handles the detection of project root, source directory,
  * composer.json content, and repository metadata (owner/name).
- * It also provides helpers for absolute path generation and repository
- * visibility checks. It centralizes filesystem and project-wide state
- * for other setup tasks.
+ * It also provides helpers for absolute path generation.
+ * It centralizes filesystem and project-wide state for other setup tasks.
  *
  * Methods:
  * - __construct(): Detects project root, validates composer.json, and determines repo metadata.
  * - fullPath(): Converts a relative path to an absolute path within the project.
- * - isPublicRepository(): Checks if the project's GitHub repository is publicly accessible.
  */
 class ProjectContext
 {
@@ -37,6 +34,11 @@ class ProjectContext
     public string $repoOwner;
 
     public string $repoName;
+
+    /**
+     * @var array<string, mixed>
+     */
+    public array $composerJson = [];
 
     public function getEnv(string $key, mixed $default = null): mixed
     {
@@ -80,13 +82,14 @@ class ProjectContext
             throw PackagingToolException::composerJsonNotFound($this->composerJsonPath);
         }
         $this->composerJsonContent = $this->filesystem->get($this->composerJsonPath);
-        $composerJson = json_decode($this->composerJsonContent, true);
+        $decoded = json_decode($this->composerJsonContent, true);
         // validate that composer.json is a valid JSON file
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (json_last_error() !== JSON_ERROR_NONE || ! is_array($decoded)) {
             throw PackagingToolException::invalidComposerJson(json_last_error_msg());
         }
-        $type = $composerJson['type'] ?? '';
-        $this->projectName = $composerJson['name'] ?? 'unknown';
+        $this->composerJson = $decoded;
+        $type = $this->composerJson['type'] ?? '';
+        $this->projectName = $this->composerJson['name'] ?? 'unknown';
         $parts = explode('/', $this->projectName);
         if (count($parts) === 2) {
             $this->repoOwner = $parts[0];
@@ -109,24 +112,31 @@ class ProjectContext
         return $this->projectRoot.'/'.$path;
     }
 
-    public function isPublicRepository(): bool
+    /**
+     * returns true if the project is a Laravel project or uses the laravel/framework package
+     */
+    public function isLaravel(): bool
     {
-        if ($this->repoOwner === 'unknown') {
-            return false;
-        }
-        $url = "https://github.com/{$this->repoOwner}/{$this->repoName}";
+        $type = $this->composerJson['type'] ?? '';
 
-        try {
-            $response = Http::head($url);
-
-            return $response instanceof \Illuminate\Http\Client\Response && $response->successful();
-        } catch (\Exception $e) {
-            return false;
-        }
+        return $type === 'project' || isset($this->composerJson['require']['laravel/framework']);
     }
 
-    public function runProcess(string $command): void
+    /**
+     * returns true if the project uses orchestra/workbench
+     */
+    public function isOrchestraWorkbench(): bool
     {
-        passthru($command);
+        return isset($this->composerJson['require-dev']['orchestra/workbench']);
+    }
+
+    /**
+     * executes a shell command and passes the output to the standard output
+     */
+    public function runProcess(string $command): bool
+    {
+        passthru($command, $result);
+
+        return $result === 0;
     }
 }

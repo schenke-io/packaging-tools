@@ -44,7 +44,7 @@ class GroupDefinition extends BaseDefinition
      */
     public function schema(): Schema
     {
-        return Expect::anyOf(false, Expect::arrayOf(Expect::anyOf(...$this->tasks)))->default($this->tasks);
+        return Expect::arrayOf(Expect::anyOf(...$this->tasks));
     }
 
     /**
@@ -52,7 +52,15 @@ class GroupDefinition extends BaseDefinition
      */
     public function explainConfig(): string
     {
-        return 'false = disabled, or an array of scripts to include in this group: '.implode(', ', $this->tasks);
+        return 'an array of scripts to include in this group: '.implode(', ', $this->tasks);
+    }
+
+    /**
+     * groups are always enabled because they are defined by an array
+     */
+    protected function isEnabled(Config $config): bool
+    {
+        return true;
     }
 
     /**
@@ -60,11 +68,16 @@ class GroupDefinition extends BaseDefinition
      */
     protected function getCommands(Config $config): string|array
     {
+        $groupTasks = $this->tasks;
+        if ($this->taskName && isset($config->config->{$this->taskName}) && is_array($config->config->{$this->taskName})) {
+            $groupTasks = $config->config->{$this->taskName};
+        }
+
         $return = [];
         /**
          * iterate over tasks in the group and check if they are enabled in config
          */
-        foreach ($this->tasks as $task) {
+        foreach ($groupTasks as $task) {
             if (in_array($task, array_keys((array) $config->config))) {
                 if ($config->config->$task) {
                     /**

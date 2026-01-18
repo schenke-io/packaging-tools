@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "php": "^8.2|^8.3",
+        "php": "^8.3",
         "ext-curl": "*",
         "ext-gd": "*",
         "ext-json": "*",
@@ -28,12 +28,12 @@
         "symfony/console": "^7.1"
     },
     "require-dev": {
-        "infection/infection": "^0.32.3",
-        "laravel/pint": "^1.18",
+        "phpunit/phpunit": "^12.3",
+        "laravel/pint": "^1.24",
+        "larastan/larastan": "^3.5",
         "mockery/mockery": "^1.5",
-        "pestphp/pest": "^3.8",
-        "pestphp/pest-plugin-mutate": "^3.0",
-        "phpstan/phpstan-phpunit": "^1.4",
+        "pestphp/pest": "^4.2",
+        "pestphp/pest-plugin-mutate": "^4.0",
         "spatie/ray": "^1.40"
     },
     "autoload": {
@@ -73,8 +73,7 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "infection/extension-installer": true
+            "pestphp/pest-plugin": true
         }
     },
     "minimum-stability": "stable",

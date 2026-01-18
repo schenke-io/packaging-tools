@@ -121,6 +121,54 @@ it('identifies pending scripts', function () {
         ->and($pending['test']['status'])->toBe('missing');
 });
 
+it('identifies discrepancies in existing scripts', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturnUsing(function ($path) {
+        if (str_ends_with($path, 'composer.json')) {
+            return json_encode(['scripts' => ['test' => 'old-command']]);
+        }
+
+        return '';
+    });
+
+    $projectContext = new ProjectContext($filesystem);
+    $composer = new Composer($projectContext);
+    $config = new \SchenkeIo\PackagingTools\Setup\Config(['test' => 'pest'], $projectContext);
+
+    $pending = $composer->getPendingScripts($config);
+
+    expect($pending)->toHaveKey('test')
+        ->and($pending['test']['status'])->toBe('discrepancy');
+});
+
+it('identifies missing or empty scripts as missing', function ($currentValue) {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturnUsing(function ($path) use ($currentValue) {
+        if (str_ends_with($path, 'composer.json')) {
+            return json_encode(['scripts' => ['test' => $currentValue]]);
+        }
+
+        return '';
+    });
+
+    $projectContext = new ProjectContext($filesystem);
+    $composer = new Composer($projectContext);
+    $config = new \SchenkeIo\PackagingTools\Setup\Config(['test' => 'pest'], $projectContext);
+
+    $pending = $composer->getPendingScripts($config);
+
+    expect($pending)->toHaveKey('test')
+        ->and($pending['test']['status'])->toBe('missing');
+})->with([
+    [''],
+    [[]],
+    [false],
+]);
+
 it('identifies pending packages', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('exists')->andReturn(true);
@@ -141,4 +189,26 @@ it('identifies pending packages', function () {
 
     expect($pending)->toHaveKey('pestphp/pest')
         ->and($pending['pestphp/pest']['key'])->toBe('require-dev');
+});
+
+it('can set non-dev packages', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($p) => str_ends_with($p, 'composer.json')))->andReturn(json_encode(['name' => 'test/project']));
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($p) => str_ends_with($p, '.packaging-tools.neon')))->andReturn('');
+    $projectContext = new ProjectContext($filesystem);
+    $composer = new Composer($projectContext);
+
+    $config = new \SchenkeIo\PackagingTools\Setup\Config($projectContext);
+
+    $mockTask = Mockery::mock(\SchenkeIo\PackagingTools\Setup\Definitions\BaseDefinition::class)->makePartial();
+    $mockTask->shouldReceive('packages')->andReturn(
+        \SchenkeIo\PackagingTools\Setup\Requirements::require('some/package')
+    );
+
+    $composer->setPackages($mockTask, $config);
+    $composer->setAddPackages();
+
+    expect($composer->composer['scripts']['add'])->toContain('composer require some/package');
 });

@@ -20,12 +20,12 @@ The following keys are supported in `.packaging-tools.neon`:
 | `analyse` | `bool` | Enables PHPStan static analysis | `analyse: true` |
 | `coverage` | `bool` | Enables code coverage reporting during tests | `coverage: true` |
 | `infection` | `bool` | Enables mutation testing with Infection | `infection: true` |
-| `markdown` | `string` | The command to run for Markdown assembly | `markdown: php workbench/MakeMarkdown.php` |
-| `migrations` | `string\|array` | Configuration for migration generation | `migrations: mysql:users,posts` |
+| `markdown` | `string\|null` | The command to run for Markdown assembly | `markdown: php workbench/MakeMarkdown.php` |
+| `migrations` | `string\|null` | Configuration for migration generation | `migrations: mysql:users,posts` |
 | `pint` | `bool` | Enables code styling with Laravel Pint | `pint: true` |
-| `quick` | `bool\|array` | Group task: `pint`, `test`, `markdown` | `quick: true` |
-| `release` | `bool\|array` | Group task for pre-release checks | `release: true` |
-| `test` | `string\|false` | Test runner: `pest`, `phpunit` or `false` | `test: pest` |
+| `quick` | `array` | Group task: `pint`, `test`, `markdown` | `quick: [pint, test, markdown]` |
+| `release` | `array` | Group task for pre-release checks | `release: [pint, analyse, coverage, markdown]` |
+| `test` | `string` | Test runner: `pest`, `phpunit` or `''` | `test: pest` |
 | `customTasks`| `array` | Mapping of custom task names to commands | `customTasks: { my-task: "ls -la" }` |
 
 ### Detailed Key Purpose
@@ -40,10 +40,10 @@ Requires a test runner to be configured. It adds coverage flags to the test comm
 Runs mutation testing to check the quality of your tests. Requires `infection/infection` to be installed.
 
 #### `markdown`
-Points to the script that assembles your documentation. Usually `php workbench/MakeMarkdown.php`.
+Points to the script that assembles your documentation. Usually `php workbench/MakeMarkdown.php`. Use `null` to disable.
 
 #### `migrations`
-Uses `kitloong/laravel-migrations-generator`. Can be a string in the format `connection:table1,table2` or an array of tables for the default connection.
+Uses `kitloong/laravel-migrations-generator`. Can be a string in the format `connection:table1,table2`. Use `null` to disable.
 
 #### `pint`
 Uses Laravel Pint to ensure your code follows the project's styling rules.
@@ -55,7 +55,7 @@ A shortcut to run essential checks quickly. By default it runs `pint`, `test` an
 A comprehensive check before releasing a new version. It typically runs `pint`, `analyse`, `test`, `coverage`, `infection` and `markdown`.
 
 #### `test`
-Selects the testing framework. Supported values are `pest` and `phpunit`. Set to `false` to disable tests.
+Selects the testing framework. Supported values are `pest` and `phpunit`. Use an empty string `''` to disable tests.
 
 #### `customTasks`
 Allows you to define your own tasks that can be run via `composer setup <task-name>`.

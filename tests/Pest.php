@@ -10,6 +10,7 @@ uses(BadgeStyle::class);
 afterEach(function () {
     Config::$silent = true;
     Mockery::close();
+    Illuminate\Support\Facades\Http::clearResolvedInstances();
 });
 
 /*

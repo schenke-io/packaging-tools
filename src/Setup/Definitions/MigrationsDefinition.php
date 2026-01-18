@@ -18,16 +18,14 @@ class MigrationsDefinition extends BaseDefinition
     public function schema(): Schema
     {
         return Expect::anyOf(
-            false,
             Expect::null(),
-            Expect::string(),
-            Expect::arrayOf(Expect::string())
+            Expect::string()
         )->default(null);
     }
 
     public function explainConfig(): string
     {
-        return 'false = disabled, connection:table1,table2 = enabled (with connection and tables)';
+        return 'null = disabled, connection:table1,table2 = enabled (with connection and tables)';
     }
 
     protected function getPackages(Config $config): Requirements
@@ -38,7 +36,7 @@ class MigrationsDefinition extends BaseDefinition
     protected function getCommands(Config $config): string|array
     {
         $val = $config->config->migrations;
-        if ($val === null || $val === false) {
+        if ($val === null) {
             return [];
         }
 
@@ -55,8 +53,6 @@ class MigrationsDefinition extends BaseDefinition
             } else {
                 $command .= " --connection=$val";
             }
-        } elseif (is_array($val) && ! empty($val)) {
-            $command .= ' --tables='.implode(',', $val);
         }
 
         return [

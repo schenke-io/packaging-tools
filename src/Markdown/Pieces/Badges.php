@@ -13,8 +13,10 @@ use SchenkeIo\PackagingTools\Setup\ProjectContext;
  *
  * This class provides a fluent interface to buffer various types of badges
  * (version, test status, downloads, etc.) and then render them as Markdown.
- * It integrates with external services like Shields.io, Packagist, GitHub
- * Actions, and Laravel Forge.
+ * Mechanics:
+ * - Integrates with external services like Shields.io, Packagist, and Laravel Forge.
+ * - Uses native GitHub Actions badge URLs (/badge.svg) for workflow statuses to
+ *   ensure they are always in sync and avoid unnecessary HTTP calls.
  *
  * Supported Badge Types:
  * - Version: Fetches the latest release from Packagist.
@@ -37,7 +39,7 @@ class Badges implements MarkdownPieceInterface
     /**
      * adds a version badge from packagist to the buffer
      */
-    public function version(BadgeStyle $badgeStyle = BadgeStyle::Plastic): self
+    public function version(BadgeStyle $badgeStyle = BadgeStyle::Flat): self
     {
         $this->badgeBuffer[] = ['type' => 'version', 'args' => ['style' => $badgeStyle]];
 
@@ -47,7 +49,7 @@ class Badges implements MarkdownPieceInterface
     /**
      * adds a test badge from GitHub actions to the buffer
      */
-    public function test(string $workflowFile, BadgeStyle $badgeStyle = BadgeStyle::Plastic, string $branch = 'main'): self
+    public function test(string $workflowFile, BadgeStyle $badgeStyle = BadgeStyle::Flat, string $branch = 'main'): self
     {
         $this->badgeBuffer[] = ['type' => 'test', 'args' => [
             'workflowFile' => $workflowFile,
@@ -61,7 +63,7 @@ class Badges implements MarkdownPieceInterface
     /**
      * adds a download badge from packagist to the buffer
      */
-    public function download(BadgeStyle $badgeStyle = BadgeStyle::Plastic): self
+    public function download(BadgeStyle $badgeStyle = BadgeStyle::Flat): self
     {
         $this->badgeBuffer[] = ['type' => 'download', 'args' => ['style' => $badgeStyle]];
 
@@ -81,7 +83,7 @@ class Badges implements MarkdownPieceInterface
     /**
      * adds a forge deployment badge to the buffer
      */
-    public function forge(string $hash, int $server, int $site, int $date = 0, int $label = 0, BadgeStyle $badgeStyle = BadgeStyle::Plastic): self
+    public function forge(string $hash, int $server, int $site, int $date = 0, int $label = 0, BadgeStyle $badgeStyle = BadgeStyle::Flat): self
     {
         $this->badgeBuffer[] = ['type' => 'forge', 'args' => [
             'hash' => $hash,
@@ -150,7 +152,7 @@ class Badges implements MarkdownPieceInterface
 
                 $src = $driver->getUrl($projectContext, $path);
                 if ($src) {
-                    $src = $this->addStyleToUrl($src, BadgeStyle::Plastic);
+                    $src = $this->addStyleToUrl($src, BadgeStyle::Flat);
                     $link = method_exists($driver, 'getLinkUrl') ? $driver->getLinkUrl($projectContext, $path) : '';
                     $badges[] = $this->getBadgeLink($driver->getSubject(), $src, $link ?? '');
                 }
@@ -176,6 +178,9 @@ class Badges implements MarkdownPieceInterface
 
     private function addStyleToUrl(string $url, BadgeStyle $badgeStyle): string
     {
+        if (str_contains($url, 'github.com')) {
+            return $url;
+        }
         $separator = str_contains($url, '?') ? '&' : '?';
 
         return $url.$separator.'style='.$badgeStyle->style();
@@ -200,7 +205,6 @@ class Badges implements MarkdownPieceInterface
 
     private function renderTest(ProjectContext $projectContext, string $workflowFile, BadgeStyle $badgeStyle, string $branch): string
     {
-        $projectName = $projectContext->projectName;
         $workflowPath = $workflowFile;
         if (! str_contains($workflowFile, '/')) {
             $workflowPath = '.github/workflows/'.$workflowFile;
@@ -212,17 +216,19 @@ class Badges implements MarkdownPieceInterface
 
         $workflowFilename = basename($workflowFile);
 
-        $src = sprintf('https://img.shields.io/github/actions/workflow/status/%s/%s?style=%s&branch=%s&label=tests',
-            $projectName,
+        $src = sprintf('https://github.com/%s/%s/actions/workflows/%s/badge.svg?branch=%s',
+            $projectContext->repoOwner,
+            $projectContext->repoName,
             $workflowFilename,
-            $badgeStyle->style(), $branch
+            $branch
         );
-        $url = sprintf('https://github.com/%s/actions?query=workflow%%3A%s+branch%%3A%s',
-            $projectName,
-            $workflowFilename, $branch
+        $url = sprintf('https://github.com/%s/%s/actions/workflows/%s',
+            $projectContext->repoOwner,
+            $projectContext->repoName,
+            $workflowFilename
         );
 
-        return $this->getBadgeLink('Test', $src, $url);
+        return $this->getBadgeLink('Tests', $src, $url);
     }
 
     private function renderDownload(ProjectContext $projectContext, BadgeStyle $badgeStyle): ?string

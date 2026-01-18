@@ -9,6 +9,7 @@ use Nette\Schema\Schema;
 use Nette\Schema\ValidationException;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
 use SchenkeIo\PackagingTools\Contracts\SetupDefinitionInterface;
+use SchenkeIo\PackagingTools\Enums\SetupMessages;
 use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 use stdClass;
 
@@ -123,6 +124,9 @@ class Config
         }
     }
 
+    /**
+     * returns the directory where Markdown source files are located
+     */
     public function getMarkdownDir(ProjectContext $projectContext): string
     {
         if ($projectContext->filesystem->isDirectory($projectContext->fullPath('workbench/resources/md'))) {
@@ -132,24 +136,39 @@ class Config
         return 'resources/md';
     }
 
-    public static function output(string $message): void
+    /**
+     * @var \Closure|null A custom handler for output messages, useful for testing
+     */
+    public static ?\Closure $outputHandler = null;
+
+    /**
+     * outputs a message to the console unless silent mode is active
+     */
+    public static function output(SetupMessages $message, mixed ...$args): void
     {
+        if (self::$outputHandler) {
+            (self::$outputHandler)($message, ...$args);
+
+            return;
+        }
         if (self::$silent) {
             return;
         }
-        echo $message.PHP_EOL;
+        echo $message->format(...$args).PHP_EOL;
     }
 
     /**
      * Entry point for configuration updates
      *
+     * @param  array<int, string>|null  $parameters
+     *
      * @throws PackagingToolException
      */
-    public static function doConfiguration(mixed $projectContext = null): void
+    public static function doConfiguration(mixed $projectContext = null, ?array $parameters = null): void
     {
         $projectContext = ($projectContext instanceof ProjectContext) ? $projectContext : new ProjectContext;
         // create config instance and run update
-        (new self(null, $projectContext))->updateComposerJson($projectContext);
+        (new self(null, $projectContext))->updateComposerJson($projectContext, $parameters);
     }
 
     /**
@@ -178,7 +197,7 @@ class Config
 
         foreach ($tools as $key => $value) {
             $current = $fileData[$key] ?? null;
-            if (is_null($current) || $current === false) {
+            if ($current !== $value) {
                 $deltas[$key] = $value;
             }
         }
@@ -188,19 +207,23 @@ class Config
 
     /**
      * orchestrates the update of composer.json based on current config
+     *
+     * @param  array<int, string>|null  $parameters
      */
-    protected function updateComposerJson(ProjectContext $projectContext): void
+    protected function updateComposerJson(ProjectContext $projectContext, ?array $parameters = null): void
     {
         $composer = new Composer($projectContext);
-        $parameters = array_slice($_SERVER['argv'], 2);
+        if (is_null($parameters)) {
+            $parameters = array_slice($_SERVER['argv'], 2);
+        }
 
         if (empty($parameters)) {
             $c2pDeltas = $this->getC2pDeltas();
 
             if (! $this->configFound) {
-                self::output("run 'composer setup config' to create a new configuration in '".self::CONFIG_BASE."':");
+                self::output(SetupMessages::runSetupConfigToCreate, self::CONFIG_BASE);
                 foreach ($c2pDeltas as $key => $value) {
-                    self::output(" - $key: ".json_encode($value));
+                    self::output(SetupMessages::listKeyAndValue, $key, json_encode($value));
                 }
 
                 return;
@@ -209,26 +232,28 @@ class Config
             $pendingScripts = $composer->getPendingScripts($this);
             $pendingPackages = $composer->getPendingPackages($this);
 
-            if (empty($c2pDeltas) && empty($pendingScripts) && empty($pendingPackages)) {
-                self::output('Everything is up to date.');
+            $toUpdateScripts = array_filter($pendingScripts, fn ($info) => $info['status'] === 'missing');
+
+            if (empty($c2pDeltas) && empty($toUpdateScripts) && empty($pendingPackages)) {
+                self::output(SetupMessages::everythingUpToDate);
 
                 return;
             }
 
             if (! empty($c2pDeltas)) {
-                self::output("run 'composer setup config' to do these changes in '".self::CONFIG_BASE."':");
+                self::output(SetupMessages::runSetupConfigToDoChanges, self::CONFIG_BASE);
                 foreach ($c2pDeltas as $key => $value) {
-                    self::output(" - $key: ".json_encode($value));
+                    self::output(SetupMessages::listKeyAndValue, $key, json_encode($value));
                 }
             }
 
-            if (! empty($pendingScripts) || ! empty($pendingPackages)) {
-                self::output("run 'composer setup update' to do these changes in 'composer.json':");
-                foreach ($pendingScripts as $name => $info) {
-                    self::output(" - script $name: ".$info['status']);
+            if (! empty($toUpdateScripts) || ! empty($pendingPackages)) {
+                self::output(SetupMessages::runSetupUpdateToDoChanges);
+                foreach ($toUpdateScripts as $name => $info) {
+                    self::output(SetupMessages::listVerbScript, 'add', $name);
                 }
                 foreach ($pendingPackages as $name => $info) {
-                    self::output(" - package $name (for task: ".$info['task'].')');
+                    self::output(SetupMessages::listAddPackageForTask, $name, $info['task']);
                 }
             }
 
@@ -240,7 +265,7 @@ class Config
                 'config' => $this->writeConfig($projectContext),
                 'badges' => MakeBadge::auto($projectContext),
                 'update' => $this->runUpdate($composer),
-                default => self::output("unknown parameter '$parameter'"),
+                default => self::output(SetupMessages::technoclExplicit, $parameter),
             };
             if ($parameter !== 'config') {
                 return;
@@ -257,33 +282,36 @@ class Config
     protected function applyScripts(Composer $composer): void
     {
         $pending = $composer->getPendingScripts($this);
-        if (empty($pending)) {
-            self::output('No script changes pending.');
+        $toUpdate = array_filter($pending, fn ($info) => $info['status'] === 'missing');
+        if (empty($toUpdate)) {
+            self::output(SetupMessages::noScriptChangesPending);
 
             return;
         }
-        foreach ($pending as $name => $info) {
+        foreach ($toUpdate as $name => $info) {
             $composer->composer['scripts'][$name] = $info['expected'];
-            self::output(sprintf('updated script: %s (%s)', $name, $info['status']));
+            self::output(SetupMessages::scriptVerbName, 'added', $name);
         }
         $composer->save();
-        self::output('composer.json updated.');
+        self::output(SetupMessages::composerJsonUpdated);
     }
 
     protected function runInstallCommands(Composer $composer): void
     {
         $pending = $composer->getPendingPackages($this);
         if (empty($pending)) {
-            self::output('No missing packages found.');
+            self::output(SetupMessages::noMissingPackagesFound);
 
             return;
         }
         foreach ($pending as $name => $info) {
             $key = $info['key'];
             $command = ($key === 'require-dev') ? "composer require --dev $name" : "composer require $name";
-            self::output(sprintf('installing package %s for task: %s', $name, $info['task']));
-            self::output("running: $command");
-            $this->projectContext->runProcess($command);
+            self::output(SetupMessages::installingPackageForTask, $name, $info['task']);
+            self::output(SetupMessages::runningCommand, $command);
+            if (! $this->projectContext->runProcess($command)) {
+                self::output(SetupMessages::commandFailed, $command);
+            }
         }
     }
 
@@ -294,46 +322,53 @@ class Config
      */
     public function writeConfig(ProjectContext $projectContext, array $data = []): void
     {
+        if ($projectContext->isLaravel()) {
+            self::output(SetupMessages::laravelDetected);
+        }
+        if ($projectContext->isOrchestraWorkbench()) {
+            self::output(SetupMessages::orchestraWorkbenchDetected);
+        }
+
         $configPath = $projectContext->fullPath(self::CONFIG_BASE);
         $isUpdate = $projectContext->filesystem->exists($configPath);
 
         if ($isUpdate && empty($data)) {
             try {
-                $data = Neon::decode($projectContext->filesystem->get($configPath));
+                $data = Neon::decode($projectContext->filesystem->get($configPath)) ?? [];
             } catch (\Exception $e) {
                 $data = [];
             }
+        }
+
+        if (is_scalar($data)) {
+            $data = [];
         }
 
         if (! $isUpdate) {
             /*
             * build the default configuration
             */
-            $data = [];
-            foreach ($this->taskRegistry->getAllTasks() as $name => $task) {
-                $data[$name] = match ($name) {
-                    'test' => 'pest',
-                    'quick' => ['pint', 'test', 'markdown'],
-                    'release' => ['pint', 'analyse', 'coverage', 'markdown'],
-                    'markdown' => 'SchenkeIo\PackagingTools\Workbench\MakeMarkdown::run',
-                    'pint' => true,
-                    default => false
-                };
-            }
-            $data['customTasks'] = [];
+            $data = [
+                'test' => 'pest',
+                'quick' => ['pint', 'test', 'markdown'],
+                'release' => ['pint', 'analyse', 'coverage', 'markdown'],
+                'markdown' => 'SchenkeIo\PackagingTools\Workbench\MakeMarkdown::run',
+                'pint' => true,
+                'customTasks' => [],
+            ];
         }
 
         $deltas = $this->getC2pDeltas();
         if (empty($deltas)) {
             if ($isUpdate) {
-                self::output(sprintf('config file %s is already up to date.', self::CONFIG_BASE));
+                self::output(SetupMessages::configFileUpToDate, self::CONFIG_BASE);
 
                 return;
             }
         } else {
-            self::output(sprintf('Merging these keys from composer.json into %s:', self::CONFIG_BASE));
+            self::output(SetupMessages::mergingKeysIntoConfig, self::CONFIG_BASE);
             foreach ($deltas as $key => $value) {
-                self::output(" - $key: ".json_encode($value));
+                self::output(SetupMessages::listKeyAndValue, $key, json_encode($value));
             }
             $data = array_merge($data, $deltas);
         }
@@ -343,11 +378,15 @@ class Config
         $processed = $processor->process($this->getSchema(), $data);
         $neon = $this->getNeonWithComments($processed);
         // write neon content to config file
-        $projectContext->filesystem->put($configPath, $neon);
+        if ($projectContext->filesystem->put($configPath, $neon) === false) {
+            self::output(SetupMessages::errorWritingConfig, self::CONFIG_BASE);
+
+            return;
+        }
         if ($isUpdate) {
-            self::output(sprintf('config file %s updated.', self::CONFIG_BASE));
+            self::output(SetupMessages::configFileUpdated, self::CONFIG_BASE);
         } else {
-            self::output(sprintf('config file %s created.', self::CONFIG_BASE));
+            self::output(SetupMessages::configFileCreated, self::CONFIG_BASE);
         }
     }
 

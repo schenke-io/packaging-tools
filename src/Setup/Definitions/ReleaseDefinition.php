@@ -24,6 +24,6 @@ class ReleaseDefinition extends GroupDefinition
      */
     public function explainConfig(): string
     {
-        return 'false = disabled, true = enabled (uses various tools to prepare a release)';
+        return 'an array of scripts to include in this group: '.implode(', ', $this->tasks);
     }
 }

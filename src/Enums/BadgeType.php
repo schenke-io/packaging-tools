@@ -7,6 +7,7 @@ use SchenkeIo\PackagingTools\Badges\Drivers\DownloadsDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\GitHubTestDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\InfectionDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\LaravelVersionDriver;
+use SchenkeIo\PackagingTools\Badges\Drivers\LicenseDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\PhpStanNeonDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\ReleaseVersionDriver;
 use SchenkeIo\PackagingTools\Contracts\BadgeDriverInterface;
@@ -19,6 +20,9 @@ use SchenkeIo\PackagingTools\Setup\ProjectContext;
  * logic for mapping each category to its corresponding driver and
  * automatic path detection logic. It serves as the primary registry
  * for the automatic badge generation system.
+ *
+ * New badge types can be added here by defining a new case and updating
+ * the `getDriver()` method to return the appropriate driver implementation.
  */
 enum BadgeType
 {
@@ -29,6 +33,7 @@ enum BadgeType
     case Downloads;
     case Laravel;
     case Tests;
+    case License;
 
     /**
      * Get the badge driver instance for the current badge type.
@@ -43,6 +48,7 @@ enum BadgeType
             self::Downloads => new DownloadsDriver,
             self::Laravel => new LaravelVersionDriver,
             self::Tests => new GitHubTestDriver,
+            self::License => new LicenseDriver,
         };
     }
 

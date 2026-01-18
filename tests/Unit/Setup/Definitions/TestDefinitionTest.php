@@ -18,7 +18,7 @@ it('can explain the config', function () {
 describe('packages method', function () {
     it('returns empty requirements by default', function () {
         $definition = new TestDefinition;
-        $config = new Config(['test' => false]);
+        $config = new Config(['test' => '']);
         $requirements = $definition->packages($config);
         expect($requirements->devPackages)->toBeEmpty();
     });
@@ -36,12 +36,26 @@ describe('packages method', function () {
         $requirements = $definition->packages($config);
         expect($requirements->devPackages)->toContain('phpunit/phpunit');
     });
+
+    it('returns empty requirements for empty string', function () {
+        $definition = new TestDefinition;
+        $config = new Config(['test' => '']);
+        $requirements = $definition->packages($config);
+        expect($requirements->devPackages)->toBeEmpty();
+    });
 });
 
 describe('commands method', function () {
+    it('returns empty array for empty string', function () {
+        $definition = new TestDefinition;
+        $config = new Config(['test' => '']);
+        $commands = $definition->commands($config);
+        expect($commands)->toBeArray()->toBeEmpty();
+    });
+
     it('returns empty array by default', function () {
         $definition = new TestDefinition;
-        $config = new Config(['test' => false]);
+        $config = new Config(['test' => '']);
         $commands = $definition->commands($config);
         expect($commands)->toBeArray()->toBeEmpty();
     });

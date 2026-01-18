@@ -50,7 +50,7 @@ class TOC implements MarkdownPieceInterface
                 if (preg_match('@^(#+) (.*)$@', $line, $matches)) {
                     [, $level, $headingText] = $matches;
                     $headingLevel = strlen($level) - 1;
-                    $link = strtolower(str_replace(' ', '-', $headingText));
+                    $link = $this->makeLink($headingText);
 
                     // Handle heading levels and create TOC entries
                     $toc .= sprintf(
@@ -64,5 +64,19 @@ class TOC implements MarkdownPieceInterface
         }
 
         return $toc;
+    }
+
+    public function makeLink(string $text): string
+    {
+        // 1. Convert to lowercase
+        $text = strtolower($text);
+
+        // 2. Replace non-alphanumeric characters with a hyphen
+        // This removes spaces, punctuation, symbols, etc.
+        $text = preg_replace('/[^a-z0-9]+/', '-', $text) ?? '';
+
+        // 3. Trim hyphens from the beginning and end
+        // Ensures you don't end up with "-hello-"
+        return trim($text, '-');
     }
 }

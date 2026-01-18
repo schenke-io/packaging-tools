@@ -7,6 +7,15 @@ use Mockery;
 use SchenkeIo\PackagingTools\Markdown\Pieces\TOC;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
 
+it('make safe links', function ($text, $link) {
+    $toc = new TOC;
+    expect($toc->makeLink($text))->toBe($link);
+})->with([
+    ['Test Heading', 'test-heading'],
+    ['#+ölkasten', 'lkasten'],
+    ['$from#', 'from'],
+]);
+
 it('can generate a table of contents from blocks', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);

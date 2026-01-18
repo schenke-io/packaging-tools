@@ -5,13 +5,26 @@ namespace SchenkeIo\PackagingTools\Setup\Definitions;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
-use SchenkeIo\PackagingTools\Setup\Definition;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
-class TestDefinition implements Definition
+/**
+ * Task definition for PHPUnit/Pest testing.
+ *
+ * This class handles the configuration for running project tests. It ensures
+ * that the necessary testing framework is available and provides the
+ * command to execute tests with the appropriate options.
+ *
+ * Methods:
+ * - schema(): Defines the schema for test runners (pest, phpunit, or false).
+ * - explainConfig(): Explains how to configure the test runner.
+ * - packages(): Returns required packages based on the chosen test runner.
+ * - commands(): Returns the execution command for the selected test runner.
+ * - explainTask(): Provides help text for the test command.
+ */
+class TestDefinition extends BaseDefinition
 {
     /**
-     * return the schema of the configuration for this Definition
+     * return the schema of the configuration for this SetupDefinitionInterface
      */
     public function schema(): Schema
     {
@@ -23,14 +36,17 @@ class TestDefinition implements Definition
      */
     public function explainConfig(): string
     {
-        return "defaults to 'pest', can be false or 'phpunit";
+        return 'false = disabled, true = enabled (runs pest)';
     }
 
     /**
      * return the list of required packages
      */
-    public function packages(Config $config): Requirements
+    protected function getPackages(Config $config): Requirements
     {
+        /**
+         * check config for test settings
+         */
         return match ($config->config->test) {
             default => new Requirements,
             'pest' => Requirements::dev('pestphp/pest'),
@@ -41,19 +57,22 @@ class TestDefinition implements Definition
     /**
      * line or lines which will be executed when the script is called
      */
-    public function commands(Config $config): string|array
+    protected function getCommands(Config $config): string|array
     {
+        /**
+         * check config for test settings and return appropriate command
+         */
         return match ($config->config->test) {
-            default => null,
+            default => [],
             'pest' => 'vendor/bin/pest',
             'phpunit' => 'vendor/bin/phpunit'
         };
     }
 
     /**
-     * return help text for dev menu
+     * return help text for task
      */
-    public function explainUse(): string
+    public function explainTask(): string
     {
         return 'run the test suite';
     }

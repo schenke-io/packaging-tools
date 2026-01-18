@@ -5,17 +5,30 @@ namespace SchenkeIo\PackagingTools\Setup\Definitions;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
-use SchenkeIo\PackagingTools\Setup\Definition;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
-class PintDefinition implements Definition
+/**
+ * Task definition for Laravel Pint code styling.
+ *
+ * This class implements the SetupDefinitionInterface to provide configuration schema,
+ * package requirements, and execution commands for Laravel Pint. It allows
+ * the packaging tool to automate code formatting setup and execution.
+ *
+ * Methods:
+ * - schema(): Returns the boolean schema for enabling Pint.
+ * - explainConfig(): Explains how to enable Pint in the config.
+ * - packages(): Returns 'laravel/pint' dev-requirement if enabled.
+ * - commands(): Returns the command to run Pint from the vendor bin.
+ * - explainTask(): Provides help text for the Pint command.
+ */
+class PintDefinition extends BaseDefinition
 {
     /**
-     * return the schema of the configuration for this Definition
+     * return the schema of the configuration for this SetupDefinitionInterface
      */
     public function schema(): Schema
     {
-        return Expect::bool(true);
+        return Expect::bool(false);
     }
 
     /**
@@ -23,13 +36,13 @@ class PintDefinition implements Definition
      */
     public function explainConfig(): string
     {
-        return 'true or false to control the use of Laravel Pint';
+        return 'false = disabled, true = enabled (uses laravel/pint)';
     }
 
     /**
      * return the list of required packages
      */
-    public function packages(Config $config): Requirements
+    protected function getPackages(Config $config): Requirements
     {
         return Requirements::dev('laravel/pint');
     }
@@ -37,15 +50,18 @@ class PintDefinition implements Definition
     /**
      * line or lines which will be executed when the script is called
      */
-    public function commands(Config $config): string|array
+    protected function getCommands(Config $config): string|array
     {
+        /**
+         * returns the pint command
+         */
         return 'vendor/bin/pint';
     }
 
     /**
-     * return help text for dev menu
+     * return help text for task
      */
-    public function explainUse(): string
+    public function explainTask(): string
     {
         return 'format the source code';
     }

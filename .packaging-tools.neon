@@ -1,18 +1,51 @@
+# .packaging-tools.neon
+# Configuration for the packaging tools
+
+# false = disabled, true = enabled (uses phpstan/phpstan-phpunit or larastan/larastan)
 analyse: true
+
+
+# false = disabled, or provide the relative path to the clover.xml file
 coverage: true
+
+
+# false = disabled, true = enabled (requires infection/infection)
+infection: true
+
+
+# false = disabled, true = enabled (assembles Markdown files from resources/md)
 markdown: SchenkeIo\PackagingTools\Workbench\MakeMarkdown::run
+
+
+# false = disabled, connection:table1,table2 = enabled (with connection and tables)
+migrations: false
+
+
+# false = disabled, true = enabled (uses laravel/pint)
 pint: true
-test: pest
-check:
+
+
+# false = disabled, true = enabled (runs tests with --stop-on-failure)
+quick:
 	- pint
 	- test
 	- markdown
 
+
+
+# false = disabled, true = enabled (uses various tools to prepare a release)
 release:
 	- pint
 	- analyse
 	- coverage
 	- markdown
-dev:
-    - run:me
-    - victor
+
+
+
+# false = disabled, true = enabled (runs pest)
+test: pest
+
+
+# Register custom tasks here
+customTasks: []
+

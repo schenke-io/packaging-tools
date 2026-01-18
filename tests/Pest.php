@@ -1,9 +1,16 @@
 <?php
 
-use SchenkeIo\PackagingTools\Badges\BadgeStyle;
-use SchenkeIo\PackagingTools\Setup\Base;
+use SchenkeIo\PackagingTools\Enums\BadgeStyle;
+use SchenkeIo\PackagingTools\Setup\Config;
+
+Config::$silent = true;
 
 uses(BadgeStyle::class);
+
+afterEach(function () {
+    Config::$silent = true;
+    Mockery::close();
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -46,8 +53,5 @@ expect()->extend('toBeOne', function () {
 
 function setStaticFileSystem($filesystem): void
 {
-    // set the static filesystem for the tests
-    (new ReflectionClass(Base::class))
-        ->getProperty('filesystem')
-        ->setValue(null, $filesystem);
+    // No longer using static filesystem in Base
 }

@@ -15,18 +15,24 @@
     "require": {
         "php": "^8.2|^8.3",
         "ext-curl": "*",
+        "ext-gd": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
         "badges/poser": "^3.1",
+        "kitloong/laravel-migrations-generator": "^7.0",
         "illuminate/filesystem": "^11.0|^12.0",
+        "illuminate/http": "^11.0|^12.0",
         "nette/neon": "^3.4",
         "nette/php-generator": "^4.2",
-        "nette/schema": "^1.3"
+        "nette/schema": "^1.3",
+        "symfony/console": "^7.1"
     },
     "require-dev": {
+        "infection/infection": "^0.32.3",
         "laravel/pint": "^1.18",
         "mockery/mockery": "^1.5",
-        "pestphp/pest": "^3.6",
+        "pestphp/pest": "^3.8",
+        "pestphp/pest-plugin-mutate": "^3.0",
         "phpstan/phpstan-phpunit": "^1.4",
         "spatie/ray": "^1.40"
     },
@@ -45,13 +51,13 @@
         "setup": "SchenkeIo\\PackagingTools\\Setup::handle",
         "analyse": "./vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
-        "coverage": "vendor/bin/pest --coverage",
+        "coverage": "vendor/bin/pest --parallel --coverage",
         "pint": "vendor/bin/pint",
         "markdown": "SchenkeIo\\PackagingTools\\Workbench\\MakeMarkdown::run",
         "low": "composer update --prefer-lowest --prefer-dist",
         "stable": "composer update --prefer-stable --prefer-dist",
         "add": [],
-        "check": [
+        "quick": [
             "@pint",
             "@test",
             "@markdown"
@@ -62,12 +68,13 @@
             "@coverage",
             "@markdown"
         ],
-        "dev": "SchenkeIo\\PackagingTools\\DeveloperMenu::handle"
+        "migrations": []
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "infection/extension-installer": true
         }
     },
     "minimum-stability": "stable",

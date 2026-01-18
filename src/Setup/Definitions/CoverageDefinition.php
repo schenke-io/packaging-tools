@@ -5,13 +5,26 @@ namespace SchenkeIo\PackagingTools\Setup\Definitions;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
-use SchenkeIo\PackagingTools\Setup\Definition;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
-class CoverageDefinition implements Definition
+/**
+ * Task definition for code coverage reporting.
+ *
+ * This class handles the configuration for generating code coverage reports.
+ * It manages the requirements for clover coverage drivers and provides the
+ * command to generate coverage data during test execution.
+ *
+ * Implements SetupDefinitionInterface with the following:
+ * - schema(): Expects a boolean value to enable/disable coverage
+ * - explainConfig(): Describes the configuration key purpose
+ * - packages(): Returns dependencies based on the selected test runner (pest or phpunit)
+ * - commands(): Provides the CLI command with coverage flags
+ * - explainTask(): Provides the text shown in the task
+ */
+class CoverageDefinition extends BaseDefinition
 {
     /**
-     * return the schema of the configuration for this Definition
+     * return the schema of the configuration for this SetupDefinitionInterface
      */
     public function schema(): Schema
     {
@@ -23,14 +36,17 @@ class CoverageDefinition implements Definition
      */
     public function explainConfig(): string
     {
-        return 'true or false to control the use of test coverage';
+        return 'false = disabled, or provide the relative path to the clover.xml file';
     }
 
     /**
      * return the list of required packages
      */
-    public function packages(Config $config): Requirements
+    protected function getPackages(Config $config): Requirements
     {
+        /**
+         * check config for coverage settings
+         */
         return match ($config->config->coverage) {
             default => new Requirements,
             'pest' => Requirements::dev('pestphp/pest'),
@@ -42,23 +58,22 @@ class CoverageDefinition implements Definition
     /**
      * line or lines which will be executed when the script is called
      */
-    public function commands(Config $config): string|array
+    protected function getCommands(Config $config): string|array
     {
-        if ($config->config->coverage) {
-            return match ($config->config->test) {
-                default => [],
-                'pest' => 'vendor/bin/pest --coverage',
-                'phpunit' => 'vendor/bin/phpunit --coverage'
-            };
-        } else {
-            return [];
-        }
+        /**
+         * return coverage command based on test runner
+         */
+        return match ($config->config->test) {
+            default => [],
+            'pest' => 'vendor/bin/pest --coverage',
+            'phpunit' => 'vendor/bin/phpunit --coverage'
+        };
     }
 
     /**
-     * return help text for dev menu
+     * return help text for task
      */
-    public function explainUse(): string
+    public function explainTask(): string
     {
         return 'run test with coverage';
     }

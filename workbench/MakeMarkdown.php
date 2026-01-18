@@ -2,14 +2,16 @@
 
 namespace SchenkeIo\PackagingTools\Workbench;
 
-require __DIR__.'./../vendor/autoload.php'; // important
+require_once __DIR__.'/../vendor/autoload.php'; // important
 
 use Exception;
-use SchenkeIo\PackagingTools\Badges\BadgeStyle;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
 use SchenkeIo\PackagingTools\Markdown\ClassData;
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
-use SchenkeIo\PackagingTools\Setup\Tasks;
+use SchenkeIo\PackagingTools\Setup\Composer;
+use SchenkeIo\PackagingTools\Setup\Config;
+use SchenkeIo\PackagingTools\Setup\ProjectContext;
+use SchenkeIo\PackagingTools\Setup\TaskRegistry;
 
 /*
  * this scripts make the package itself and tests its functionality
@@ -17,43 +19,49 @@ use SchenkeIo\PackagingTools\Setup\Tasks;
 
 class MakeMarkdown
 {
-    public static function run(): void
+    public static function run(mixed $event = null): void
     {
         try {
-            $markdownAssembler = new MarkdownAssembler('resources/md');
+            $markdownAssembler = new MarkdownAssembler('workbench/resources/md');
 
             $markdownAssembler->addText('# Packaging Tools');
-            $markdownAssembler->storeVersionBadge();
-            $markdownAssembler->storeTestBadge('run-tests.yml');
-            $markdownAssembler->storeDownloadBadge();
-            $markdownAssembler->storeLocalBadge('', '.github/coverage-badge.svg');
-            $markdownAssembler->storeLocalBadge('', '.github/phpstan.svg');
-            $markdownAssembler->addBadges();
 
-            $markdownAssembler->addLocalImage('', '.github/werkstatt.png');
-            $markdownAssembler->addMarkdown('header.md');
+            $markdownAssembler->badges()
+                ->version()
+                ->test('run-tests.yml')
+                ->download();
 
-            $markdownAssembler->addTableOfContents();
-            $markdownAssembler->addMarkdown('installation.md');
-            $markdownAssembler->addMarkdown('concept.md');
-            $markdownAssembler->addMarkdown('configuration.md');
+            $markdownAssembler->image('', '.github/werkstatt.png')
+                ->addMarkdown('header.md');
+            $markdownAssembler->toc();
+            $markdownAssembler->addMarkdown('installation.md')
+                ->addMarkdown('concept.md')
+                ->addMarkdown('configuration.md')
+                ->addMarkdown('migrations.md')
+                ->addMarkdown('badges.md');
+
             $table[] = ['key', 'description'];
-            foreach (Tasks::cases() as $task) {
-                $table[] = [$task->value, $task->definition()->explainConfig()];
+            $taskRegistry = new TaskRegistry;
+            foreach ($taskRegistry->getAllTasks() as $name => $task) {
+                $table[] = [$name, $task->explainConfig()];
             }
-            $markdownAssembler->addTableFromArray($table);
+            $markdownAssembler->tables()->fromArray($table);
 
-            $markdownAssembler->addMarkdown('classes.md');
-            $markdownAssembler->addClassMarkdown(MarkdownAssembler::class);
-            $markdownAssembler->addClassMarkdown(MakeBadge::class);
-            $markdownAssembler->addClassMarkdown(ClassData::class); // empty
+            $markdownAssembler->addMarkdown('classes.md')
+                ->classes()
+                ->add(MarkdownAssembler::class)
+                ->add(MakeBadge::class)
+                ->add(Config::class)
+                ->add(Composer::class)
+                ->add(TaskRegistry::class)
+                ->add(ProjectContext::class)
+                ->add(ClassData::class);
 
             $markdownAssembler->writeMarkdown('README.md');
 
-            MakeBadge::makeCoverageBadge('build/logs/clover.xml')
-                ->store('.github/coverage-badge.svg', BadgeStyle::Plastic);
-            MakeBadge::makePhpStanBadge('phpstan.neon')
-                ->store('.github/phpstan.svg', BadgeStyle::Plastic);
+            MakeBadge::auto();
+
+            echo "Markdown and badge generation completed successfully.\n";
         } catch (Exception $e) {
             echo sprintf("ERROR: %s  (%s %d)\n", $e->getMessage(), $e->getFile(), $e->getLine());
         }

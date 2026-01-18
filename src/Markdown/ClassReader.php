@@ -3,35 +3,64 @@
 namespace SchenkeIo\PackagingTools\Markdown;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Filesystem\Filesystem;
 use Nette\PhpGenerator\PhpFile;
 use ReflectionClass;
 use ReflectionException;
-use SchenkeIo\PackagingTools\Setup\Base;
+use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
+use SchenkeIo\PackagingTools\Markdown\Pieces\Tables;
+use SchenkeIo\PackagingTools\Setup\ProjectContext;
 
-class ClassReader extends Base
+/**
+ * Reads PHP classes and extracts documentation for Markdown generation.
+ *
+ * This class uses reflection to inspect PHP classes and extract PHPDoc blocks,
+ * methods, and properties. It converts this information into Markdown format,
+ * supporting external Markdown file inclusion and automatic table generation
+ * for class methods.
+ *
+ * It provides mechanisms to:
+ * - Extract class summaries and descriptions from PHPDoc.
+ * - Format class properties and public methods into structured Markdown lists and tables.
+ * - Integrate external .md files based on class and method names.
+ * - Handle @markdown tags within class documentation to trigger specialized inclusion logic.
+ *
+ * Key Methods:
+ * - fromClass() / fromPath(): Factory methods to instantiate the reader for a specific class.
+ * - getClassMarkdown(): The primary method to generate a full Markdown block for a class.
+ * - getClassDataFromClass(): Lower-level reflection logic to collect class-string metadata.
+ */
+class ClassReader
 {
-    public function __construct(public string $classname, Filesystem $filesystem = new Filesystem)
-    {
-        parent::__construct($filesystem);
-    }
+    /**
+     * @param  class-string  $classname
+     */
+    public function __construct(
+        public string $classname,
+        protected ProjectContext $projectContext = new ProjectContext
+    ) {}
 
     /**
-     * @throws \Exception
+     * @param  class-string  $classname
+     *
+     * @throws PackagingToolException
      */
-    public static function fromClass(string $classname): self
+    public static function fromClass(string $classname, ?ProjectContext $projectContext = null): self
     {
-        return new self($classname);
+        return new self($classname, $projectContext ?? new ProjectContext);
     }
 
     /**
      * @throws FileNotFoundException
      */
-    public static function fromPath(string $filepath): self
+    public static function fromPath(string $filepath, ?ProjectContext $projectContext = null): self
     {
-        $file = PhpFile::fromCode(file_get_contents($filepath));
+        $projectContext = $projectContext ?? new ProjectContext;
+        $file = PhpFile::fromCode($projectContext->filesystem->get($filepath));
+        $classes = $file->getClasses();
+        /** @var class-string $classname */
+        $classname = (string) array_key_first($classes);
 
-        return new self(array_key_first($file->getClasses()));
+        return new self($classname, $projectContext);
     }
 
     /**
@@ -42,14 +71,17 @@ class ClassReader extends Base
         $classData = $this->getClassDataFromClass($this->classname);
 
         $return = '';
+        // Add class name as header
         $return .= str_repeat('#', $headerLevel).' '.$classData['short']."\n\n";
+        // Add class summary
         $return .= $classData['summary']."\n\n";
 
         /*
-         * Properties
+         * Properties: extract and format them as list
          */
         $properties = [];
         foreach ($classData['property'] ?? [] as $propertyLine) {
+            // match format: type $name description
             if (preg_match('/^(.*?)\$(.*?) (.*)/', $propertyLine, $matches)) {
                 $properties[] = sprintf("* __\$%s:__ %s\n", $matches[2], $matches[3]);
             }
@@ -59,41 +91,45 @@ class ClassReader extends Base
             $return .= implode("\n", $properties);
         }
         /*
-         * Methods from header overwrite the docs on the method itself (usefull for traits)
+         * Methods from header: these can overwrite the docs on the method itself (useful for traits)
          */
         $methods = [];
         foreach ($classData['method'] ?? [] as $methodLine) {
+            // match format: method() description
             if (preg_match('/^(.*?)\(\)(.*)/', $methodLine, $matches)) {
                 $methods[trim($matches[1])] = trim($matches[2]);
             }
         }
         /*
-         * external files
+         * External markdown files inclusion
          */
         if ($classData['markdown'] > 0) {
-            $return .= self::$filesystem->get(
-                $this->fullPath($markdownSourceDir.'/'.$classData['markdown-file'])
+            // @markdown tag was found in class doc
+            $return .= $this->projectContext->filesystem->get(
+                $this->projectContext->fullPath($markdownSourceDir.'/'.$classData['markdown-file'])
             );
         }
         if (count($classData['methods']) > 0) {
             $return .= str_repeat('#', $headerLevel + 1).' Public methods of '.$classData['short']."\n\n";
             /*
-             * build the main table
+             * build the main methods table
              */
-            $table[] = ['method', 'summary'];
+            $tableData = [];
+            $tableData[] = ['method', 'summary'];
             foreach ($classData['methods'] as $shortMethod => $methodData) {
+                // use method summary or fallback to header-defined method description
                 $details = strlen($methodData['summary']) > 3 ? $methodData['summary'] : $methods[$shortMethod] ?? '-';
-                $table[] = [$shortMethod, $details];
+                $tableData[] = [$shortMethod, $details];
             }
-            $return .= (new Table)->getTableFromArray($table);
+            $return .= (new Tables)->getTableFromArray($tableData);
             /*
-             * find method markdowns
+             * find and include method-specific markdown files
              */
             foreach ($classData['methods'] as $shortMethod => $methodData) {
                 if ($methodData['markdown'] > 0) {
                     $return .= str_repeat('#', $headerLevel + 1)." Details of $shortMethod()\n\n";
-                    $return .= self::$filesystem->get(
-                        $this->fullPath(
+                    $return .= $this->projectContext->filesystem->get(
+                        $this->projectContext->fullPath(
                             $markdownSourceDir.
                             '/'.
                             substr($classData['markdown-file'], 0, -3).
@@ -162,7 +198,7 @@ class ClassReader extends Base
                 'description' => '',
                 'markdown' => 0,
             ],
-                PhpDocExtractor::getFrom($method->getDocComment())
+                PhpDocExtractor::getFrom($method->getDocComment() ?: '')
             );
 
         }

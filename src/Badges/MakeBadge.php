@@ -169,6 +169,24 @@ class MakeBadge
     }
 
     /**
+     * Create a PHP version badge from composer.json.
+     *
+     * @param  ProjectContext|null  $projectContext  Optional project context
+     *
+     * @throws PackagingToolException
+     */
+    public static function makePhpVersionBadge(?ProjectContext $projectContext = null): self
+    {
+        $projectContext = $projectContext ?? new ProjectContext;
+        $path = BadgeType::Php->detectPath($projectContext);
+        if (! $path || ! $projectContext->filesystem->exists($projectContext->fullPath($path))) {
+            throw PackagingToolException::pathDetectionFailed('PHP');
+        }
+
+        return self::fromDriver(new Drivers\PhpVersionDriver, $path, $projectContext);
+    }
+
+    /**
      * Get the informational summary string for the badge.
      */
     public function info(): string

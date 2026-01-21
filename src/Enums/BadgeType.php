@@ -9,6 +9,7 @@ use SchenkeIo\PackagingTools\Badges\Drivers\InfectionDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\LaravelVersionDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\LicenseDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\PhpStanNeonDriver;
+use SchenkeIo\PackagingTools\Badges\Drivers\PhpVersionDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\ReleaseVersionDriver;
 use SchenkeIo\PackagingTools\Contracts\BadgeDriverInterface;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
@@ -34,6 +35,7 @@ enum BadgeType
     case Laravel;
     case Tests;
     case License;
+    case Php;
 
     /**
      * Get the badge driver instance for the current badge type.
@@ -49,6 +51,7 @@ enum BadgeType
             self::Laravel => new LaravelVersionDriver,
             self::Tests => new GitHubTestDriver,
             self::License => new LicenseDriver,
+            self::Php => new PhpVersionDriver,
         };
     }
 

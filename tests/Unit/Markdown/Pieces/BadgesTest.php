@@ -24,6 +24,7 @@ it('can render various badges', function () {
 
     $badges->version(BadgeStyle::Flat)
         ->download(BadgeStyle::Plastic)
+        ->php(BadgeStyle::Flat)
         ->local('Local', 'img/local.png')
         ->forge('hash', 1, 2);
 
@@ -31,6 +32,7 @@ it('can render various badges', function () {
 
     expect($content)->toContain('https://img.shields.io/packagist/v/schenke-io/packaging-tools?style=flat')
         ->and($content)->toContain('https://img.shields.io/packagist/dt/schenke-io/packaging-tools?style=plastic')
+        ->and($content)->toContain('https://img.shields.io/packagist/php-v/schenke-io/packaging-tools?style=flat')
         ->and($content)->toContain('[![Local](img/local.png)]()')
         ->and($content)->toContain('forge.laravel.com%2Fsite-badges%2Fhash');
 });
@@ -175,6 +177,43 @@ it('handles missing URL from driver in download', function () {
     $projectContext = new ProjectContext($filesystem);
     $badges = new Badges;
     $badges->download();
+    $content = $badges->getContent($projectContext, 'resources/md');
+    expect($content)->toBe('');
+});
+
+it('handles missing PHP requirement in renderPhp', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    // detectPath for PHP driver will look for composer.json
+    $filesystem->shouldReceive('exists')->andReturnUsing(fn ($path) => str_contains($path, 'composer.json'));
+    $filesystem->shouldReceive('files')->andReturn([]);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    // return name 'unknown' to make getUrl return null (as it happens when repo info is missing)
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'unknown']));
+    $projectContext = new ProjectContext($filesystem);
+    $badges = new Badges;
+    $badges->php();
+    $content = $badges->getContent($projectContext, 'resources/md');
+    expect($content)->toBe('');
+});
+
+it('handles missing composer.json in renderPhp', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturnUsing(function ($path) {
+        if (str_ends_with($path, 'composer.json')) {
+            static $count = 0;
+
+            return ++$count === 1;
+        }
+
+        return false;
+    });
+    $filesystem->shouldReceive('files')->andReturn([]);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project']));
+    $projectContext = new ProjectContext($filesystem);
+    $badges = new Badges;
+    $badges->php();
+
     $content = $badges->getContent($projectContext, 'resources/md');
     expect($content)->toBe('');
 });

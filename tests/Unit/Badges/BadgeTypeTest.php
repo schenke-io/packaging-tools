@@ -23,6 +23,7 @@ it('can detect paths for various badge types', function () {
     expect(BadgeType::PhpStan->detectPath($projectContext))->toBe('phpstan.neon');
     expect(BadgeType::Version->detectPath($projectContext))->toBe('composer.json');
     expect(BadgeType::License->detectPath($projectContext))->toBe('composer.json');
+    expect(BadgeType::Php->detectPath($projectContext))->toBe('composer.json');
 });
 
 it('has correct local badge status', function () {
@@ -34,6 +35,7 @@ it('has correct local badge status', function () {
     expect(BadgeType::Laravel->hasLocalBadge())->toBeFalse();
     expect(BadgeType::Tests->hasLocalBadge())->toBeFalse();
     expect(BadgeType::License->hasLocalBadge())->toBeFalse();
+    expect(BadgeType::Php->hasLocalBadge())->toBeFalse();
 });
 
 it('can detect github workflow path', function () {
@@ -115,4 +117,19 @@ it('license driver works', function () {
     expect($driver->getUrl($projectContext, ''))->toBe('https://img.shields.io/github/license/owner/repo');
     expect($driver->getLinkUrl($projectContext, ''))->toBe('https://github.com/owner/repo/blob/main/LICENSE.md');
     expect($driver->detectPath($projectContext))->toBe('composer.json');
+});
+
+it('php version driver works', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(json_encode([
+        'name' => 'test/project',
+        'require' => ['php' => '^8.2'],
+    ]));
+
+    $projectContext = new ProjectContext($filesystem);
+    $driver = BadgeType::Php->getDriver();
+
+    expect($driver->getStatus($projectContext, ''))->toBe('^8.2');
 });

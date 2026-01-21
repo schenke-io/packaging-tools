@@ -1,6 +1,7 @@
 [![Coverage](workbench/resources/md/svg/coverage.svg)]()
 [![PHPStan](workbench/resources/md/svg/phpstan.svg)]()
 [![License](https://img.shields.io/github/license/schenke-io/packaging-tools?style=flat)](https://github.com/schenke-io/packaging-tools/blob/main/LICENSE.md)
+[![PHP](https://img.shields.io/packagist/php-v/schenke-io/packaging-tools?style=flat)]()
 [![Latest Version](https://img.shields.io/packagist/v/schenke-io/packaging-tools?style=flat)](https://packagist.org/packages/schenke-io/packaging-tools)
 [![Tests](https://github.com/schenke-io/packaging-tools/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/schenke-io/packaging-tools/actions/workflows/run-tests.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/schenke-io/packaging-tools?style=flat)](https://packagist.org/packages/schenke-io/packaging-tools)
@@ -242,6 +243,7 @@ MakeBadge::auto();
 MakeBadge::makeCoverageBadge();
 MakeBadge::makePhpStanBadge();
 MakeBadge::makeInfectionBadge();
+MakeBadge::makePhpVersionBadge();
 
 // or with explicit paths:
 MakeBadge::makeCoverageBadge('path/to/clover.xml');
@@ -258,10 +260,12 @@ The `BadgeType` Enum defines the badges that can be automatically detected and g
 - **Coverage**: Displays the code coverage percentage. Detected from `clover.xml` (location found via `phpunit.xml`).
 - **PhpStan**: Displays the PHPStan analysis level or status. Detected from `phpstan.neon` or `phpstan.neon.dist`.
 - **Infection**: Displays the mutation score. Detected from `infection-report.json`.
+- **PHP**: Displays the minimum PHP version requirement parsed from `composer.json`.
 - **Version**: Displays the latest stable version from Packagist (via shields.io).
 - **Downloads**: Displays the total number of downloads from Packagist (via shields.io).
 - **Laravel**: Displays the minimum Laravel version requirement parsed from `composer.json`.
 - **Tests**: Displays the GitHub Action workflow status (e.g., for "run-tests") (via shields.io).
+- **License**: Displays the project license (via shields.io).
 
 ### Special Badges
 
@@ -443,16 +447,17 @@ Central class for generating and storing SVG badges.
 
 #### Public methods of MakeBadge
 
-| method             | summary                                                      |
-|--------------------|--------------------------------------------------------------|
-| auto               | Automatically detect and generate all supported badge types. |
-| define             | Create a new MakeBadge instance with manual definitions.     |
-| fromDriver         | Create a new MakeBadge instance using a driver.              |
-| makeCoverageBadge  | Create a coverage badge from a clover.xml file.              |
-| makePhpStanBadge   | Create a PHPStan badge from a neon configuration file.       |
-| makeInfectionBadge | Create an Infection badge from a JSON report.                |
-| info               | Get the informational summary string for the badge.          |
-| store              | Generate the SVG and store it in a file.                     |
+| method              | summary                                                      |
+|---------------------|--------------------------------------------------------------|
+| auto                | Automatically detect and generate all supported badge types. |
+| define              | Create a new MakeBadge instance with manual definitions.     |
+| fromDriver          | Create a new MakeBadge instance using a driver.              |
+| makeCoverageBadge   | Create a coverage badge from a clover.xml file.              |
+| makePhpStanBadge    | Create a PHPStan badge from a neon configuration file.       |
+| makeInfectionBadge  | Create an Infection badge from a JSON report.                |
+| makePhpVersionBadge | Create a PHP version badge from composer.json.               |
+| info                | Get the informational summary string for the badge.          |
+| store               | Generate the SVG and store it in a file.                     |
 
 ### Config
 

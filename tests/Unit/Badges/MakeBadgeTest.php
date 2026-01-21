@@ -204,7 +204,15 @@ it('can test various drivers', function () {
 it('throws exception when path detection fails', function ($type) {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
-    $filesystem->shouldReceive('exists')->andReturn(false);
+    $filesystem->shouldReceive('exists')->andReturnUsing(function ($path) {
+        if (str_ends_with($path, 'composer.json')) {
+            static $count = 0;
+
+            return ++$count === 1;
+        }
+
+        return false;
+    });
     $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project', 'type' => 'library']));
     $projectContext = new ProjectContext($filesystem);
 
@@ -212,8 +220,30 @@ it('throws exception when path detection fails', function ($type) {
         'Coverage' => MakeBadge::makeCoverageBadge(null, $projectContext),
         'PhpStan' => MakeBadge::makePhpStanBadge(null, 'color', $projectContext),
         'Infection' => MakeBadge::makeInfectionBadge(null, $projectContext),
+        'PHP' => MakeBadge::makePhpVersionBadge($projectContext),
     };
-})->with(['Coverage', 'PhpStan', 'Infection'])->throws(SchenkeIo\PackagingTools\Exceptions\PackagingToolException::class);
+})->with(['Coverage', 'PhpStan', 'Infection', 'PHP'])->throws(SchenkeIo\PackagingTools\Exceptions\PackagingToolException::class);
+
+it('can make php version badge', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturnUsing(function ($path) {
+        if (str_contains($path, 'composer.json')) {
+            return json_encode([
+                'name' => 'test/project',
+                'type' => 'library',
+                'require' => ['php' => '^8.3'],
+            ]);
+        }
+
+        return '';
+    });
+
+    $projectContext = new ProjectContext($filesystem);
+    $badge = MakeBadge::makePhpVersionBadge($projectContext);
+    expect($badge->info())->toBe('PHP badge: ^8.3 / 777bb4');
+});
 
 it('creates directory in store if not exists', function () {
     $filesystem = Mockery::mock(Filesystem::class);

@@ -72,7 +72,7 @@ class ProjectContext
             $this->filesystem = $filesystem;
         }
         // determine the current project root directory
-        $this->projectRoot = $projectRoot ?? (getcwd() ?: throw PackagingToolException::projectRootNotSet());
+        $this->projectRoot = rtrim($projectRoot ?? (getcwd() ?: throw PackagingToolException::projectRootNotSet()), '/');
         if (! $this->filesystem->isDirectory($this->projectRoot)) {
             throw PackagingToolException::projectRootNotFound($this->projectRoot);
         }
@@ -109,7 +109,7 @@ class ProjectContext
     {
         $path = ltrim($path, '/');
 
-        return $this->projectRoot.'/'.$path;
+        return (string) preg_replace('#/+#', '/', $this->projectRoot.'/'.$path);
     }
 
     /**

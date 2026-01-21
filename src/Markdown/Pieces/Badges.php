@@ -22,11 +22,12 @@ use SchenkeIo\PackagingTools\Setup\ProjectContext;
  * - Version: Fetches the latest release from Packagist.
  * - Test: Monitors GitHub Actions workflow statuses.
  * - Download: Displays total package downloads from Packagist.
+ * - PHP: Displays the minimum PHP version requirement from composer.json.
  * - Local: Links to local SVG files within the project.
  * - Forge: Shows deployment status for Laravel Forge sites.
  *
  * Methods:
- * - version() / test() / download() / local() / forge(): Buffer specific badge types with styling.
+ * - version() / test() / download() / php() / local() / forge(): Buffer specific badge types with styling.
  * - getContent(): Renders all buffered badges into a single Markdown block.
  */
 class Badges implements MarkdownPieceInterface
@@ -66,6 +67,16 @@ class Badges implements MarkdownPieceInterface
     public function download(BadgeStyle $badgeStyle = BadgeStyle::Flat): self
     {
         $this->badgeBuffer[] = ['type' => 'download', 'args' => ['style' => $badgeStyle]];
+
+        return $this;
+    }
+
+    /**
+     * adds a PHP version badge from packagist to the buffer
+     */
+    public function php(BadgeStyle $badgeStyle = BadgeStyle::Flat): self
+    {
+        $this->badgeBuffer[] = ['type' => 'php', 'args' => ['style' => $badgeStyle]];
 
         return $this;
     }
@@ -149,6 +160,9 @@ class Badges implements MarkdownPieceInterface
                 if ($type == BadgeType::Tests && in_array('test', $manualTypes)) {
                     continue;
                 }
+                if ($type == BadgeType::Php && in_array('php', $manualTypes)) {
+                    continue;
+                }
 
                 $src = $driver->getUrl($projectContext, $path);
                 if ($src) {
@@ -167,6 +181,7 @@ class Badges implements MarkdownPieceInterface
                 'version' => $this->renderVersion($projectContext, $badge['args']['style']),
                 'test' => $this->renderTest($projectContext, $badge['args']['workflowFile'], $badge['args']['style'], $badge['args']['branch']),
                 'download' => $this->renderDownload($projectContext, $badge['args']['style']),
+                'php' => $this->renderPhp($projectContext, $badge['args']['style']),
                 'local' => $this->getBadgeLink($badge['args']['text'], $badge['args']['path']),
                 'forge' => $this->renderForge($badge['args']['hash'], $badge['args']['server'], $badge['args']['site'], $badge['args']['date'], $badge['args']['label'], $badge['args']['style']),
                 default => ''
@@ -246,6 +261,23 @@ class Badges implements MarkdownPieceInterface
         $url = 'https://packagist.org/packages/'.$projectContext->projectName;
 
         return $this->getBadgeLink('Total Downloads', $src, $url);
+    }
+
+    private function renderPhp(ProjectContext $projectContext, BadgeStyle $badgeStyle): ?string
+    {
+        $driver = BadgeType::Php->getDriver();
+        $path = $driver->detectPath($projectContext);
+        if (! $path) {
+            return null;
+        }
+        $src = $driver->getUrl($projectContext, $path);
+        if (! $src) {
+            return null;
+        }
+        $src = $this->addStyleToUrl($src, $badgeStyle);
+        $url = 'https://packagist.org/packages/'.$projectContext->projectName;
+
+        return $this->getBadgeLink('PHP Version', $src, $url);
     }
 
     private function renderForge(string $hash, int $server, int $site, int $date, int $label, BadgeStyle $badgeStyle): string

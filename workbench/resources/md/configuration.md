@@ -25,6 +25,7 @@ The following keys are supported in `.packaging-tools.neon`:
 | `pint` | `bool` | Enables code styling with Laravel Pint | `pint: true` |
 | `quick` | `array` | Group task: `pint`, `test`, `markdown` | `quick: [pint, test, markdown]` |
 | `release` | `array` | Group task for pre-release checks | `release: [pint, analyse, coverage, markdown]` |
+| `sql-cache` | `bool|string|null` | Enables SQL caching for tests | `sql-cache: true` |
 | `test` | `string` | Test runner: `pest`, `phpunit` or `''` | `test: pest` |
 | `customTasks`| `array` | Mapping of custom task names to commands | `customTasks: { my-task: "ls -la" }` |
 
@@ -53,6 +54,11 @@ A shortcut to run essential checks quickly. By default it runs `pint`, `test` an
 
 #### `release`
 A comprehensive check before releasing a new version. It typically runs `pint`, `analyse`, `test`, `coverage`, `infection` and `markdown`.
+
+#### `sql-cache`
+Dumps the current SQLite database to an SQL file (default `tests/Data/seeded.sql`). This can be loaded in tests using the `LoadsSeededSql` trait to significantly speed up database preparation. Can be `true` (default path), a `string` (custom path), or `null` (disabled).
+
+> **Note:** To maintain the previous grouped behavior of running migrations and then sql-cache, you can add `@sql-cache` to your custom build commands or scripts.
 
 #### `test`
 Selects the testing framework. Supported values are `pest` and `phpunit`. Use an empty string `''` to disable tests.

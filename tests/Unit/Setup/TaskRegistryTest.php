@@ -51,4 +51,12 @@ describe('TaskRegistry', function () {
         // Depending on environment, could be empty or not, but it should be an array.
         expect($tasks)->toBeArray();
     });
+
+    it('registers core tasks with kebab-case names', function () {
+        $registry = new TaskRegistry;
+        $tasks = $registry->getAllTasks();
+
+        expect($tasks)->toHaveKeys(['sql-cache', 'analyse', 'coverage']);
+        expect($tasks)->not->toHaveKey('SqlCache');
+    });
 });

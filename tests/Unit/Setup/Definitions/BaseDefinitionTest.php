@@ -32,6 +32,32 @@ it('uses custom task name from constructor', function () {
     expect($prop->getValue($def))->toBe('custom');
 });
 
+class MyExampleTaskDefinition extends BaseDefinition
+{
+    public function schema(): Schema
+    {
+        return Expect::bool();
+    }
+
+    public function explainConfig(): string
+    {
+        return '';
+    }
+
+    public function explainTask(): string
+    {
+        return '';
+    }
+}
+
+it('derives kebab-case task name from a named class', function () {
+    $def = new MyExampleTaskDefinition;
+    $ref = new ReflectionClass($def);
+    $prop = $ref->getProperty('taskName');
+    $prop->setAccessible(true);
+    expect($prop->getValue($def))->toBe('my-example-task');
+});
+
 it('enables group task automatically', function () {
     $def = new class('group') extends BaseDefinition
     {

@@ -39,7 +39,8 @@ class TaskRegistry
                 $reflection = new \ReflectionClass($className);
                 if ($reflection->isInstantiable() && $reflection->implementsInterface(SetupDefinitionInterface::class)) {
                     try {
-                        $taskName = strtolower(str_replace('Definition', '', basename($file, '.php')));
+                        $baseName = str_replace('Definition', '', basename($file, '.php'));
+                        $taskName = strtolower((string) preg_replace('/(?<!^)[A-Z]/', '-$0', $baseName));
                         /** @var SetupDefinitionInterface $task */
                         $task = new $className;
                         if ($task instanceof BaseDefinition) {

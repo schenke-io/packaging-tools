@@ -28,7 +28,8 @@ abstract class BaseDefinition implements SetupDefinitionInterface
             $class = static::class;
             $parts = explode('\\', $class);
             $className = end($parts);
-            $this->taskName = strtolower(str_replace('Definition', '', $className));
+            $baseName = str_replace('Definition', '', $className);
+            $this->taskName = strtolower((string) preg_replace('/(?<!^)[A-Z]/', '-$0', $baseName));
         } else {
             $this->taskName = $taskName;
         }
@@ -59,11 +60,14 @@ abstract class BaseDefinition implements SetupDefinitionInterface
 
     protected function isEnabled(Config $config): bool
     {
-        if ($this->taskName === 'group') {
+        $taskName = $this->taskName;
+        if ($taskName === 'group') {
             return true;
         }
 
-        return (bool) ($config->config->{$this->taskName} ?? false);
+        $val = $config->config->$taskName ?? null;
+
+        return ! is_null($val) && $val !== false;
     }
 
     protected function getPackages(Config $config): Requirements

@@ -44,7 +44,11 @@ class GroupDefinition extends BaseDefinition
      */
     public function schema(): Schema
     {
-        return Expect::arrayOf(Expect::anyOf(...$this->tasks));
+        return Expect::anyOf(
+            Expect::null(),
+            Expect::bool(),
+            Expect::arrayOf(Expect::anyOf(...$this->tasks))
+        )->default(null);
     }
 
     /**
@@ -56,22 +60,13 @@ class GroupDefinition extends BaseDefinition
     }
 
     /**
-     * groups are always enabled because they are defined by an array
-     */
-    protected function isEnabled(Config $config): bool
-    {
-        return true;
-    }
-
-    /**
      * line or lines which will be executed when the script is called
      */
     protected function getCommands(Config $config): string|array
     {
-        $groupTasks = $this->tasks;
-        if ($this->taskName && isset($config->config->{$this->taskName}) && is_array($config->config->{$this->taskName})) {
-            $groupTasks = $config->config->{$this->taskName};
-        }
+        $taskName = $this->taskName;
+        $val = $config->config->$taskName ?? null;
+        $groupTasks = is_array($val) ? $val : $this->tasks;
 
         $return = [];
         /**

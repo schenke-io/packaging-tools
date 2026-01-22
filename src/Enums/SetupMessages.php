@@ -133,6 +133,11 @@ enum SetupMessages: string
     case composerJsonUpdatedWithScripts = 'composer.json updated with scripts';
 
     /**
+     * @param  string  $path
+     */
+    case sqlCacheDumped = 'SQL cache dumped to %s';
+
+    /**
      * @param  string  $filename
      */
     case errorWritingConfig = 'error writing %s';

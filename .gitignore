@@ -17,7 +17,7 @@ node_modules
 .badita.yaml
 build/
 __old
-workbench
+
 .output.txt
 
 

@@ -11,7 +11,7 @@ use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\TaskRegistry;
 
 /*
- * this scripts make the package itself and tests its functionality
+ * this script makes the package itself and tests its functionality
  */
 
 class MakeMarkdown
@@ -20,13 +20,7 @@ class MakeMarkdown
     {
         try {
             $markdownAssembler = new MarkdownAssembler('workbench/resources/md');
-
-            $markdownAssembler->addText('# Packaging Tools');
-
-            $markdownAssembler->badges()
-                ->version()
-                ->test('run-tests.yml')
-                ->download();
+            $markdownAssembler->autoHeader('Packaging Tools');
 
             $markdownAssembler->addMarkdown('header.md');
             $markdownAssembler->toc();

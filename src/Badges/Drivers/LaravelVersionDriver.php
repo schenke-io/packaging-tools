@@ -66,6 +66,17 @@ class LaravelVersionDriver implements BadgeDriverInterface
     }
 
     /**
+     * Get the URL for the Packagist page.
+     *
+     * @param  ProjectContext  $projectContext  The project context for file operations
+     * @param  string  $path  The path to the source data
+     */
+    public function getLinkUrl(ProjectContext $projectContext, string $path): ?string
+    {
+        return 'https://packagist.org/packages/'.$projectContext->projectName;
+    }
+
+    /**
      * Detection path for Laravel version.
      *
      * Always returns 'composer.json'.

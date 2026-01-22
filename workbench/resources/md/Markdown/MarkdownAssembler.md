@@ -32,7 +32,7 @@ try {
     $mda = new MarkdownAssembler('workbench/resources/md');
     $mda->addMarkdown("header.md");
     $mda->addTableOfContents();
-    // relative to markdown directory
+    // relative to Markdown directory
     $mda->addMarkdown("installation.md");
     // makes markdown from all classes in src/
     $mda->classes()->all();

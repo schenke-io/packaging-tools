@@ -147,7 +147,7 @@ class Badges implements MarkdownPieceInterface
                     }
                 }
                 if ($projectContext->filesystem->exists($projectContext->fullPath($relPath))) {
-                    $badges[] = $this->getBadgeLink($driver->getSubject(), $relPath);
+                    $badges[] = $this->getBadgeLink($driver->getSubject(), $relPath, $relPath);
                 }
             } else {
                 // skip automated remote badges if they are manually added
@@ -182,7 +182,7 @@ class Badges implements MarkdownPieceInterface
                 'test' => $this->renderTest($projectContext, $badge['args']['workflowFile'], $badge['args']['style'], $badge['args']['branch']),
                 'download' => $this->renderDownload($projectContext, $badge['args']['style']),
                 'php' => $this->renderPhp($projectContext, $badge['args']['style']),
-                'local' => $this->getBadgeLink($badge['args']['text'], $badge['args']['path']),
+                'local' => $this->getBadgeLink($badge['args']['text'], $badge['args']['path'], $badge['args']['path']),
                 'forge' => $this->renderForge($badge['args']['hash'], $badge['args']['server'], $badge['args']['site'], $badge['args']['date'], $badge['args']['label'], $badge['args']['style']),
                 default => ''
             };

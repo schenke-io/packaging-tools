@@ -33,7 +33,7 @@ it('can render various badges', function () {
     expect($content)->toContain('https://img.shields.io/packagist/v/schenke-io/packaging-tools?style=flat')
         ->and($content)->toContain('https://img.shields.io/packagist/dt/schenke-io/packaging-tools?style=plastic')
         ->and($content)->toContain('https://img.shields.io/packagist/php-v/schenke-io/packaging-tools?style=flat')
-        ->and($content)->toContain('[![Local](img/local.png)]()')
+        ->and($content)->toContain('[![Local](img/local.png)](img/local.png)')
         ->and($content)->toContain('forge.laravel.com%2Fsite-badges%2Fhash');
 });
 
@@ -118,7 +118,7 @@ it('does not duplicate local badges', function () {
     $badges->local('Coverage', 'resources/md/svg/coverage.svg');
     $content = $badges->getContent($projectContext, 'resources/md');
     $occurrences = substr_count($content, 'resources/md/svg/coverage.svg');
-    expect($occurrences)->toBe(1);
+    expect($occurrences)->toBe(2);
 });
 
 it('handles unknown project name in version and downloads', function () {

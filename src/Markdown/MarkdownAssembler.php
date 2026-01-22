@@ -110,12 +110,12 @@ EOM
         return $this;
     }
 
-    public function autoHeader(): self
+    public function autoHeader(?string $title = null): self
     {
         $this->autoHeaderUsed = true;
         $this->badges()->all();
 
-        $title = ucwords(str_replace(['/', '-', '_'], ' ', $this->projectContext->projectName));
+        $title = $title ?? ucwords(str_replace(['/', '-', '_'], ' ', $this->projectContext->projectName));
         $this->addText("# $title");
 
         $composerJson = json_decode($this->projectContext->composerJsonContent, true);

@@ -64,7 +64,7 @@ it('skips automated local badges if they are manually added', function () {
 
     $content = $badges->getContent($projectContext, 'resources/md');
     $occurrences = substr_count($content, 'resources/md/svg/coverage.svg');
-    expect($occurrences)->toBe(1);
+    expect($occurrences)->toBe(2);
 });
 
 it('skips automated test badges if they are manually added', function () {

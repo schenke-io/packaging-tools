@@ -1,10 +1,10 @@
-[![Coverage](workbench/resources/md/svg/coverage.svg)]()
-[![PHPStan](workbench/resources/md/svg/phpstan.svg)]()
+[![Coverage](workbench/resources/md/svg/coverage.svg)](workbench/resources/md/svg/coverage.svg)
+[![PHPStan](workbench/resources/md/svg/phpstan.svg)](workbench/resources/md/svg/phpstan.svg)
+[![Version](https://img.shields.io/packagist/v/schenke-io/packaging-tools?style=flat)](https://packagist.org/packages/schenke-io/packaging-tools)
+[![Downloads](https://img.shields.io/packagist/dt/schenke-io/packaging-tools?style=flat)](https://packagist.org/packages/schenke-io/packaging-tools)
+[![Tests](https://github.com/schenke-io/packaging-tools/actions/workflows/run-tests.yml/badge.svg)](https://github.com/schenke-io/packaging-tools/actions/workflows/run-tests.yml)
 [![License](https://img.shields.io/github/license/schenke-io/packaging-tools?style=flat)](https://github.com/schenke-io/packaging-tools/blob/main/LICENSE.md)
-[![PHP](https://img.shields.io/packagist/php-v/schenke-io/packaging-tools?style=flat)]()
-[![Latest Version](https://img.shields.io/packagist/v/schenke-io/packaging-tools?style=flat)](https://packagist.org/packages/schenke-io/packaging-tools)
-[![Tests](https://github.com/schenke-io/packaging-tools/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/schenke-io/packaging-tools/actions/workflows/run-tests.yml)
-[![Total Downloads](https://img.shields.io/packagist/dt/schenke-io/packaging-tools?style=flat)](https://packagist.org/packages/schenke-io/packaging-tools)
+[![PHP](https://img.shields.io/packagist/php-v/schenke-io/packaging-tools?style=flat)](https://packagist.org/packages/schenke-io/packaging-tools)
 
 <!--
 ********************************************************************************
@@ -18,9 +18,11 @@
 *                                                                              *
 ********************************************************************************
 -->
-![cover](workbench/resources/md/cover.png)
-
 # Packaging Tools
+
+> Tools to simplify publishing github packages
+
+<img src="workbench/resources/md/cover.png" alt="cover" />
 
 This package is a collection of tools to simplify the package and project development.
 
@@ -413,7 +415,7 @@ try {
     $mda = new MarkdownAssembler('workbench/resources/md');
     $mda->addMarkdown("header.md");
     $mda->addTableOfContents();
-    // relative to markdown directory
+    // relative to Markdown directory
     $mda->addMarkdown("installation.md");
     // makes markdown from all classes in src/
     $mda->classes()->all();

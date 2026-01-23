@@ -24,8 +24,12 @@ trait LoadsSeededSql
      */
     public function loadSeededSql(string $path = 'tests/Data/seeded.sql'): void
     {
-        if (File::exists($path)) {
-            DB::unprepared(File::get($path));
+        try {
+            DB::table('users')->count() === 0;
+        } catch (\Exception $e) {
+            if (File::exists($path)) {
+                DB::unprepared(File::get($path));
+            }
         }
     }
 }

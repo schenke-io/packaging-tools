@@ -18,7 +18,7 @@ use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
  * - fullPath(): Converts a relative path to an absolute path within the project.
  * - getModelPath(): Finds the directory where models are stored.
  * - isLaravel(): Checks if the project is a Laravel project.
- * - isOrchestraWorkbench(): Checks if the project uses Orchestra Workbench.
+ * - isWorkbench(): Checks if the project has a workbench directory.
  * - getEnv(): Retrieves an environment variable.
  * - runProcess(): Executes a shell command.
  */
@@ -186,11 +186,11 @@ class ProjectContext
     }
 
     /**
-     * Returns true if the project uses orchestra/workbench.
+     * Returns true if the project contains a workbench directory.
      */
-    public function isOrchestraWorkbench(): bool
+    public function isWorkbench(): bool
     {
-        return isset($this->composerJson['require-dev']['orchestra/workbench']);
+        return $this->filesystem->isDirectory($this->fullPath('workbench'));
     }
 
     /**

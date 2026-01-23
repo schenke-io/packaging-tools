@@ -240,3 +240,51 @@ it('throws exception if no model path exists', function () {
 
     $context->getModelPath();
 })->throws(\SchenkeIo\PackagingTools\Exceptions\PackagingToolException::class);
+
+it('detects laravel projects', function () {
+    // case 1: type is project
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['type' => 'project']));
+    $context = new ProjectContext($filesystem);
+    expect($context->isLaravel())->toBeTrue();
+
+    // case 2: laravel/framework is required
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['require' => ['laravel/framework' => '^11.0']]));
+    $context = new ProjectContext($filesystem);
+    expect($context->isLaravel())->toBeTrue();
+
+    // case 3: neither
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(json_encode([]));
+    $context = new ProjectContext($filesystem);
+    expect($context->isLaravel())->toBeFalse();
+});
+
+it('detects workbench directory', function () {
+    // case 1: workbench directory exists
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->with(getcwd())->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn('{}');
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench')))->andReturn(true);
+
+    $context = new ProjectContext($filesystem);
+    expect($context->isWorkbench())->toBeTrue();
+
+    // case 2: workbench directory does not exist
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->with(getcwd())->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn('{}');
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench')))->andReturn(false);
+
+    $context = new ProjectContext($filesystem);
+    expect($context->isWorkbench())->toBeFalse();
+});

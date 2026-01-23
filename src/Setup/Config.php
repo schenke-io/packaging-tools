@@ -325,8 +325,8 @@ class Config
         if ($projectContext->isLaravel()) {
             self::output(SetupMessages::laravelDetected);
         }
-        if ($projectContext->isOrchestraWorkbench()) {
-            self::output(SetupMessages::orchestraWorkbenchDetected);
+        if ($projectContext->isWorkbench()) {
+            self::output(SetupMessages::workbenchDetected);
         }
 
         $configPath = $projectContext->fullPath(self::CONFIG_BASE);

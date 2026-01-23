@@ -59,7 +59,7 @@ it('outputs error when composer update fails', function () {
     $mockContext->composerJson = ['name' => 'test/project'];
     $mockContext->shouldReceive('fullPath')->andReturnUsing(fn ($p) => $this->projectContext->fullPath($p));
     $mockContext->shouldReceive('isLaravel')->andReturn(false);
-    $mockContext->shouldReceive('isOrchestraWorkbench')->andReturn(false);
+    $mockContext->shouldReceive('isWorkbench')->andReturn(false);
 
     $mockContext->shouldReceive('runProcess')
         ->with('composer require --dev laravel/pint')

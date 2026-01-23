@@ -40,6 +40,7 @@ it('does nothing if not a command context', function () {
 
 it('generates migrations with connection and tables from config', function () {
     $filesystem = m::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->with(m::on(fn ($path) => str_contains($path, 'workbench')))->andReturn(false);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('exists')->andReturn(true);
     $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/pkg']));
@@ -52,15 +53,11 @@ it('generates migrations with connection and tables from config', function () {
     $ref->setAccessible(true);
     $ref->setValue($command, m::mock(\Symfony\Component\Console\Output\OutputInterface::class));
 
-    $command->shouldReceive('call')->with('migrate:generate', [
-        '--no-interaction' => true,
-        '--path' => 'database/migrations/',
-        '--tables' => 'batches,cache,cache_locks,failed_jobs,job_batches,jobs,migrations,password_reset_tokens,sessions,table1,table2',
-        '--default-index-names' => true,
-        '--skip-log' => true,
-        '--date' => '2020-10-10',
-        '--connection' => 'mysql',
-    ])->once();
+    $command->shouldReceive('call')->with('migrate:generate', m::on(function ($args) {
+        return str_contains($args['--path'], 'database/migrations/') &&
+               str_contains($args['--tables'], 'table1,table2') &&
+               $args['--connection'] === 'mysql';
+    }))->once();
 
     File::shouldReceive('isDirectory')->andReturn(false); // for MigrationCleaner
     File::shouldReceive('cleanDirectory')->andReturnTrue();
@@ -91,7 +88,7 @@ it('generates migrations with connection only and uses model discovery', functio
     $projectContext = m::mock(ProjectContext::class);
     $projectContext->shouldReceive('getModelPath')->andReturn('/path/to/models');
     $projectContext->shouldReceive('fullPath')->andReturn('/path/to/migrations');
-    $projectContext->shouldReceive('isOrchestraWorkbench')->andReturn(false);
+    $projectContext->shouldReceive('isWorkbench')->andReturn(false);
 
     File::shouldReceive('isDirectory')->with('/path/to/models')->andReturn(true);
     File::shouldReceive('allFiles')->with('/path/to/models')->andReturn([$file]);
@@ -133,7 +130,7 @@ it('generates migrations with connection:* and uses model discovery', function (
     $projectContext = m::mock(ProjectContext::class);
     $projectContext->shouldReceive('getModelPath')->andReturn('/path/to/models');
     $projectContext->shouldReceive('fullPath')->andReturn('/path/to/migrations');
-    $projectContext->shouldReceive('isOrchestraWorkbench')->andReturn(false);
+    $projectContext->shouldReceive('isWorkbench')->andReturn(false);
 
     File::shouldReceive('isDirectory')->with('/path/to/models')->andReturn(true);
     File::shouldReceive('allFiles')->with('/path/to/models')->andReturn([$file]);

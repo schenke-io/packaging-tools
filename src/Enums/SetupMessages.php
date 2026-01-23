@@ -90,7 +90,7 @@ enum SetupMessages: string
 
     case laravelDetected = 'Laravel detected and considered.';
 
-    case orchestraWorkbenchDetected = 'Orchestra Workbench detected and considered.';
+    case workbenchDetected = 'Workbench detected and considered.';
 
     /**
      * @param  string  $configBase

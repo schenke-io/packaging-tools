@@ -42,7 +42,7 @@ trait GeneratesPackageMigrations
         $config = $config ?? new Config(null, $projectContext);
 
         $resolved = MigrationHelper::resolveMigrationTargets($config, $projectContext);
-        $path = $projectContext->isOrchestraWorkbench() ? 'workbench/database/migrations' : 'database/migrations/';
+        $path = $projectContext->isWorkbench() ? 'workbench/database/migrations' : 'database/migrations/';
 
         /*
          * clean up existing migrations
@@ -54,7 +54,7 @@ trait GeneratesPackageMigrations
 
         $arguments = [
             '--no-interaction' => true,
-            '--path' => $path,
+            '--path' => $fullPath,
             '--tables' => implode(',', $resolved['tables']),
             '--default-index-names' => true,
             '--skip-log' => true,

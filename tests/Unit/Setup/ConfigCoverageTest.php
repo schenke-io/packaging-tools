@@ -74,7 +74,7 @@ it('detects Laravel and Orchestra Workbench in writeConfig', function () {
 
     $projectContext = Mockery::mock(ProjectContext::class, [$filesystem])->makePartial();
     $projectContext->shouldReceive('isLaravel')->andReturn(true);
-    $projectContext->shouldReceive('isOrchestraWorkbench')->andReturn(true);
+    $projectContext->shouldReceive('isWorkbench')->andReturn(true);
 
     ob_start();
     Config::$silent = false;
@@ -83,7 +83,7 @@ it('detects Laravel and Orchestra Workbench in writeConfig', function () {
     Config::$silent = true;
 
     expect($output)->toContain('Laravel detected')
-        ->and($output)->toContain('Orchestra Workbench detected');
+        ->and($output)->toContain('Workbench detected');
 });
 
 it('covers default config generation in writeConfig', function () {

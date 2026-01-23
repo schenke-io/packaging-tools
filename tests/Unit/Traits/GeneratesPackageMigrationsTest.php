@@ -110,6 +110,48 @@ it('generates migrations with connection only and uses model discovery', functio
     $command->generatePackageMigrations($projectContext, $config);
 });
 
+it('generates migrations with connection:* and uses model discovery', function () {
+    $filesystem = m::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/pkg']));
+
+    $projectContext = new ProjectContext($filesystem);
+    $config = new Config(['migrations' => 'mysql:*'], $projectContext);
+
+    $command = m::mock(MockCommand::class)->makePartial();
+    $ref = new \ReflectionProperty(Command::class, 'output');
+    $ref->setAccessible(true);
+    $ref->setValue($command, m::mock(\Symfony\Component\Console\Output\OutputInterface::class));
+
+    // Mock model discovery
+    $file = m::mock(\Symfony\Component\Finder\SplFileInfo::class);
+    $file->shouldReceive('getExtension')->andReturn('php');
+    $file->shouldReceive('getRealPath')->andReturn('/path/to/models/MockModel.php');
+
+    // override getModelPath behavior for this test
+    $projectContext = m::mock(ProjectContext::class);
+    $projectContext->shouldReceive('getModelPath')->andReturn('/path/to/models');
+    $projectContext->shouldReceive('fullPath')->andReturn('/path/to/migrations');
+    $projectContext->shouldReceive('isOrchestraWorkbench')->andReturn(false);
+
+    File::shouldReceive('isDirectory')->with('/path/to/models')->andReturn(true);
+    File::shouldReceive('allFiles')->with('/path/to/models')->andReturn([$file]);
+    File::shouldReceive('get')->with('/path/to/models/MockModel.php')->andReturn('<?php namespace SchenkeIo\PackagingTools\Tests\Unit\Traits; class MockModel extends \Illuminate\Database\Eloquent\Model { protected $table = "mock_table"; }');
+    File::shouldReceive('isDirectory')->with('/path/to/migrations')->andReturn(true);
+    File::shouldReceive('cleanDirectory')->with('/path/to/migrations')->andReturnTrue();
+    File::shouldReceive('allFiles')->with('/path/to/migrations')->andReturn([]);
+
+    // for MigrationCleaner
+    File::shouldReceive('isDirectory')->andReturn(false);
+
+    $command->shouldReceive('call')->with('migrate:generate', m::on(function ($args) {
+        return str_contains($args['--tables'], 'mock_table') && $args['--connection'] === 'mysql';
+    }))->once();
+
+    $command->generatePackageMigrations($projectContext, $config);
+});
+
 it('handles null config by using model discovery', function () {
     $filesystem = m::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);

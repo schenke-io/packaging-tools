@@ -26,7 +26,7 @@ class MigrationsDefinition extends BaseDefinition
 
     public function explainConfig(): string
     {
-        return 'null = disabled, connection:table1,table2 = enabled (with connection and tables)';
+        return 'null = disabled, connection:* = auto-detect, connection:table1,table2 = enabled (with connection and tables)';
     }
 
     protected function getPackages(Config $config): Requirements

@@ -28,6 +28,41 @@ function getProjectContext(): ProjectContext
     return new ProjectContext($fs, '/root');
 }
 
+test('resolveMigrationTargets with * after colon', function () {
+    $fs = Mockery::mock(Filesystem::class);
+    $fs->shouldReceive('isDirectory')->with('/root')->andReturn(true);
+    $fs->shouldReceive('isDirectory')->with('/root/src/Models')->andReturn(true);
+    $fs->shouldReceive('isDirectory')->andReturn(false);
+    $fs->shouldReceive('exists')->andReturn(true);
+    $fs->shouldReceive('get')->andReturn(json_encode([
+        'name' => 'vendor/package',
+        'type' => 'library',
+    ]));
+
+    $projectContext = new ProjectContext($fs, '/root');
+    $modelPath = '/root/src/Models';
+
+    $file = Mockery::mock();
+    $file->shouldReceive('getExtension')->andReturn('php');
+    $file->shouldReceive('getRealPath')->andReturn($modelPath.'/GoodModel.php');
+
+    File::shouldReceive('isDirectory')->with($modelPath)->andReturn(true);
+    File::shouldReceive('allFiles')->with($modelPath)->andReturn([$file]);
+
+    if (! class_exists('App\Models\GoodModel')) {
+        eval('namespace App\Models; use Illuminate\Database\Eloquent\Model; class GoodModel extends Model { protected $table = "good_table"; }');
+    }
+    File::shouldReceive('get')->with($modelPath.'/GoodModel.php')->andReturn('<?php namespace App\Models; class GoodModel extends Model {}');
+
+    $config = new Config(['migrations' => 'mysql:*'], $projectContext);
+
+    $resolved = MigrationHelper::resolveMigrationTargets($config, $projectContext);
+
+    expect($resolved['connection'])->toBe('mysql');
+    expect($resolved['tables'])->toContain('good_table');
+    expect($resolved['tables'])->toContain('migrations');
+});
+
 test('resolveMigrationTargets with empty table list after colon', function () {
     $projectContext = getProjectContext();
 
@@ -36,7 +71,8 @@ test('resolveMigrationTargets with empty table list after colon', function () {
     $resolved = MigrationHelper::resolveMigrationTargets($config, $projectContext);
 
     expect($resolved['connection'])->toBe('mysql');
-    expect($resolved['tables'])->toContain('migrations');
+    // should only contain system tables, not model tables
+    expect($resolved['tables'])->toEqualCanonicalizing(MigrationHelper::$systemTables);
 });
 
 test('getTablesFromModels ignores classes that throw exceptions', function () {

@@ -48,10 +48,10 @@ class MigrationHelper
         if (is_string($migrationsConfig) && $migrationsConfig !== '') {
             if (str_contains($migrationsConfig, ':')) {
                 [$connection, $tableList] = explode(':', $migrationsConfig, 2);
-                if ($tableList !== '') {
-                    $tables = array_merge($tables, explode(',', $tableList));
-                } else {
+                if ($tableList === '*') {
                     $tables = array_merge($tables, self::getTablesFromModels($projectContext));
+                } elseif ($tableList !== '') {
+                    $tables = array_merge($tables, explode(',', $tableList));
                 }
             } else {
                 $connection = $migrationsConfig;

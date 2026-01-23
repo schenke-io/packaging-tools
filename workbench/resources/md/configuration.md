@@ -21,7 +21,7 @@ The following keys are supported in `.packaging-tools.neon`:
 | `coverage` | `bool` | Enables code coverage reporting during tests | `coverage: true` |
 | `infection` | `bool` | Enables mutation testing with Infection | `infection: true` |
 | `markdown` | `string\|null` | The command to run for Markdown assembly | `markdown: php workbench/MakeMarkdown.php` |
-| `migrations` | `string\|null` | Configuration for migration generation | `migrations: mysql:users,posts` |
+| `migrations` | `string\|null` | Configuration for migration generation | `migrations: mysql:*` |
 | `pint` | `bool` | Enables code styling with Laravel Pint | `pint: true` |
 | `quick` | `array` | Group task: `pint`, `test`, `markdown` | `quick: [pint, test, markdown]` |
 | `release` | `array` | Group task for pre-release checks | `release: [pint, analyse, coverage, markdown]` |
@@ -44,7 +44,7 @@ Runs mutation testing to check the quality of your tests. Requires `infection/in
 Points to the script that assembles your documentation. Usually `php workbench/MakeMarkdown.php`. Use `null` to disable.
 
 #### `migrations`
-Uses `kitloong/laravel-migrations-generator`. Can be a string in the format `connection:table1,table2`. Use `null` to disable.
+Uses `kitloong/laravel-migrations-generator`. Can be a string in the format `connection:table1,table2`. Use `connection:*` to auto-detect tables from your models. Use `null` to disable.
 
 #### `pint`
 Uses Laravel Pint to ensure your code follows the project's styling rules.

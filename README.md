@@ -159,7 +159,7 @@ The following keys are supported in `.packaging-tools.neon`:
 | `coverage` | `bool` | Enables code coverage reporting during tests | `coverage: true` |
 | `infection` | `bool` | Enables mutation testing with Infection | `infection: true` |
 | `markdown` | `string\|null` | The command to run for Markdown assembly | `markdown: php workbench/MakeMarkdown.php` |
-| `migrations` | `string\|null` | Configuration for migration generation | `migrations: mysql:users,posts` |
+| `migrations` | `string\|null` | Configuration for migration generation | `migrations: mysql:*` |
 | `pint` | `bool` | Enables code styling with Laravel Pint | `pint: true` |
 | `quick` | `array` | Group task: `pint`, `test`, `markdown` | `quick: [pint, test, markdown]` |
 | `release` | `array` | Group task for pre-release checks | `release: [pint, analyse, coverage, markdown]` |
@@ -182,7 +182,7 @@ Runs mutation testing to check the quality of your tests. Requires `infection/in
 Points to the script that assembles your documentation. Usually `php workbench/MakeMarkdown.php`. Use `null` to disable.
 
 #### `migrations`
-Uses `kitloong/laravel-migrations-generator`. Can be a string in the format `connection:table1,table2`. Use `null` to disable.
+Uses `kitloong/laravel-migrations-generator`. Can be a string in the format `connection:table1,table2`. Use `connection:*` to auto-detect tables from your models. Use `null` to disable.
 
 #### `pint`
 Uses Laravel Pint to ensure your code follows the project's styling rules.
@@ -208,18 +208,18 @@ Allows you to define your own tasks that can be run via `composer setup <task-na
 
 All tasks in `packaging-tools` define their own configuration schema using `nette/schema`. This ensures that your configuration is always valid and provides helpful error messages if something is misconfigured.
 
-| key        | description                                                                                      |
-|------------|--------------------------------------------------------------------------------------------------|
-| analyse    | false = disabled, true = enabled (uses phpstan/phpstan-phpunit or larastan/larastan)             |
-| coverage   | false = disabled, true = enabled (adds --coverage to the test runner)                            |
-| infection  | false = disabled, true = enabled (requires infection/infection)                                  |
-| markdown   | null = disabled, string = enabled (command to assemble Markdown files)                           |
-| migrations | null = disabled, connection:table1,table2 = enabled (with connection and tables)                 |
-| pint       | false = disabled, true = enabled (uses laravel/pint)                                             |
-| quick      | an array of scripts to include in this group: pint, test, markdown                               |
-| release    | an array of scripts to include in this group: pint, analyse, test, coverage, infection, markdown |
-| sql-cache  | null = disabled, true = default path, 'path/to/file.sql' = custom path                           |
-| test       | '' = disabled, 'pest' or 'phpunit' = enabled                                                     |
+| key        | description                                                                                                  |
+|------------|--------------------------------------------------------------------------------------------------------------|
+| analyse    | false = disabled, true = enabled (uses phpstan/phpstan-phpunit or larastan/larastan)                         |
+| coverage   | false = disabled, true = enabled (adds --coverage to the test runner)                                        |
+| infection  | false = disabled, true = enabled (requires infection/infection)                                              |
+| markdown   | null = disabled, string = enabled (command to assemble Markdown files)                                       |
+| migrations | null = disabled, connection:* = auto-detect, connection:table1,table2 = enabled (with connection and tables) |
+| pint       | false = disabled, true = enabled (uses laravel/pint)                                                         |
+| quick      | an array of scripts to include in this group: pint, test, markdown                                           |
+| release    | an array of scripts to include in this group: pint, analyse, test, coverage, infection, markdown             |
+| sql-cache  | null = disabled, true = default path, 'path/to/file.sql' = custom path                                       |
+| test       | '' = disabled, 'pest' or 'phpunit' = enabled                                                                 |
 
 ## Database Migrations
 

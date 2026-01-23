@@ -51,6 +51,16 @@ describe('commands', function () {
         expect($commands[1])->toBe('SchenkeIo\PackagingTools\Setup\MigrationCleaner::clean');
     });
 
+    test('returns generate and clean commands if migrations is a connection:* string', function () {
+        $definition = new MigrationsDefinition;
+        $config = new Config(['migrations' => 'mysql:*'], new ProjectContext);
+        $commands = $definition->commands($config);
+        expect($commands)->toBeArray()->toHaveCount(2);
+        expect($commands[0])->toContain('migrate:generate')
+            ->toContain('--connection=mysql');
+        expect($commands[1])->toBe('SchenkeIo\PackagingTools\Setup\MigrationCleaner::clean');
+    });
+
     test('returns generate and clean commands if migrations is a connection:table string', function () {
         $definition = new MigrationsDefinition;
         $config = new Config(['migrations' => 'mysql:users,posts'], new ProjectContext);

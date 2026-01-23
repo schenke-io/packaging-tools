@@ -122,4 +122,41 @@ describe('SqlCache', function () {
         expect(true)->toBeTrue();
         Config::$outputHandler = null;
     });
+
+    it('uses a custom path if sql-cache is a string', function () {
+        $filesystem = Mockery::mock(Filesystem::class);
+
+        $filesystem->shouldReceive('exists')->with('./composer.json')->andReturn(true);
+        $filesystem->shouldReceive('get')->with('./composer.json')->andReturn(json_encode(['name' => 'test/test', 'type' => 'library']));
+
+        /** @var ProjectContext $projectContext */
+        $projectContext = Mockery::mock(ProjectContext::class, [['projectRoot' => '.', 'sourceRoot' => 'src'], $filesystem])->makePartial();
+        $projectContext->filesystem = $filesystem;
+        $projectContext->projectRoot = '.';
+
+        $filesystem->shouldReceive('exists')->with('./.packaging-tools.neon')->andReturn(true);
+        $filesystem->shouldReceive('get')->with('./.packaging-tools.neon')->andReturn('sql-cache: custom/path.sql');
+
+        $projectContext->shouldReceive('fullPath')->with('custom/path.sql')->andReturn('./custom/path.sql');
+        $projectContext->shouldReceive('getEnv')->with('DB_DATABASE')->andReturn('database/database.sqlite');
+        $filesystem->shouldReceive('isAbsolute')->with('database/database.sqlite')->andReturn(false);
+        $projectContext->shouldReceive('fullPath')->with('database/database.sqlite')->andReturn('./database/database.sqlite');
+        $filesystem->shouldReceive('exists')->with('./database/database.sqlite')->andReturn(true);
+
+        $filesystem->shouldReceive('isDirectory')->with('./custom')->andReturn(true);
+
+        $projectContext->shouldReceive('runProcess')->once()->andReturn(true);
+
+        $outputCalled = false;
+        Config::$outputHandler = function ($message, ...$args) use (&$outputCalled) {
+            if ($message === SetupMessages::sqlCacheDumped && $args[0] === 'custom/path.sql') {
+                $outputCalled = true;
+            }
+        };
+
+        SqlCache::dump(null, $projectContext);
+
+        expect($outputCalled)->toBeTrue();
+        Config::$outputHandler = null;
+    });
 });

@@ -20,6 +20,7 @@ use Exception;
  * - unsupportedFileExtension(): When processing files with unexpected formats.
  * - workflowNotFound(): Missing GitHub action definitions for badges.
  * - pathDetectionFailed(): Inability to locate source data for specific badge types.
+ * - modelPathNotFound(): When no standard model directory is found.
  */
 class PackagingToolException extends Exception
 {
@@ -109,5 +110,13 @@ class PackagingToolException extends Exception
     public static function pathDetectionFailed(string $badgeType): self
     {
         return new self("Could not detect path for badge type: $badgeType");
+    }
+
+    /**
+     * Create an exception when no model path is found.
+     */
+    public static function modelPathNotFound(): self
+    {
+        return new self('Could not find a model directory in workbench/app/Models, app/Models or src/Models');
     }
 }

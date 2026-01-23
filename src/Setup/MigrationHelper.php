@@ -4,6 +4,7 @@ namespace SchenkeIo\PackagingTools\Setup;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
+use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 
 /**
  * Helper class for migration-related tasks.
@@ -37,6 +38,8 @@ class MigrationHelper
     /**
      * Resolves the connection and tables for migration generation.
      *
+     * @param  Config  $config  The configuration object.
+     * @param  ProjectContext  $projectContext  The project context.
      * @return array{connection: string, tables: list<string>}
      */
     public static function resolveMigrationTargets(Config $config, ProjectContext $projectContext): array
@@ -73,27 +76,30 @@ class MigrationHelper
     /**
      * Scans the model directory and retrieves table names from found Eloquent models.
      *
-     * @return list<string>
+     * @param  ProjectContext  $projectContext  The project context.
+     * @return list<string> The list of table names.
      */
     public static function getTablesFromModels(ProjectContext $projectContext): array
     {
         $tables = [];
-        $modelPath = $projectContext->getModelPath();
-        if ($modelPath && File::isDirectory($modelPath)) {
-            foreach (File::allFiles($modelPath) as $file) {
-                if ($file->getExtension() === 'php') {
-                    $className = self::getClassNameFromFile($file->getRealPath());
-                    if ($className && class_exists($className)) {
-                        try {
-                            $reflection = new \ReflectionClass($className);
-                            if ($reflection->isInstantiable() && $reflection->isSubclassOf(Model::class)) {
-                                /** @var Model $model */
-                                $model = new $className;
-                                $tables[] = $model->getTable();
-                            }
-                        } catch (\Throwable) {
-                            // ignore classes that cannot be reflected or instantiated
+        try {
+            $modelPath = $projectContext->getModelPath();
+        } catch (PackagingToolException) {
+            return [];
+        }
+        foreach (File::allFiles($modelPath) as $file) {
+            if ($file->getExtension() === 'php') {
+                $className = self::getClassNameFromFile($file->getRealPath());
+                if ($className && class_exists($className)) {
+                    try {
+                        $reflection = new \ReflectionClass($className);
+                        if ($reflection->isInstantiable() && $reflection->isSubclassOf(Model::class)) {
+                            /** @var Model $model */
+                            $model = new $className;
+                            $tables[] = $model->getTable();
                         }
+                    } catch (\Throwable) {
+                        // ignore classes that cannot be reflected or instantiated
                     }
                 }
             }
@@ -104,6 +110,9 @@ class MigrationHelper
 
     /**
      * Attempts to resolve the class name from a PHP file by parsing its namespace and class name.
+     *
+     * @param  string  $path  The absolute path to the PHP file.
+     * @return string|null The fully qualified class name or null if not found.
      */
     public static function getClassNameFromFile(string $path): ?string
     {

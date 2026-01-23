@@ -109,6 +109,48 @@ it('can get env values', function () {
         ->and($context->getEnv('NON_EXISTENT', 'default'))->toBe('default');
 });
 
+it('handles comments and quotes in .env', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($path) => str_ends_with($path, 'composer.json')))->andReturn('{}');
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($path) => str_ends_with($path, '.env')))->andReturn(
+        "KEY1=VALUE1 # comment\n".
+        "KEY2=\"VALUE2 # with hash\" # comment\n".
+        "KEY3='VALUE3 # with hash' # comment\n".
+        "KEY4=\"VALUE4\"\n".
+        'KEY5='
+    );
+
+    $context = new ProjectContext($filesystem);
+
+    expect($context->getEnv('KEY1'))->toBe('VALUE1')
+        ->and($context->getEnv('KEY2'))->toBe('VALUE2 # with hash')
+        ->and($context->getEnv('KEY3'))->toBe('VALUE3 # with hash')
+        ->and($context->getEnv('KEY4'))->toBe('VALUE4')
+        ->and($context->getEnv('KEY5'))->toBe('');
+});
+
+it('handles edge cases in .env', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($path) => str_ends_with($path, 'composer.json')))->andReturn('{}');
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($path) => str_ends_with($path, '.env')))->andReturn(
+        "KEY1=\"missing_end\n".
+        "KEY2='missing_end\n".
+        "KEY3=value #comment\n".
+        "KEY4=  \n"
+    );
+
+    $context = new ProjectContext($filesystem);
+
+    expect($context->getEnv('KEY1'))->toBe('"missing_end')
+        ->and($context->getEnv('KEY2'))->toBe("'missing_end")
+        ->and($context->getEnv('KEY3'))->toBe('value')
+        ->and($context->getEnv('KEY4'))->toBe('');
+});
+
 it('can run a process', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
@@ -148,15 +190,15 @@ it('can find model paths', function () {
 
     $context = new ProjectContext($filesystem);
 
-    // Mocking isDirectory for the getModelPath call - Case 1: app/Models exists
-    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'app/Models')))->andReturn(true);
+    // Mocking isDirectory for the getModelPath call - Case 1: workbench/app/Models exists
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench/app/Models')))->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'app/Models')))->andReturn(false);
     $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'src/Models')))->andReturn(false);
-    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench/app/Models')))->andReturn(false);
 
-    expect($context->getModelPath())->toContain('app/Models');
+    expect($context->getModelPath())->toContain('workbench/app/Models');
 });
 
-it('finds src/Models if app/Models is missing', function () {
+it('finds app/Models if workbench/app/Models is missing', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->with(getcwd())->andReturn(true);
     $filesystem->shouldReceive('exists')->andReturn(true);
@@ -164,14 +206,29 @@ it('finds src/Models if app/Models is missing', function () {
 
     $context = new ProjectContext($filesystem);
 
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench/app/Models')))->andReturn(false);
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'app/Models')))->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'src/Models')))->andReturn(false);
+
+    expect($context->getModelPath())->toContain('app/Models');
+});
+
+it('finds src/Models if workbench/app/Models and app/Models are missing', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->with(getcwd())->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn('{}');
+
+    $context = new ProjectContext($filesystem);
+
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench/app/Models')))->andReturn(false);
     $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'app/Models')))->andReturn(false);
     $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'src/Models')))->andReturn(true);
-    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench/app/Models')))->andReturn(false);
 
     expect($context->getModelPath())->toContain('src/Models');
 });
 
-it('returns null if no model path exists', function () {
+it('throws exception if no model path exists', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->with(getcwd())->andReturn(true);
     $filesystem->shouldReceive('exists')->andReturn(true);
@@ -181,5 +238,5 @@ it('returns null if no model path exists', function () {
 
     $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'Models')))->andReturn(false);
 
-    expect($context->getModelPath())->toBeNull();
-});
+    $context->getModelPath();
+})->throws(\SchenkeIo\PackagingTools\Exceptions\PackagingToolException::class);

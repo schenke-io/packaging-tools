@@ -168,6 +168,7 @@ it('handles null config by using model discovery', function () {
 
     // for MigrationCleaner
     File::shouldReceive('isDirectory')->andReturn(false);
+    File::shouldReceive('allFiles')->andReturn([]);
     File::shouldReceive('cleanDirectory')->andReturnTrue();
 
     $command->shouldReceive('call')->with('migrate:generate', m::on(function ($args) {

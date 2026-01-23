@@ -97,6 +97,15 @@ test('getTablesFromModels ignores classes that throw exceptions', function () {
     expect($tables)->toBeEmpty();
 });
 
+test('getTablesFromModels returns empty array when no models found', function () {
+    $projectContext = Mockery::mock(ProjectContext::class);
+    $projectContext->shouldReceive('getModelPath')
+        ->andThrow(\SchenkeIo\PackagingTools\Exceptions\PackagingToolException::modelPathNotFound());
+
+    $tables = MigrationHelper::getTablesFromModels($projectContext);
+    expect($tables)->toBeEmpty();
+});
+
 test('getTablesFromModels with a valid model', function () {
     $projectContext = Mockery::mock(ProjectContext::class);
     $modelPath = '/root/app/Models';

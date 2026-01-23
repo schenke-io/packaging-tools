@@ -45,13 +45,41 @@ class ProjectContext
      */
     public array $composerJson = [];
 
+    /**
+     * Retrieves an environment variable from the project's .env file.
+     *
+     * It handles various quoting styles and trailing comments.
+     * Returns the default value if the key is not found or the .env file is missing.
+     *
+     * @param  string  $key  The environment variable key.
+     * @param  mixed  $default  The default value to return if not found.
+     * @return mixed The parsed value or the default.
+     */
     public function getEnv(string $key, mixed $default = null): mixed
     {
         $envFile = $this->fullPath('.env');
         if ($this->filesystem->exists($envFile)) {
             $content = $this->filesystem->get($envFile);
-            if (preg_match("/^{$key}=(.*)$/m", $content, $matches)) {
-                return trim($matches[1], " \t\n\r\0\x0B\"'");
+            if (preg_match("/^{$key}=\s*(.*)$/m", $content, $matches)) {
+                $value = trim($matches[1]);
+                if ($value === '') {
+                    return '';
+                }
+                // Handle double quotes
+                if ($value[0] === '"') {
+                    if (preg_match('/^"([^"]*)"/', $value, $quotedMatches)) {
+                        return $quotedMatches[1];
+                    }
+                }
+                // Handle single quotes
+                if ($value[0] === "'") {
+                    if (preg_match("/^'([^']*)'/", $value, $quotedMatches)) {
+                        return $quotedMatches[1];
+                    }
+                }
+
+                // Handle unquoted value with potential trailing comment
+                return trim(explode('#', $value, 2)[0]);
             }
         }
 
@@ -59,9 +87,15 @@ class ProjectContext
     }
 
     /**
-     * @param  Filesystem|array<string,mixed>  $filesystem
+     * Initializes the project context by detecting the root and reading composer.json.
      *
-     * @throws PackagingToolException
+     * It also sets up repository metadata like owner and name.
+     *
+     * @param  Filesystem|array<string,mixed>  $filesystem  The filesystem instance or initial data.
+     * @param  string|null  $projectRoot  Override for the project root path.
+     * @param  string|null  $sourceRoot  Override for the source directory path.
+     *
+     * @throws PackagingToolException If the project root or composer.json is missing or invalid.
      */
     public function __construct(
         Filesystem|array $filesystem = new Filesystem,
@@ -108,7 +142,10 @@ class ProjectContext
     }
 
     /**
-     * converts a relative path into a full absolute path from project root
+     * Converts a relative path into a full absolute path from the project root.
+     *
+     * @param  string  $path  The relative path.
+     * @return string The absolute path.
      */
     public function fullPath(string $path): string
     {
@@ -118,22 +155,28 @@ class ProjectContext
     }
 
     /**
-     * returns the absolute path to the first found model directory or null
+     * Returns the absolute path to the first found model directory.
+     *
+     * It checks workbench/app/Models, app/Models, and src/Models in order.
+     *
+     * @return string The absolute path to the model directory.
+     *
+     * @throws PackagingToolException If no model directory is found.
      */
-    public function getModelPath(): ?string
+    public function getModelPath(): string
     {
-        foreach (['app/Models', 'src/Models', 'workbench/app/Models'] as $dir) {
+        foreach (['workbench/app/Models', 'app/Models', 'src/Models'] as $dir) {
             $path = $this->fullPath($dir);
             if ($this->filesystem->isDirectory($path)) {
                 return $path;
             }
         }
 
-        return null;
+        throw PackagingToolException::modelPathNotFound();
     }
 
     /**
-     * returns true if the project is a Laravel project or uses the laravel/framework package
+     * Returns true if the project is a Laravel project or uses the laravel/framework package.
      */
     public function isLaravel(): bool
     {
@@ -143,7 +186,7 @@ class ProjectContext
     }
 
     /**
-     * returns true if the project uses orchestra/workbench
+     * Returns true if the project uses orchestra/workbench.
      */
     public function isOrchestraWorkbench(): bool
     {
@@ -151,7 +194,10 @@ class ProjectContext
     }
 
     /**
-     * executes a shell command and passes the output to the standard output
+     * Executes a shell command and passes the output to the standard output.
+     *
+     * @param  string  $command  The command to execute.
+     * @return bool True if the command executed successfully (exit code 0).
      */
     public function runProcess(string $command): bool
     {

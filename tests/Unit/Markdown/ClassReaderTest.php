@@ -73,3 +73,12 @@ it('can handle class with no docblock', function () {
     $markdown = $classReader->getClassMarkdown('docs');
     expect($markdown)->toContain('### NoDocDummy');
 });
+
+it('handles classes with short namespace', function () {
+    if (! class_exists('Short\Name')) {
+        eval('namespace Short; class Name {}');
+    }
+    $classReader = ClassReader::fromClass('Short\Name');
+    $markdown = $classReader->getClassMarkdown('docs');
+    expect($markdown)->toContain('### Name');
+});

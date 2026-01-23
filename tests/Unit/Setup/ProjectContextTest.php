@@ -288,3 +288,27 @@ it('detects workbench directory', function () {
     $context = new ProjectContext($filesystem);
     expect($context->isWorkbench())->toBeFalse();
 });
+
+it('returns correct migration path when workbench exists', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->with(getcwd())->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn('{}');
+
+    $context = new ProjectContext($filesystem);
+
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench')))->andReturn(true);
+    expect($context->getMigrationPath())->toBe('workbench/database/migrations');
+});
+
+it('returns correct migration path when workbench is missing', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->with(getcwd())->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn('{}');
+
+    $context = new ProjectContext($filesystem);
+
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench')))->andReturn(false);
+    expect($context->getMigrationPath())->toBe('database/migrations');
+});

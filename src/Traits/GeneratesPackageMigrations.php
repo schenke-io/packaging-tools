@@ -42,7 +42,7 @@ trait GeneratesPackageMigrations
         $config = $config ?? new Config(null, $projectContext);
 
         $resolved = MigrationHelper::resolveMigrationTargets($config, $projectContext);
-        $path = $projectContext->isWorkbench() ? 'workbench/database/migrations' : 'database/migrations/';
+        $path = $projectContext->getMigrationPath();
 
         /*
          * clean up existing migrations

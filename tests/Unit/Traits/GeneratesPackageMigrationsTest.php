@@ -54,7 +54,7 @@ it('generates migrations with connection and tables from config', function () {
     $ref->setValue($command, m::mock(\Symfony\Component\Console\Output\OutputInterface::class));
 
     $command->shouldReceive('call')->with('migrate:generate', m::on(function ($args) {
-        return str_contains($args['--path'], 'database/migrations/') &&
+        return str_contains($args['--path'], 'database/migrations') &&
                str_contains($args['--tables'], 'table1,table2') &&
                $args['--connection'] === 'mysql';
     }))->once();
@@ -88,7 +88,7 @@ it('generates migrations with connection only and uses model discovery', functio
     $projectContext = m::mock(ProjectContext::class);
     $projectContext->shouldReceive('getModelPath')->andReturn('/path/to/models');
     $projectContext->shouldReceive('fullPath')->andReturn('/path/to/migrations');
-    $projectContext->shouldReceive('isWorkbench')->andReturn(false);
+    $projectContext->shouldReceive('getMigrationPath')->andReturn('database/migrations');
 
     File::shouldReceive('isDirectory')->with('/path/to/models')->andReturn(true);
     File::shouldReceive('allFiles')->with('/path/to/models')->andReturn([$file]);
@@ -130,7 +130,7 @@ it('generates migrations with connection:* and uses model discovery', function (
     $projectContext = m::mock(ProjectContext::class);
     $projectContext->shouldReceive('getModelPath')->andReturn('/path/to/models');
     $projectContext->shouldReceive('fullPath')->andReturn('/path/to/migrations');
-    $projectContext->shouldReceive('isWorkbench')->andReturn(false);
+    $projectContext->shouldReceive('getMigrationPath')->andReturn('database/migrations');
 
     File::shouldReceive('isDirectory')->with('/path/to/models')->andReturn(true);
     File::shouldReceive('allFiles')->with('/path/to/models')->andReturn([$file]);

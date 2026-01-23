@@ -28,7 +28,7 @@ class MigrationCleaner
     {
         $count = 0;
         $projectContext = $projectContext ?? new ProjectContext;
-        $directory = $projectContext->fullPath('database/migrations');
+        $directory = $projectContext->fullPath($projectContext->getMigrationPath());
 
         if (! File::isDirectory($directory)) {
             return 0;

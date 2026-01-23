@@ -176,6 +176,14 @@ class ProjectContext
     }
 
     /**
+     * Returns the relative path to the migrations directory based on the environment.
+     */
+    public function getMigrationPath(): string
+    {
+        return $this->isWorkbench() ? 'workbench/database/migrations' : 'database/migrations';
+    }
+
+    /**
      * Returns true if the project is a Laravel project or uses the laravel/framework package.
      */
     public function isLaravel(): bool

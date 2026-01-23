@@ -12,7 +12,16 @@ namespace SchenkeIo\PackagingTools\Enums;
  * `format()` method.
  *
  * The `format()` method provides a convenient way to inject dynamic values
- * into the messages using `sprintf` syntax.
+ * into the messages using `sprintf` syntax. By centralizing these messages,
+ * the package maintains a consistent user interface and simplifies
+ * internationalization or future message updates.
+ *
+ * These messages cover various stages of the package lifecycle:
+ * - Configuration creation and updates
+ * - Composer JSON modifications
+ * - Dependency management and installation
+ * - Directory and file creation
+ * - Result reporting and error handling
  */
 enum SetupMessages: string
 {

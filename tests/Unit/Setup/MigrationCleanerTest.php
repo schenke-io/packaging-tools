@@ -26,14 +26,19 @@ it('removes connection calls from migration files', function () {
     $content = "Schema::connection('mysql')->create('users', function (Blueprint \$table) {
         Schema::connection(\"sqlite\") ->create('posts');
         Schema::connection ( 'other' )->table('roles');
+        Schema::connection('db')->
+            create('another');
     ";
     $expected = "Schema::create('users', function (Blueprint \$table) {
         Schema::create('posts');
         Schema::table('roles');
+        Schema::
+            create('another');
     ";
 
     File::shouldReceive('get')->with('/path/to/migration.php')->andReturn($content);
     File::shouldReceive('put')->once()->with('/path/to/migration.php', $expected);
+    File::shouldReceive('chmod')->once()->with('/path/to/migration.php', 0444);
 
     expect(MigrationCleaner::clean())->toBe(1);
 });
@@ -47,6 +52,25 @@ it('ignores non-php files', function () {
     File::shouldReceive('isDirectory')->andReturn(true);
     File::shouldReceive('allFiles')->andReturn([$mockFile]);
     File::shouldReceive('get')->never();
+
+    expect(MigrationCleaner::clean())->toBe(0);
+});
+
+it('calls chmod on php files that do not need cleaning', function () {
+    Config::$silent = true;
+
+    $mockFile = Mockery::mock('Symfony\Component\Finder\SplFileInfo');
+    $mockFile->shouldReceive('getExtension')->andReturn('php');
+    $mockFile->shouldReceive('getRealPath')->andReturn('/path/to/clean.php');
+    $mockFile->shouldReceive('getFilename')->andReturn('clean.php');
+
+    File::shouldReceive('isDirectory')->andReturn(true);
+    File::shouldReceive('allFiles')->andReturn([$mockFile]);
+
+    $content = "Schema::create('users', function (Blueprint \$table) {});";
+    File::shouldReceive('get')->with('/path/to/clean.php')->andReturn($content);
+    File::shouldReceive('put')->never();
+    File::shouldReceive('chmod')->once()->with('/path/to/clean.php', 0444);
 
     expect(MigrationCleaner::clean())->toBe(0);
 });

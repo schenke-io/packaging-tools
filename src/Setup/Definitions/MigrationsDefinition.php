@@ -5,6 +5,7 @@ namespace SchenkeIo\PackagingTools\Setup\Definitions;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
+use SchenkeIo\PackagingTools\Setup\MigrationHelper;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
 /**
@@ -35,24 +36,17 @@ class MigrationsDefinition extends BaseDefinition
 
     protected function getCommands(Config $config): string|array
     {
-        $val = $config->config->migrations;
-        if ($val === null) {
+        if (($config->config->migrations ?? null) === null) {
             return [];
         }
 
+        $resolved = MigrationHelper::resolveMigrationTargets($config, $config->projectContext);
+
         $command = 'php artisan migrate:generate --no-interaction';
-        if (is_string($val)) {
-            if (str_contains($val, ':')) {
-                [$connection, $tables] = explode(':', $val, 2);
-                if ($connection) {
-                    $command .= " --connection=$connection";
-                }
-                if ($tables) {
-                    $command .= " --tables=$tables";
-                }
-            } else {
-                $command .= " --connection=$val";
-            }
+        $command .= ' --tables='.implode(',', $resolved['tables']);
+
+        if ($resolved['connection'] !== '') {
+            $command .= " --connection={$resolved['connection']}";
         }
 
         return [

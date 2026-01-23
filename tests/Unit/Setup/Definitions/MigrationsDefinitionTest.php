@@ -58,7 +58,7 @@ describe('commands', function () {
         expect($commands)->toBeArray()->toHaveCount(2);
         expect($commands[0])->toContain('migrate:generate')
             ->toContain('--connection=mysql')
-            ->toContain('--tables=users,posts');
+            ->toContain('--tables=batches,cache,cache_locks,failed_jobs,job_batches,jobs,migrations,password_reset_tokens,posts,sessions,users');
         expect($commands[1])->toBe('SchenkeIo\PackagingTools\Setup\MigrationCleaner::clean');
     });
 

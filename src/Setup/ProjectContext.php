@@ -16,6 +16,11 @@ use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
  * Methods:
  * - __construct(): Detects project root, validates composer.json, and determines repo metadata.
  * - fullPath(): Converts a relative path to an absolute path within the project.
+ * - getModelPath(): Finds the directory where models are stored.
+ * - isLaravel(): Checks if the project is a Laravel project.
+ * - isOrchestraWorkbench(): Checks if the project uses Orchestra Workbench.
+ * - getEnv(): Retrieves an environment variable.
+ * - runProcess(): Executes a shell command.
  */
 class ProjectContext
 {
@@ -110,6 +115,21 @@ class ProjectContext
         $path = ltrim($path, '/');
 
         return (string) preg_replace('#/+#', '/', $this->projectRoot.'/'.$path);
+    }
+
+    /**
+     * returns the absolute path to the first found model directory or null
+     */
+    public function getModelPath(): ?string
+    {
+        foreach (['app/Models', 'src/Models', 'workbench/app/Models'] as $dir) {
+            $path = $this->fullPath($dir);
+            if ($this->filesystem->isDirectory($path)) {
+                return $path;
+            }
+        }
+
+        return null;
     }
 
     /**

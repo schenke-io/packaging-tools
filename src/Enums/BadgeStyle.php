@@ -17,7 +17,15 @@ use PUGX\Poser\Render\SvgPlasticRender;
  * library and the string representation of the style.
  *
  * Each style corresponds to a specific SVG layout used by Shields.io-like
- * badges (flat, plastic, etc.).
+ * badges:
+ * - Flat: Standard flat design (default)
+ * - FlatSquare: Flat design with square corners
+ * - Plastic: Classic design with a 3D effect
+ * - ForTheBadge: Large, uppercase style for high visibility
+ *
+ * The `render()` method returns the appropriate PUGX renderer, while
+ * `style()` provides the string identifier used in configuration and
+ * during the SVG assembly process.
  */
 enum BadgeStyle
 {

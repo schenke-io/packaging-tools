@@ -139,3 +139,47 @@ it('returns false when a process fails', function () {
 
     expect($result)->toBeFalse();
 });
+
+it('can find model paths', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->with(getcwd())->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn('{}');
+
+    $context = new ProjectContext($filesystem);
+
+    // Mocking isDirectory for the getModelPath call - Case 1: app/Models exists
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'app/Models')))->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'src/Models')))->andReturn(false);
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench/app/Models')))->andReturn(false);
+
+    expect($context->getModelPath())->toContain('app/Models');
+});
+
+it('finds src/Models if app/Models is missing', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->with(getcwd())->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn('{}');
+
+    $context = new ProjectContext($filesystem);
+
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'app/Models')))->andReturn(false);
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'src/Models')))->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'workbench/app/Models')))->andReturn(false);
+
+    expect($context->getModelPath())->toContain('src/Models');
+});
+
+it('returns null if no model path exists', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->with(getcwd())->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn('{}');
+
+    $context = new ProjectContext($filesystem);
+
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'Models')))->andReturn(false);
+
+    expect($context->getModelPath())->toBeNull();
+});

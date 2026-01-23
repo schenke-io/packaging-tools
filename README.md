@@ -31,9 +31,17 @@ The main elements are:
 - **Badge** build the badge custom or from existing files
 - **Setup** read the `.packaging-tools.neon` configuration file and modify scripts in `composer.json`
 
+### Basics
+
+#### GeneratesPackageMigrations
+This trait allows your package to easily regenerate its own migrations from the current database schema, ensuring your package's migrations are always in sync with your development environment.
+
 * [Packaging Tools](#packaging-tools)
+    * [Basics](#basics)
+      * [GeneratesPackageMigrations](#generatespackagemigrations)
   * [Installation](#installation)
   * [Concept](#concept)
+  * [Universal Traits](#universal-traits)
   * [Configuration](#configuration)
     * [Initialization](#initialization)
     * [Configuration Keys](#configuration-keys)
@@ -121,6 +129,13 @@ This package follows the following concept:
 - badges are written from data 
 - the build process is controlled by script
 - missing files are explained with full path
+
+## Universal Traits
+
+Universal Traits provide a bridge between your package and the `packaging-tools` infrastructure. By using these traits, you benefit from:
+- **Consistent DX:** Developers familiar with one package using these tools will feel at home with others.
+- **Interoperability:** Traits automatically respect the project context (Laravel App vs. Package) and configuration.
+- **Encapsulation:** Complex logic like model discovery or SQL loading is hidden behind simple, expressive method calls.
 
 ## Configuration
 

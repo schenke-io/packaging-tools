@@ -22,8 +22,15 @@ use SchenkeIo\PackagingTools\Setup\ProjectContext;
  * automatic path detection logic. It serves as the primary registry
  * for the automatic badge generation system.
  *
+ * The badge system supports several categories of metrics:
+ * - Code Quality: Coverage, PhpStan, Infection
+ * - Project Metadata: Version, License, Php, Laravel
+ * - Statistics: Downloads, Tests
+ *
  * New badge types can be added here by defining a new case and updating
  * the `getDriver()` method to return the appropriate driver implementation.
+ * The `detectPath()` method ensures that each badge can automatically
+ * find its source data within a standard Laravel package structure.
  */
 enum BadgeType
 {

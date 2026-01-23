@@ -1,1 +1,0 @@
-/home/srv/LARAVEL/james.intra.dita.de/ubuntu/shell/../md/guidelines.md

@@ -82,3 +82,21 @@ it('handles classes with short namespace', function () {
     $markdown = $classReader->getClassMarkdown('docs');
     expect($markdown)->toContain('### Name');
 });
+
+it('can discover @skill annotation', function () {
+    if (! class_exists('Skill\ClassName')) {
+        eval('namespace Skill; /** @skill my-skill This is a skill */ class ClassName {}');
+    }
+    $classReader = ClassReader::fromClass('Skill\ClassName');
+    $skillData = $classReader->getSkillData();
+
+    expect($skillData)->toBe([
+        'name' => 'my-skill',
+        'description' => 'This is a skill',
+    ]);
+});
+
+it('returns null if no @skill annotation is present', function () {
+    $classReader = ClassReader::fromClass(Dummy::class);
+    expect($classReader->getSkillData())->toBeNull();
+});

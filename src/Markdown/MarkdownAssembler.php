@@ -211,6 +211,25 @@ EOM
         return $piece;
     }
 
+    public function skills(): Pieces\Skills
+    {
+        $piece = new Pieces\Skills;
+        $this->addContentProvider($piece);
+
+        return $piece;
+    }
+
+    /**
+     * Add a table with all skills, their descriptions and links.
+     */
+    public function skillOverview(): Pieces\Skills
+    {
+        $piece = (new Pieces\Skills)->all()->asOverview();
+        $this->addContentProvider($piece);
+
+        return $piece;
+    }
+
     public function image(string $text, string $path, string $url = ''): self
     {
         $this->blocks[] = sprintf('[![%s](%s)](%s)', $text, $path, $url);

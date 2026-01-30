@@ -152,7 +152,8 @@ it('calls various piece methods', function () {
     expect($mda->badges())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\Badges::class)
         ->and($mda->classes())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\Classes::class)
         ->and($mda->tables())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\Tables::class)
-        ->and($mda->toc())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\TOC::class);
+        ->and($mda->toc())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\TOC::class)
+        ->and($mda->skills())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\Skills::class);
 });
 
 it('can add an image', function () {
@@ -165,6 +166,17 @@ it('can add an image', function () {
     $mda = new MarkdownAssembler('src_dir', $projectContext);
     $mda->image('alt', 'path', 'url');
     expect(true)->toBeTrue();
+});
+
+it('can add skill overview', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project']));
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $projectContext = new ProjectContext($filesystem);
+
+    $mda = new MarkdownAssembler('src_dir', $projectContext);
+    expect($mda->skillOverview())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\Skills::class);
 });
 
 it('autoHeader handles missing cover.png', function () {

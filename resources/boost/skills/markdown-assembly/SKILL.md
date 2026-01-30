@@ -1,3 +1,7 @@
+---
+name: Modular Markdown Assembler
+description: Assemble modular documentation and class references
+---
 
 ## Markdown Assembler
 
@@ -8,7 +12,7 @@ The Markdown Assembler allows you to build complex Markdown files (like your REA
 The tool is typically used in a `MakeMarkdown` script. You can generate a boilerplate script using:
 
 ```bash
-# This is usually part of the automated setup
+// This is usually part of the automated setup
 ```
 
 Example of an assembler script:
@@ -17,7 +21,6 @@ Example of an assembler script:
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
 
 $assembler = new MarkdownAssembler('resources/md');
-
 $assembler->addTableOfContents()
     ->addMarkdown('header.md')
     ->badges()->all()

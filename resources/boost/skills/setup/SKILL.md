@@ -1,3 +1,50 @@
+---
+name: Swift Project Setup
+description: Basic installation and configuration
+---
+
+## Installation
+
+Install the package with composer:
+
+```bash
+  composer require schenke-io/packaging-tools
+```
+
+Add the setup command into `composer.json` under scripts.
+
+```json
+{
+    "scripts": {
+        "setup": "SchenkeIo\\PackagingTools\\Setup::handle"
+    }
+}
+```
+
+Start the setup:
+
+```bash
+  composer setup
+```
+
+or initialize the configuration:
+
+```bash
+  composer setup config
+```
+
+## Concept
+
+This package follows the following concept:
+
+- setup and configuration is controlled by a config file
+- manual edits have higher priority than automatics
+- when manual edits would be overwritten there is a warning
+- the documentation is organised out of components which get assembled at the end
+- important classes and methods are marked and documented
+- badges are written from data
+- the build process is controlled by script
+- missing files are explained with full path
 
 ## Configuration
 
@@ -32,38 +79,49 @@ The following keys are supported in `.packaging-tools.neon`:
 ### Detailed Key Purpose
 
 #### `analyse`
+
 Runs PHPStan to perform static analysis on your codebase. It automatically detects if you are using standard PHP or Laravel (Larastan).
 
 #### `coverage`
+
 Requires a test runner to be configured. It adds coverage flags to the test command and checks for the existence of `clover.xml`.
 
 #### `infection`
+
 Runs mutation testing to check the quality of your tests. Requires `infection/infection` to be installed.
 
 #### `markdown`
+
 Points to the script that assembles your documentation. Usually `php workbench/MakeMarkdown.php`. Use `null` to disable.
 
 #### `migrations`
+
 Uses `kitloong/laravel-migrations-generator`. Can be a string in the format `connection:table1,table2`. Use `connection:*` to auto-detect tables from your models. Use `null` to disable.
 
 #### `pint`
+
 Uses Laravel Pint to ensure your code follows the project's styling rules.
 
 #### `quick`
+
 A shortcut to run essential checks quickly. By default it runs `pint`, `test` and `markdown`. You can override the list of tasks by providing an array.
 
 #### `release`
+
 A comprehensive check before releasing a new version. It typically runs `pint`, `analyse`, `test`, `coverage`, `infection` and `markdown`.
 
 #### `sql-cache`
+
 Dumps the current SQLite database to an SQL file (default `tests/Data/seeded.sql`). This can be loaded in tests using the `LoadsSeededSql` trait to significantly speed up database preparation. Can be `true` (default path), a `string` (custom path), or `null` (disabled).
 
 > **Note:** To maintain the previous grouped behavior of running migrations and then sql-cache, you can add `@sql-cache` to your custom build commands or scripts.
 
 #### `test`
+
 Selects the testing framework. Supported values are `pest` and `phpunit`. Use an empty string `''` to disable tests.
 
 #### `customTasks`
+
 Allows you to define your own tasks that can be run via `composer setup <task-name>`.
 
 ### Schema Validation

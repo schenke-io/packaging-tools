@@ -6,8 +6,11 @@ The main elements are:
 - **Markdown** Assemble the readme.md file out of small markdown files, class comments and other sources
 - **Badge** build the badge custom or from existing files
 - **Setup** read the `.packaging-tools.neon` configuration file and modify scripts in `composer.json`
+- **Boost Skills & Guidelines** this package supports the [Laravel Boost](https://laravel.com/docs/12.x/boost) standard for AI-ready packages.
 
-### Basics
+### Skill-based documentation
 
-#### GeneratesPackageMigrations
-This trait allows your package to easily regenerate its own migrations from the current database schema, ensuring your package's migrations are always in sync with your development environment.
+Documentation for this package is partly generated from **AI Skills**. These skills are small, focused pieces of documentation that describe specific features or workflows. They are located in `resources/boost/skills/` and are also compatible with Laravel Boost.
+
+By using these skills, the package ensures that both human developers and AI assistants have clear, actionable instructions on how to use the provided tools.
+

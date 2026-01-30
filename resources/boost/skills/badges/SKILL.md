@@ -1,3 +1,7 @@
+---
+name: Dynamic SVG Badges
+description: Generate SVG badges for project metrics
+---
 
 ## Badges System
 

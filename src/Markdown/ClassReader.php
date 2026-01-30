@@ -146,6 +146,28 @@ class ClassReader
     }
 
     /**
+     * Extract skill name and description from @skill annotation.
+     *
+     * @return array{name: string, description: string}|null
+     */
+    public function getSkillData(): ?array
+    {
+        $classData = $this->getClassDataFromClass($this->classname);
+
+        if (isset($classData['skill']) && is_array($classData['skill']) && count($classData['skill']) > 0) {
+            $skillLine = $classData['skill'][0];
+            if (preg_match('/^(\S+)\s+(.*)$/', (string) $skillLine, $matches)) {
+                return [
+                    'name' => $matches[1],
+                    'description' => $matches[2],
+                ];
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param  class-string  $classname
      * @return array<string,mixed>
      *

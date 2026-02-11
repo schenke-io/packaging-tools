@@ -22,3 +22,23 @@ __old
 GEMINI.md
 
 
+/vendor
+/node_modules
+npm-debug.log
+yarn-error.log
+/app/storage
+/public/storage
+/public/hot
+/public/build
+/storage/pail
+/.junie
+/.gemini
+/.vscode
+/.ai
+auth.json
+.env
+/.idea
+/__old
+/_old
+.run
+/build

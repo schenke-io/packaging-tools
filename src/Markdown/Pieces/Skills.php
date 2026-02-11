@@ -68,16 +68,16 @@ class Skills implements MarkdownPieceInterface
             return $this->getOverviewContent($projectContext);
         }
 
-        $content = '';
+        $contents = [];
         foreach ($this->skills as $skillName) {
             $filePath = $projectContext->fullPath("resources/boost/skills/$skillName/SKILL.md");
             if ($projectContext->filesystem->exists($filePath)) {
                 $skillContent = $projectContext->filesystem->get($filePath);
-                $content .= $this->processContent($skillContent)."\n\n";
+                $contents[] = $this->processContent($skillContent);
             }
         }
 
-        return trim($content);
+        return trim(implode("\n\n", $contents));
     }
 
     protected function getOverviewContent(ProjectContext $projectContext): string

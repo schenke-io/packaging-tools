@@ -71,7 +71,7 @@ it('can build a markdown with various components', function () {
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('files')->andReturn([]);
     $filesystem->shouldReceive('put')->once()->with(Mockery::any(), Mockery::on(function ($content) {
-        return str_contains($content, '# Heading 1') &&
+        return str_contains($content, '# <a name="heading-1"></a>Heading 1') &&
                str_contains($content, '* [Heading 1](#heading-1)') &&
                str_contains($content, 'Manual content');
     }));

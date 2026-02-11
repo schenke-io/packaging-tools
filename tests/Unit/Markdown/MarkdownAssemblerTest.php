@@ -87,6 +87,26 @@ it('can build a markdown with various components', function () {
     ob_get_clean();
 });
 
+it('does not add anchors to headers inside code blocks', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project']));
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('files')->andReturn([]);
+    $filesystem->shouldReceive('put')->once()->with(Mockery::any(), Mockery::on(function ($content) {
+        return str_contains($content, '# <a name="real-header"></a>Real Header') &&
+               ! str_contains($content, '<a name="fake-header"></a>');
+    }));
+
+    $projectContext = new ProjectContext($filesystem);
+
+    $mda = new MarkdownAssembler('src_dir', $projectContext);
+    $mda->addText("# Real Header\n```markdown\n# Fake Header\n```");
+    ob_start();
+    $mda->writeMarkdown('output.md');
+    ob_get_clean();
+});
+
 it('can add content from provider', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project']));

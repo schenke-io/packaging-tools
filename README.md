@@ -51,13 +51,8 @@ By using these skills, the package ensures that both human developers and AI ass
   * [When to use this skill](#when-to-use-this-skill)
   * [AI Guidelines](#ai-guidelines)
     * [Example `core.blade.php`](#example-core-blade-php)
-  * [Package Name](#package-name)
-    * [Features](#features)
   * [AI Skills](#ai-skills)
     * [Example `SKILL.md`](#example-skill-md)
-* [Package Name Development](#package-name-development)
-  * [When to use this skill](#when-to-use-this-skill)
-  * [Features](#features)
   * [Database Migrations](#database-migrations)
     * [Usage](#usage)
     * [Process](#process)
@@ -201,11 +196,11 @@ AI guidelines should provide a short overview of what your package does, outline
 ### <a name="example-core-blade-php"></a>Example `core.blade.php`
 
 ```php
-## <a name="package-name"></a>Package Name
+## Package Name
 
 This package provides [brief description of functionality].
 
-### <a name="features"></a>Features
+### Features
 
 - Feature 1: [clear & short description].
 - Feature 2: [clear & short description]. Example usage:
@@ -231,12 +226,12 @@ name: package-name-development
 description: Build and work with PackageName features, including components and workflows.
 ---
 
-# <a name="package-name-development"></a>Package Name Development
+# Package Name Development
 
-## <a name="when-to-use-this-skill"></a>When to use this skill
+## When to use this skill
 Use this skill when working with PackageName features...
 
-## <a name="features"></a>Features
+## Features
 
 - Feature 1: [clear & short description].
 - Feature 2: [clear & short description]. Example usage:

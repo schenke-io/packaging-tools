@@ -45,9 +45,13 @@ class TOC implements MarkdownPieceInterface
     public function getContent(ProjectContext $projectContext, string $markdownSourceDir): string
     {
         $toc = '';
+        $inCodeBlock = false;
         foreach ($this->blocks as $block) {
             foreach (explode("\n", $block) as $line) {
-                if (preg_match('@^(#+) (.*)$@', $line, $matches)) {
+                if (str_starts_with(trim($line), '```')) {
+                    $inCodeBlock = ! $inCodeBlock;
+                }
+                if (! $inCodeBlock && preg_match('@^(#+) (.*)$@', $line, $matches)) {
                     [, $level, $headingText] = $matches;
                     $headingLevel = strlen($level) - 1;
                     $link = $this->makeLink($headingText);

@@ -54,6 +54,28 @@ it('returns empty string when no blocks are provided', function () {
     expect($content)->toBe('');
 });
 
+it('ignores headers inside code blocks', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/test']));
+    $projectContext = new ProjectContext($filesystem);
+
+    $toc = new TOC;
+    $toc->setBlocks([
+        '# Real Header',
+        "```markdown\n# Fake Header\n```",
+        'Some text',
+        "```\n## Another Fake Header\n```",
+    ]);
+
+    $content = $toc->getContent($projectContext, 'resources/md');
+
+    expect($content)->toBe(
+        "* [Real Header](#real-header)\n"
+    );
+});
+
 it('ignores lines that are not headers', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);

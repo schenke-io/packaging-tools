@@ -344,10 +344,14 @@ EOM
     private function applyAnchors(array $resolvedBlocks): array
     {
         $toc = new Pieces\TOC;
+        $inCodeBlock = false;
         foreach ($resolvedBlocks as &$block) {
             $lines = explode("\n", $block);
             foreach ($lines as &$line) {
-                if (preg_match('/^(#+)\s+(.*)$/', $line, $matches)) {
+                if (str_starts_with(trim($line), '```')) {
+                    $inCodeBlock = ! $inCodeBlock;
+                }
+                if (! $inCodeBlock && preg_match('/^(#+)\s+(.*)$/', $line, $matches)) {
                     $level = $matches[1];
                     $text = $matches[2];
                     if (! str_starts_with($text, '<a name="')) {

@@ -126,7 +126,7 @@ class MakeBadge
     }
 
     /**
-     * Create a PHPStan badge from a neon configuration file.
+     * Create a PHPStan badge from a neon configuration file and a specific color.
      *
      * If no path is provided, it attempts to detect it automatically.
      *

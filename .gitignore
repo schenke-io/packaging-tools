@@ -42,3 +42,8 @@ auth.json
 /_old
 .run
 /build
+CLAUDE.md
+.CLAUDE.md
+.GEMINI.md
+AGENTS.md
+

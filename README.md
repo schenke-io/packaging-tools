@@ -99,14 +99,14 @@ By using these skills, the package ensures that both human developers and AI ass
     * [Config](#config)
       * [Public methods of Config](#public-methods-of-config)
 
-| Title                                                                               | Description                                                                  |
-|-------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
-| [Dynamic SVG Badges](resources/boost/skills/badges/SKILL.md)                        | Generate SVG badges for project metrics                                      |
-| [AI-Ready Boost Guidelines](resources/boost/skills/guidelines/SKILL.md)             | Write AI guidelines and skills for projects based on Laravel Boost standards |
-| [Elegant Migration Management](resources/boost/skills/imported-migrations/SKILL.md) | Clean up and manage database migrations                                      |
-| [Modular Markdown Assembler](resources/boost/skills/markdown-assembly/SKILL.md)     | Assemble modular documentation and class references                          |
-| [Swift Project Setup](resources/boost/skills/setup/SKILL.md)                        | Basic installation and configuration                                         |
-| [Turbo Speed Seeding](resources/boost/skills/speed-seeding/SKILL.md)                | Speeds up database preparation in tests by loading a pre-generated SQL dump  |
+| Title                                                                                                      | Description                                                                  |
+|------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| [packaging_tools_badges](resources/boost/skills/packaging_tools_badges/SKILL.md)                           | Generate SVG badges for project metrics                                      |
+| [packaging_tools_guidelines](resources/boost/skills/packaging_tools_guidelines/SKILL.md)                   | Write AI guidelines and skills for projects based on Laravel Boost standards |
+| [packaging_tools_imported_migrations](resources/boost/skills/packaging_tools_imported_migrations/SKILL.md) | Clean up and manage database migrations                                      |
+| [packaging_tools_markdown_assembly](resources/boost/skills/packaging_tools_markdown_assembly/SKILL.md)     | Assemble modular documentation and class references                          |
+| [packaging_tools_setup](resources/boost/skills/packaging_tools_setup/SKILL.md)                             | Basic installation and configuration                                         |
+| [packaging_tools_speed_seeding](resources/boost/skills/packaging_tools_speed_seeding/SKILL.md)             | Speeds up database preparation in tests by loading a pre-generated SQL dump  |
 
 ## <a name="badges-system"></a>Badges System
 
@@ -135,7 +135,7 @@ MakeBadge::makePhpVersionBadge();
 
 // or with explicit paths:
 MakeBadge::makeCoverageBadge('path/to/clover.xml');
-MakeBadge::makePhpStanBadge('path/to/phpstan.neon');
+MakeBadge::makePhpStanBadge('path/to/phpstan.neon', '2563eb');
 MakeBadge::makeInfectionBadge('path/to/infection-report.json');
 ```
 
@@ -642,17 +642,17 @@ Central class for generating and storing SVG badges.
 
 #### <a name="public-methods-of-makebadge"></a>Public methods of MakeBadge
 
-| method              | summary                                                      |
-|---------------------|--------------------------------------------------------------|
-| auto                | Automatically detect and generate all supported badge types. |
-| define              | Create a new MakeBadge instance with manual definitions.     |
-| fromDriver          | Create a new MakeBadge instance using a driver.              |
-| makeCoverageBadge   | Create a coverage badge from a clover.xml file.              |
-| makePhpStanBadge    | Create a PHPStan badge from a neon configuration file.       |
-| makeInfectionBadge  | Create an Infection badge from a JSON report.                |
-| makePhpVersionBadge | Create a PHP version badge from composer.json.               |
-| info                | Get the informational summary string for the badge.          |
-| store               | Generate the SVG and store it in a file.                     |
+| method              | summary                                                                     |
+|---------------------|-----------------------------------------------------------------------------|
+| auto                | Automatically detect and generate all supported badge types.                |
+| define              | Create a new MakeBadge instance with manual definitions.                    |
+| fromDriver          | Create a new MakeBadge instance using a driver.                             |
+| makeCoverageBadge   | Create a coverage badge from a clover.xml file.                             |
+| makePhpStanBadge    | Create a PHPStan badge from a neon configuration file and a specific color. |
+| makeInfectionBadge  | Create an Infection badge from a JSON report.                               |
+| makePhpVersionBadge | Create a PHP version badge from composer.json.                              |
+| info                | Get the informational summary string for the badge.                         |
+| store               | Generate the SVG and store it in a file.                                    |
 
 ### <a name="config"></a>Config
 

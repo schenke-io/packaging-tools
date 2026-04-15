@@ -1,5 +1,5 @@
 ---
-name: packaging_tools_badges
+name: packaging-tools-badges
 description: Generate SVG badges for project metrics
 ---
 

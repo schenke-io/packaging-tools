@@ -1,5 +1,5 @@
 ---
-name: packaging_tools_markdown_assembly
+name: packaging-tools-markdown-assembly
 description: Assemble modular documentation and class references into a README
 ---
 

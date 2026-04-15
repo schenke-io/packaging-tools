@@ -1,5 +1,5 @@
 ---
-name: packaging_tools_guidelines
+name: packaging-tools-guidelines
 description: Write AI guidelines and skills for projects based on Laravel Boost standards
 ---
 
@@ -47,7 +47,7 @@ Add a `resources/boost/skills/{skill-name}/SKILL.md` file. Required frontmatter:
 
 ```markdown
 ---
-name: package_name_feature
+name: package-name-feature
 description: Build and work with PackageName features.
 ---
 

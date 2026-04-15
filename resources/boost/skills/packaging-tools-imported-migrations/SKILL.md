@@ -1,5 +1,5 @@
 ---
-name: packaging_tools_imported_migrations
+name: packaging-tools-imported-migrations
 description: Regenerate package migrations from a live database schema
 ---
 

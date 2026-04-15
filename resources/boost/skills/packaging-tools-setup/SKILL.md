@@ -1,5 +1,5 @@
 ---
-name: packaging_tools_setup
+name: packaging-tools-setup
 description: Install, configure, and run packaging tools via composer scripts
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: packaging_tools_speed_seeding
+name: packaging-tools-speed-seeding
 description: Speed up tests by loading a pre-generated SQL dump instead of running migrations
 ---
 

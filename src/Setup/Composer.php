@@ -115,13 +115,13 @@ class Composer
         $foundTools = [];
 
         $tools = [
-            'pestphp/pest' => ['test', 'pest'],
-            'phpunit/phpunit' => ['test', 'phpunit'],
             'phpstan/phpstan' => ['analyse', true],
             'phpstan/phpstan-phpunit' => ['analyse', true],
             'larastan/larastan' => ['analyse', true],
             'laravel/pint' => ['pint', true],
             'infection/infection' => ['infection', true],
+            'phpunit/phpunit' => ['test', 'phpunit'],
+            'pestphp/pest' => ['test', 'pest'],
         ];
 
         foreach ($tools as $package => $config) {

@@ -7,6 +7,7 @@ use Mockery;
 use SchenkeIo\PackagingTools\Enums\BadgeStyle;
 use SchenkeIo\PackagingTools\Markdown\Pieces\Badges;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
+use Symfony\Component\Finder\SplFileInfo;
 
 it('can render various badges', function () {
     $filesystem = Mockery::mock(Filesystem::class);
@@ -86,7 +87,7 @@ it('does not duplicate automated badges if manually added', function () {
 it('does not duplicate test badges', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('exists')->andReturn(true);
-    $filesystem->shouldReceive('files')->andReturn([new \Symfony\Component\Finder\SplFileInfo('.github/workflows/run-tests.yml', '.github/workflows', 'run-tests.yml')]);
+    $filesystem->shouldReceive('files')->andReturn([new SplFileInfo('.github/workflows/run-tests.yml', '.github/workflows', 'run-tests.yml')]);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project']));
     $projectContext = new ProjectContext($filesystem);

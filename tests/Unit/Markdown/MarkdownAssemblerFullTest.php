@@ -71,7 +71,7 @@ it('can add classes via glob', function () {
     $mda = new MarkdownAssembler('docs', $this->projectContext);
     try {
         $mda->classes()->glob('src/*.php');
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         // ClassReader will likely fail because File1.php content is mocked as 'content of File1.php'
     }
 

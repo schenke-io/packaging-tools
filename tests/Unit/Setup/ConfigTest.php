@@ -1,8 +1,12 @@
 <?php
 
 use Illuminate\Filesystem\Filesystem;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
+use SchenkeIo\PackagingTools\Setup\Definitions\BaseDefinition;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
+use SchenkeIo\PackagingTools\Setup\Requirements;
 
 it('Config throws exception on invalid neon', function () {
     $filesystem = Mockery::mock(Filesystem::class);
@@ -202,11 +206,11 @@ it('updates existing neon file with deltas', function () {
     expect($output)->toContain('updated');
 });
 
-class CustomTask extends \SchenkeIo\PackagingTools\Setup\Definitions\BaseDefinition
+class CustomTask extends BaseDefinition
 {
-    public function schema(): \Nette\Schema\Schema
+    public function schema(): Schema
     {
-        return \Nette\Schema\Expect::string();
+        return Expect::string();
     }
 
     public function explainConfig(): string
@@ -214,9 +218,9 @@ class CustomTask extends \SchenkeIo\PackagingTools\Setup\Definitions\BaseDefinit
         return '';
     }
 
-    protected function getPackages(Config $config): \SchenkeIo\PackagingTools\Setup\Requirements
+    protected function getPackages(Config $config): Requirements
     {
-        return new \SchenkeIo\PackagingTools\Setup\Requirements;
+        return new Requirements;
     }
 
     protected function getCommands(Config $config): string|array

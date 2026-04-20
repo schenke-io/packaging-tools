@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Filesystem\Filesystem;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
@@ -79,7 +80,7 @@ it('enables group task automatically', function () {
     $mockContext = Mockery::mock(ProjectContext::class);
     $mockContext->projectRoot = '/root';
     $mockContext->shouldReceive('fullPath')->andReturnUsing(fn ($p) => "/root/$p");
-    $filesystem = Mockery::mock(\Illuminate\Filesystem\Filesystem::class);
+    $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('exists')->andReturn(false);
     $mockContext->filesystem = $filesystem;
     $mockContext->composerJson = [];
@@ -111,7 +112,7 @@ it('returns empty packages and commands by default', function () {
     $mockContext = Mockery::mock(ProjectContext::class);
     $mockContext->projectRoot = '/root';
     $mockContext->shouldReceive('fullPath')->andReturnUsing(fn ($p) => "/root/$p");
-    $filesystem = Mockery::mock(\Illuminate\Filesystem\Filesystem::class);
+    $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('exists')->andReturn(false);
     $mockContext->filesystem = $filesystem;
     $mockContext->composerJson = [];

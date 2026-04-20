@@ -119,7 +119,7 @@ it('handles Neon decode failure in writeConfig', function () {
             if ($count === 1) {
                 return 'pint: true';
             }
-            throw new \Exception('fail');
+            throw new Exception('fail');
         });
 
     $filesystem->shouldReceive('put')->andReturn(true);

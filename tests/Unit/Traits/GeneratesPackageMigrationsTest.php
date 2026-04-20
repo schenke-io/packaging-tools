@@ -11,6 +11,8 @@ use Mockery as m;
 use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
 use SchenkeIo\PackagingTools\Traits\GeneratesPackageMigrations;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\SplFileInfo;
 
 class MockCommand extends Command
 {
@@ -51,7 +53,7 @@ it('generates migrations with connection and tables from config', function () {
     $command = m::mock(MockCommand::class)->makePartial();
     $ref = new \ReflectionProperty(Command::class, 'output');
     $ref->setAccessible(true);
-    $ref->setValue($command, m::mock(\Symfony\Component\Console\Output\OutputInterface::class));
+    $ref->setValue($command, m::mock(OutputInterface::class));
 
     $command->shouldReceive('call')->with('migrate:generate', m::on(function ($args) {
         return str_contains($args['--path'], 'database/migrations') &&
@@ -77,10 +79,10 @@ it('generates migrations with connection only and uses model discovery', functio
     $command = m::mock(MockCommand::class)->makePartial();
     $ref = new \ReflectionProperty(Command::class, 'output');
     $ref->setAccessible(true);
-    $ref->setValue($command, m::mock(\Symfony\Component\Console\Output\OutputInterface::class));
+    $ref->setValue($command, m::mock(OutputInterface::class));
 
     // Mock model discovery
-    $file = m::mock(\Symfony\Component\Finder\SplFileInfo::class);
+    $file = m::mock(SplFileInfo::class);
     $file->shouldReceive('getExtension')->andReturn('php');
     $file->shouldReceive('getRealPath')->andReturn('/path/to/models/MockModel.php');
 
@@ -119,10 +121,10 @@ it('generates migrations with connection:* and uses model discovery', function (
     $command = m::mock(MockCommand::class)->makePartial();
     $ref = new \ReflectionProperty(Command::class, 'output');
     $ref->setAccessible(true);
-    $ref->setValue($command, m::mock(\Symfony\Component\Console\Output\OutputInterface::class));
+    $ref->setValue($command, m::mock(OutputInterface::class));
 
     // Mock model discovery
-    $file = m::mock(\Symfony\Component\Finder\SplFileInfo::class);
+    $file = m::mock(SplFileInfo::class);
     $file->shouldReceive('getExtension')->andReturn('php');
     $file->shouldReceive('getRealPath')->andReturn('/path/to/models/MockModel.php');
 
@@ -161,7 +163,7 @@ it('handles null config by using model discovery', function () {
     $command = m::mock(MockCommand::class)->makePartial();
     $ref = new \ReflectionProperty(Command::class, 'output');
     $ref->setAccessible(true);
-    $ref->setValue($command, m::mock(\Symfony\Component\Console\Output\OutputInterface::class));
+    $ref->setValue($command, m::mock(OutputInterface::class));
 
     // for MigrationCleaner
     File::shouldReceive('isDirectory')->andReturn(false);

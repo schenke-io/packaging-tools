@@ -1,12 +1,13 @@
 <?php
 
+use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\Definitions\CoverageDefinition;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
 
 test('schema returns a bool schema', function () {
     $definition = new CoverageDefinition;
-    expect($definition->schema())->toBeInstanceOf(\Nette\Schema\Schema::class);
+    expect($definition->schema())->toBeInstanceOf(Schema::class);
 });
 
 test('explainConfig returns a string', function () {

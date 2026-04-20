@@ -16,7 +16,7 @@ it('silently skips in auto when error occurs', function () {
     // Actually, I can't mock Enum cases easily.
     // But I can make the filesystem throw when get() is called for the driver.
 
-    $filesystem->shouldReceive('get')->andThrow(new \Exception('fail'));
+    $filesystem->shouldReceive('get')->andThrow(new Exception('fail'));
     $filesystem->shouldReceive('files')->andReturn([]);
     $filesystem->shouldReceive('allFiles')->andReturn([]);
 

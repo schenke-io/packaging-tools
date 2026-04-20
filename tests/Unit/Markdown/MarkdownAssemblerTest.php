@@ -1,9 +1,14 @@
 <?php
 
 use Illuminate\Filesystem\Filesystem;
+use SchenkeIo\PackagingTools\Contracts\MarkdownPieceInterface;
 use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
+use SchenkeIo\PackagingTools\Markdown\Pieces\Badges;
+use SchenkeIo\PackagingTools\Markdown\Pieces\Classes;
+use SchenkeIo\PackagingTools\Markdown\Pieces\Skills;
 use SchenkeIo\PackagingTools\Markdown\Pieces\Tables;
+use SchenkeIo\PackagingTools\Markdown\Pieces\TOC;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
 
 it('Table throws exception on unsupported extension', function () {
@@ -117,7 +122,7 @@ it('can add content from provider', function () {
 
     $projectContext = new ProjectContext($filesystem);
 
-    $provider = Mockery::mock(\SchenkeIo\PackagingTools\Contracts\MarkdownPieceInterface::class);
+    $provider = Mockery::mock(MarkdownPieceInterface::class);
     $provider->shouldReceive('getContent')->andReturn('Provider Content');
 
     $mda = new MarkdownAssembler('src_dir', $projectContext);
@@ -169,11 +174,11 @@ it('calls various piece methods', function () {
     $projectContext = new ProjectContext($filesystem);
 
     $mda = new MarkdownAssembler('src_dir', $projectContext);
-    expect($mda->badges())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\Badges::class)
-        ->and($mda->classes())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\Classes::class)
-        ->and($mda->tables())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\Tables::class)
-        ->and($mda->toc())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\TOC::class)
-        ->and($mda->skills())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\Skills::class);
+    expect($mda->badges())->toBeInstanceOf(Badges::class)
+        ->and($mda->classes())->toBeInstanceOf(Classes::class)
+        ->and($mda->tables())->toBeInstanceOf(Tables::class)
+        ->and($mda->toc())->toBeInstanceOf(TOC::class)
+        ->and($mda->skills())->toBeInstanceOf(Skills::class);
 });
 
 it('can add an image', function () {
@@ -196,7 +201,7 @@ it('can add skill overview', function () {
     $projectContext = new ProjectContext($filesystem);
 
     $mda = new MarkdownAssembler('src_dir', $projectContext);
-    expect($mda->skillOverview())->toBeInstanceOf(\SchenkeIo\PackagingTools\Markdown\Pieces\Skills::class);
+    expect($mda->skillOverview())->toBeInstanceOf(Skills::class);
 });
 
 it('autoHeader handles missing cover.png', function () {

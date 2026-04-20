@@ -3,6 +3,7 @@
 use Illuminate\Filesystem\Filesystem;
 use SchenkeIo\PackagingTools\Markdown\MakerScriptBuilder;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
+use Symfony\Component\Finder\SplFileInfo;
 
 beforeEach(function () {
     $this->filesystem = Mockery::mock(Filesystem::class);
@@ -16,18 +17,18 @@ it('builds a console command for app project with components', function () {
     $this->filesystem->shouldReceive('isDirectory')->with('/root/workbench/resources/md')->andReturn(false);
     $this->filesystem->shouldReceive('isDirectory')->with('/root/resources/md')->andReturn(true);
 
-    $file1 = Mockery::mock(\Symfony\Component\Finder\SplFileInfo::class);
+    $file1 = Mockery::mock(SplFileInfo::class);
     $file1->shouldReceive('getExtension')->andReturn('md');
     $file1->shouldReceive('getFilename')->andReturn('header.md');
 
-    $file2 = Mockery::mock(\Symfony\Component\Finder\SplFileInfo::class);
+    $file2 = Mockery::mock(SplFileInfo::class);
     $file2->shouldReceive('getExtension')->andReturn('md');
     $file2->shouldReceive('getFilename')->andReturn('usage.md');
 
-    $file3 = Mockery::mock(\Symfony\Component\Finder\SplFileInfo::class);
+    $file3 = Mockery::mock(SplFileInfo::class);
     $file3->shouldReceive('getExtension')->andReturn('txt');
 
-    $file4 = Mockery::mock(\Symfony\Component\Finder\SplFileInfo::class);
+    $file4 = Mockery::mock(SplFileInfo::class);
     $file4->shouldReceive('getExtension')->andReturn('md');
     $file4->shouldReceive('getFilename')->andReturn('other.md');
 
@@ -54,15 +55,15 @@ it('builds a plain script with components', function () {
     $this->filesystem->shouldReceive('isDirectory')->with('/root/resources/md')->andReturn(true);
     $this->filesystem->shouldReceive('isDirectory')->with('/root/workbench/app')->andReturn(false);
 
-    $file1 = Mockery::mock(\Symfony\Component\Finder\SplFileInfo::class);
+    $file1 = Mockery::mock(SplFileInfo::class);
     $file1->shouldReceive('getExtension')->andReturn('md');
     $file1->shouldReceive('getFilename')->andReturn('header.md');
 
-    $file2 = Mockery::mock(\Symfony\Component\Finder\SplFileInfo::class);
+    $file2 = Mockery::mock(SplFileInfo::class);
     $file2->shouldReceive('getExtension')->andReturn('md');
     $file2->shouldReceive('getFilename')->andReturn('usage.md');
 
-    $file3 = Mockery::mock(\Symfony\Component\Finder\SplFileInfo::class);
+    $file3 = Mockery::mock(SplFileInfo::class);
     $file3->shouldReceive('getExtension')->andReturn('md');
     $file3->shouldReceive('getFilename')->andReturn('other.md');
 

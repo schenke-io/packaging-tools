@@ -2,7 +2,10 @@
 
 use Illuminate\Filesystem\Filesystem;
 use SchenkeIo\PackagingTools\Setup\Composer;
+use SchenkeIo\PackagingTools\Setup\Config;
+use SchenkeIo\PackagingTools\Setup\Definitions\BaseDefinition;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
+use SchenkeIo\PackagingTools\Setup\Requirements;
 
 it('can initialize Composer', function () {
     $filesystem = Mockery::mock(Filesystem::class);
@@ -68,7 +71,7 @@ it('can set commands and packages', function () {
     $projectContext = new ProjectContext($filesystem);
     $composer = new Composer($projectContext);
 
-    $config = new \SchenkeIo\PackagingTools\Setup\Config($projectContext);
+    $config = new Config($projectContext);
     $task = $config->taskRegistry->getTask('test');
 
     $composer->setCommands('test', $task, $config);
@@ -113,7 +116,7 @@ it('identifies pending scripts', function () {
 
     $projectContext = new ProjectContext($filesystem);
     $composer = new Composer($projectContext);
-    $config = new \SchenkeIo\PackagingTools\Setup\Config(['test' => 'pest'], $projectContext);
+    $config = new Config(['test' => 'pest'], $projectContext);
 
     $pending = $composer->getPendingScripts($config);
 
@@ -135,7 +138,7 @@ it('identifies discrepancies in existing scripts', function () {
 
     $projectContext = new ProjectContext($filesystem);
     $composer = new Composer($projectContext);
-    $config = new \SchenkeIo\PackagingTools\Setup\Config(['test' => 'pest'], $projectContext);
+    $config = new Config(['test' => 'pest'], $projectContext);
 
     $pending = $composer->getPendingScripts($config);
 
@@ -157,7 +160,7 @@ it('identifies missing or empty scripts as missing', function ($currentValue) {
 
     $projectContext = new ProjectContext($filesystem);
     $composer = new Composer($projectContext);
-    $config = new \SchenkeIo\PackagingTools\Setup\Config(['test' => 'pest'], $projectContext);
+    $config = new Config(['test' => 'pest'], $projectContext);
 
     $pending = $composer->getPendingScripts($config);
 
@@ -183,7 +186,7 @@ it('identifies pending packages', function () {
 
     $projectContext = new ProjectContext($filesystem);
     $composer = new Composer($projectContext);
-    $config = new \SchenkeIo\PackagingTools\Setup\Config(['test' => 'pest'], $projectContext);
+    $config = new Config(['test' => 'pest'], $projectContext);
 
     $pending = $composer->getPendingPackages($config);
 
@@ -200,11 +203,11 @@ it('can set non-dev packages', function () {
     $projectContext = new ProjectContext($filesystem);
     $composer = new Composer($projectContext);
 
-    $config = new \SchenkeIo\PackagingTools\Setup\Config($projectContext);
+    $config = new Config($projectContext);
 
-    $mockTask = Mockery::mock(\SchenkeIo\PackagingTools\Setup\Definitions\BaseDefinition::class)->makePartial();
+    $mockTask = Mockery::mock(BaseDefinition::class)->makePartial();
     $mockTask->shouldReceive('packages')->andReturn(
-        \SchenkeIo\PackagingTools\Setup\Requirements::require('some/package')
+        Requirements::require('some/package')
     );
 
     $composer->setPackages($mockTask, $config);

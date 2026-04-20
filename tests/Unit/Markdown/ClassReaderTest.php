@@ -4,6 +4,7 @@ use Illuminate\Filesystem\Filesystem;
 use SchenkeIo\PackagingTools\Markdown\ClassReader;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
 use SchenkeIo\PackagingTools\Tests\Unit\Markdown\Dummy;
+use SchenkeIo\PackagingTools\Tests\Unit\Markdown\NoDocDummy;
 
 it('can get class from filename', function () {
     // relativ path to root
@@ -69,7 +70,7 @@ it('includes method markdown files if @markdown is present on method', function 
 });
 
 it('can handle class with no docblock', function () {
-    $classReader = ClassReader::fromClass(\SchenkeIo\PackagingTools\Tests\Unit\Markdown\NoDocDummy::class);
+    $classReader = ClassReader::fromClass(NoDocDummy::class);
     $markdown = $classReader->getClassMarkdown('docs');
     expect($markdown)->toContain('### NoDocDummy');
 });

@@ -27,7 +27,7 @@ it('handles exception in getC2pDeltas', function () {
     $config = new Config(null, $this->projectContext);
 
     // Now make it fail for getC2pDeltas
-    $this->filesystem->shouldReceive('get')->with(Mockery::on(fn ($path) => str_ends_with($path, '.packaging-tools.neon')))->andThrow(new \Exception('error'));
+    $this->filesystem->shouldReceive('get')->with(Mockery::on(fn ($path) => str_ends_with($path, '.packaging-tools.neon')))->andThrow(new Exception('error'));
 
     expect($config->getC2pDeltas())->toBeArray();
 });

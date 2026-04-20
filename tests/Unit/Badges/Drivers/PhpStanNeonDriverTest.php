@@ -10,7 +10,7 @@ test('getSubject returns PHPStan', function () {
 });
 
 test('getStatus detects PHPStan level from various indentations', function (string $content, string $expectedLevel) {
-    $filesystem = \Mockery::mock(Filesystem::class);
+    $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('exists')->andReturn(true);
     $filesystem->shouldReceive('get')->with(Mockery::pattern('/composer\.json$/'))->andReturn(json_encode(['name' => 'a/b']));

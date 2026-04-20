@@ -1,5 +1,6 @@
 <?php
 
+use SchenkeIo\PackagingTools\Setup\Definitions\GroupDefinition;
 use SchenkeIo\PackagingTools\Setup\Definitions\ReleaseDefinition;
 
 test('ReleaseDefinition constructor initializes with correct groups', function () {
@@ -9,5 +10,5 @@ test('ReleaseDefinition constructor initializes with correct groups', function (
 
 test('ReleaseDefinition extends GroupDefinition', function () {
     $releaseDefinition = new ReleaseDefinition;
-    expect($releaseDefinition)->toBeInstanceOf(SchenkeIo\PackagingTools\Setup\Definitions\GroupDefinition::class);
+    expect($releaseDefinition)->toBeInstanceOf(GroupDefinition::class);
 });

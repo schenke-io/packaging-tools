@@ -40,7 +40,7 @@ test('extracts project-wide coverage instead of the first file', function () {
 </coverage>
 XML;
 
-    $filesystem = \Mockery::mock(Filesystem::class);
+    $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('exists')->andReturn(true);
     $filesystem->shouldReceive('get')->with(Mockery::pattern('/composer\.json$/'))->andReturn(json_encode(['name' => 'a/b']));

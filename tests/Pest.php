@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Http;
 use SchenkeIo\PackagingTools\Enums\BadgeStyle;
 use SchenkeIo\PackagingTools\Setup\Config;
 
@@ -10,7 +11,7 @@ uses(BadgeStyle::class);
 afterEach(function () {
     Config::$silent = true;
     Mockery::close();
-    Illuminate\Support\Facades\Http::clearResolvedInstances();
+    Http::clearResolvedInstances();
 });
 
 /*

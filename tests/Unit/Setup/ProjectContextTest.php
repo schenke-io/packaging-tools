@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Filesystem\Filesystem;
+use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
 
 it('can initialize ProjectContext', function () {
@@ -239,7 +240,7 @@ it('throws exception if no model path exists', function () {
     $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'Models')))->andReturn(false);
 
     $context->getModelPath();
-})->throws(\SchenkeIo\PackagingTools\Exceptions\PackagingToolException::class);
+})->throws(PackagingToolException::class);
 
 it('detects laravel projects', function () {
     // case 1: type is project

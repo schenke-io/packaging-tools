@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\File;
 use Mockery;
+use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\MigrationHelper;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
@@ -100,7 +101,7 @@ test('getTablesFromModels ignores classes that throw exceptions', function () {
 test('getTablesFromModels returns empty array when no models found', function () {
     $projectContext = Mockery::mock(ProjectContext::class);
     $projectContext->shouldReceive('getModelPath')
-        ->andThrow(\SchenkeIo\PackagingTools\Exceptions\PackagingToolException::modelPathNotFound());
+        ->andThrow(PackagingToolException::modelPathNotFound());
 
     $tables = MigrationHelper::getTablesFromModels($projectContext);
     expect($tables)->toBeEmpty();

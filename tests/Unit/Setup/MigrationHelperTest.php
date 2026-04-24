@@ -150,3 +150,25 @@ test('getTablesFromModels handles exception in reflection', function () {
     $tables = MigrationHelper::getTablesFromModels($projectContext);
     expect($tables)->toBeEmpty();
 });
+
+test('getClassNameFromFile returns correct class name', function ($content, $expected) {
+    $tempFile = tempnam(sys_get_temp_dir(), 'php_test');
+    file_put_contents($tempFile, $content);
+
+    File::shouldReceive('get')->with($tempFile)->andReturn($content);
+
+    $className = MigrationHelper::getClassNameFromFile($tempFile);
+
+    unlink($tempFile);
+
+    expect($className)->toBe($expected);
+})->with([
+    ['<?php namespace App\Models; class User {}', 'App\Models\User'],
+    ['<?php namespace App\Models\Sub; class Profile {}', 'App\Models\Sub\Profile'],
+    ['<?php class NoNamespace {}', 'NoNamespace'],
+    ['<?php namespace App; class Single {}', 'App\Single'],
+    ['<?php namespace App \ Models; class Spaced {}', 'App\Models\Spaced'],
+    ['<?php namespace App; $x = Other::class; class User {}', 'App\User'],
+    ['<?php namespace App { class Braced {} }', 'App\Braced'],
+    ['<?php /* namespace is sometimes in comments */ namespace App; class Commented {}', 'App\Commented'],
+]);

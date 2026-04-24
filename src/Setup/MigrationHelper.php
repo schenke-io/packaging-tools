@@ -117,17 +117,30 @@ class MigrationHelper
     public static function getClassNameFromFile(string $path): ?string
     {
         $content = File::get($path);
-        $namespace = null;
-        $class = null;
+        $tokens = token_get_all($content);
+        $namespace = '';
+        $class = '';
 
-        if (preg_match('/namespace\s+([^;]+);/', $content, $matches)) {
-            $namespace = trim($matches[1]);
+        for ($i = 0; $i < count($tokens); $i++) {
+            if (is_array($tokens[$i]) && $tokens[$i][0] === T_NAMESPACE) {
+                for ($j = $i + 1; $j < count($tokens); $j++) {
+                    if (is_array($tokens[$j]) && in_array($tokens[$j][0], [T_NAME_QUALIFIED, T_STRING, T_NS_SEPARATOR])) {
+                        $namespace .= $tokens[$j][1];
+                    } elseif ($tokens[$j] === ';' || $tokens[$j] === '{') {
+                        break;
+                    }
+                }
+            }
+            if (is_array($tokens[$i]) && $tokens[$i][0] === T_CLASS) {
+                for ($j = $i + 1; $j < count($tokens); $j++) {
+                    if (is_array($tokens[$j]) && $tokens[$j][0] === T_STRING) {
+                        $class = $tokens[$j][1];
+                        break 2;
+                    }
+                }
+            }
         }
 
-        if (preg_match('/\bclass\s+(\w+)/', $content, $matches)) {
-            $class = $matches[1];
-        }
-
-        return ($namespace && $class) ? $namespace.'\\'.$class : null;
+        return $class ? ($namespace ? $namespace.'\\'.$class : $class) : null;
     }
 }

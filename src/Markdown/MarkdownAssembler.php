@@ -76,7 +76,8 @@ class MarkdownAssembler
 
     public function __construct(
         protected readonly string $markdownSourceDir,
-        protected readonly ProjectContext $projectContext = new ProjectContext
+        protected readonly ProjectContext $projectContext = new ProjectContext,
+        protected readonly bool $isPrivate = false
     ) {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         $caller = $trace[0];
@@ -182,7 +183,7 @@ EOM
 
     public function badges(): Pieces\Badges
     {
-        $piece = new Pieces\Badges;
+        $piece = (new Pieces\Badges)->setIsPrivate($this->isPrivate);
         $this->addContentProvider($piece);
 
         return $piece;
@@ -251,7 +252,9 @@ EOM
             }
         }
         if (! $foundBadgeBlock && ! $this->autoHeaderUsed) {
-            $badgeContent = (new Pieces\Badges)->getContent($this->projectContext, $this->markdownSourceDir);
+            $badgeContent = (new Pieces\Badges)
+                ->setIsPrivate($this->isPrivate)
+                ->getContent($this->projectContext, $this->markdownSourceDir);
         }
 
         return $badgeContent ? trim($badgeContent)."\n\n" : '';

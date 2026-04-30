@@ -37,6 +37,15 @@ class Badges implements MarkdownPieceInterface
      */
     protected array $badgeBuffer = [];
 
+    protected bool $isPrivate = false;
+
+    public function setIsPrivate(bool $isPrivate): self
+    {
+        $this->isPrivate = $isPrivate;
+
+        return $this;
+    }
+
     /**
      * adds a version badge from packagist to the buffer
      */
@@ -131,6 +140,9 @@ class Badges implements MarkdownPieceInterface
          * automated badges from BadgeType
          */
         foreach (BadgeType::cases() as $type) {
+            if ($this->isPrivate && ($type == BadgeType::Version || $type == BadgeType::Downloads || $type == BadgeType::Php)) {
+                continue;
+            }
             $driver = $type->getDriver();
             $path = $type->detectPath($projectContext);
             if (! $path) {

@@ -218,3 +218,19 @@ it('handles missing composer.json in renderPhp', function () {
     $content = $badges->getContent($projectContext, 'resources/md');
     expect($content)->toBe('');
 });
+
+it('omits packagist-related badges when isPrivate is true', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('files')->andReturn([]);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('get')->andReturn(json_encode(['name' => 'test/project']));
+    $projectContext = new ProjectContext($filesystem);
+
+    $badges = (new Badges)->setIsPrivate(true);
+    $content = $badges->getContent($projectContext, 'resources/md');
+
+    expect($content)->not()->toContain('https://img.shields.io/packagist/v/')
+        ->and($content)->not()->toContain('https://img.shields.io/packagist/dt/')
+        ->and($content)->not()->toContain('https://img.shields.io/packagist/php-v/');
+});

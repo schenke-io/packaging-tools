@@ -268,7 +268,7 @@ $assembler->skillOverview();
 ### <a name="when-to-use-this-skill"></a>When to use this skill
 Use when you want to keep your package's migration files in sync with a development database. This is a "database-first" workflow: you modify the database manually, then regenerate the migrations from it.
 
-Requires `kitloong/laravel-migrations-generator` to be installed.
+Requires `kitloong/laravel-migrations-generator` to be installed (it is recommended to install it as a dev-dependency).
 
 ### <a name="quick-start"></a>Quick start
 
@@ -293,7 +293,7 @@ Examples:
 
 ### <a name="process"></a>Process
 
-1. Checks that `kitloong/laravel-migrations-generator` is installed.
+1. Checks that `kitloong/laravel-migrations-generator` is installed. If missing, it outputs an error message with installation instructions.
 2. Reads the connection and table list from `.packaging-tools.neon`.
 3. If `*` is used, scans for Eloquent models in (in priority order):
    - `workbench/app/Models`

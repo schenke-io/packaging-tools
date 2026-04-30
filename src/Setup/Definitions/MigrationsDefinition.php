@@ -31,13 +31,22 @@ class MigrationsDefinition extends BaseDefinition
 
     protected function getPackages(Config $config): Requirements
     {
-        return Requirements::dev('kitloong/laravel-migrations-generator');
+        return new Requirements;
     }
 
     protected function getCommands(Config $config): string|array
     {
         if (($config->config->migrations ?? null) === null) {
             return [];
+        }
+
+        if (! class_exists('KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider')) {
+            return [
+                'echo "##############################################################################"',
+                'echo " WARNING: kitloong/laravel-migrations-generator is NOT installed."',
+                'echo " Please run: composer require --dev kitloong/laravel-migrations-generator"',
+                'echo "##############################################################################"',
+            ];
         }
 
         $resolved = MigrationHelper::resolveMigrationTargets($config, $config->projectContext);

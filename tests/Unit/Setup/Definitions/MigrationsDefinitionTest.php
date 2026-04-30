@@ -26,12 +26,12 @@ describe('packages', function () {
         expect($definition->packages($config)->devPackages)->toBeEmpty();
     });
 
-    test('returns migrations generator Requirements if migrations is enabled', function () {
+    test('returns empty Requirements even if migrations is enabled', function () {
         $definition = new MigrationsDefinition;
         $config = new Config(['migrations' => 'mysql'], new ProjectContext);
         $requirements = $definition->packages($config);
         expect($requirements)->toBeInstanceOf(Requirements::class);
-        expect($requirements->devPackages)->toContain('kitloong/laravel-migrations-generator');
+        expect($requirements->devPackages)->toBeEmpty();
     });
 });
 

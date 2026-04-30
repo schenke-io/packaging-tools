@@ -41,6 +41,13 @@ trait GeneratesPackageMigrations
         $projectContext = $projectContext ?? new ProjectContext;
         $config = $config ?? new Config(null, $projectContext);
 
+        if (! class_exists('KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider')) {
+            $this->error('Package kitloong/laravel-migrations-generator is NOT installed.');
+            $this->info('Please run: composer require --dev kitloong/laravel-migrations-generator');
+
+            return;
+        }
+
         $resolved = MigrationHelper::resolveMigrationTargets($config, $projectContext);
         $path = $projectContext->getMigrationPath();
 

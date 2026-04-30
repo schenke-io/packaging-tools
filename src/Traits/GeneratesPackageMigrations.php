@@ -41,7 +41,7 @@ trait GeneratesPackageMigrations
         $projectContext = $projectContext ?? new ProjectContext;
         $config = $config ?? new Config(null, $projectContext);
 
-        if (! class_exists('KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider')) {
+        if (! $this->isMigrationsGeneratorInstalled()) {
             $this->error('Package kitloong/laravel-migrations-generator is NOT installed.');
             $this->info('Please run: composer require --dev kitloong/laravel-migrations-generator');
 
@@ -75,5 +75,10 @@ trait GeneratesPackageMigrations
         $this->call('migrate:generate', $arguments);
 
         MigrationCleaner::clean(null, $projectContext);
+    }
+
+    protected function isMigrationsGeneratorInstalled(): bool
+    {
+        return class_exists('KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider');
     }
 }

@@ -268,7 +268,7 @@ $assembler->skillOverview();
 ### <a name="when-to-use-this-skill"></a>When to use this skill
 Use when you want to keep your package's migration files in sync with a development database. This is a "database-first" workflow: you modify the database manually, then regenerate the migrations from it.
 
-Requires `kitloong/laravel-migrations-generator` to be installed (it is recommended to install it as a dev-dependency).
+Requires `kitloong/laravel-migrations-generator` to be installed (not included by default).
 
 ### <a name="quick-start"></a>Quick start
 

@@ -2,6 +2,7 @@
 
 namespace SchenkeIo\PackagingTools\Tests\Unit\Setup\Definitions;
 
+use Mockery;
 use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\Definitions\MigrationsDefinition;
@@ -76,6 +77,21 @@ describe('commands', function () {
         $definition = new MigrationsDefinition('pint');
         $config = new Config(['pint' => true, 'migrations' => null], new ProjectContext);
         expect($definition->commands($config))->toBe([]);
+    });
+
+    test('returns warning commands if migrations generator is NOT installed', function () {
+        $definition = Mockery::mock(MigrationsDefinition::class);
+        $definition->shouldAllowMockingProtectedMethods();
+        $definition->makePartial();
+        $definition->setTaskName('migrations');
+
+        $definition->shouldReceive('isMigrationsGeneratorInstalled')->andReturn(false);
+
+        $config = new Config(['migrations' => 'mysql'], new ProjectContext);
+        $commands = $definition->commands($config);
+
+        expect($commands)->toBeArray()->toHaveCount(4);
+        expect($commands[1])->toContain('WARNING: kitloong/laravel-migrations-generator is NOT installed.');
     });
 });
 

@@ -40,7 +40,7 @@ class MigrationsDefinition extends BaseDefinition
             return [];
         }
 
-        if (! class_exists('KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider')) {
+        if (! $this->isMigrationsGeneratorInstalled()) {
             return [
                 'echo "##############################################################################"',
                 'echo " WARNING: kitloong/laravel-migrations-generator is NOT installed."',
@@ -67,5 +67,10 @@ class MigrationsDefinition extends BaseDefinition
     public function explainTask(): string
     {
         return 'generate and clean migrations from existing database';
+    }
+
+    protected function isMigrationsGeneratorInstalled(): bool
+    {
+        return class_exists('KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider');
     }
 }

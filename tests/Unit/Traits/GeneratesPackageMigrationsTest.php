@@ -176,3 +176,15 @@ it('handles null config by using model discovery', function () {
 
     $command->generatePackageMigrations($projectContext, $config);
 });
+
+it('outputs error if migrations generator is NOT installed', function () {
+    $command = m::mock(MockCommand::class);
+    $command->shouldAllowMockingProtectedMethods();
+    $command->makePartial();
+    $command->shouldReceive('isMigrationsGeneratorInstalled')->andReturn(false);
+
+    $command->shouldReceive('error')->with('Package kitloong/laravel-migrations-generator is NOT installed.')->once();
+    $command->shouldReceive('info')->with('Please run: composer require --dev kitloong/laravel-migrations-generator')->once();
+
+    $command->generatePackageMigrations();
+});

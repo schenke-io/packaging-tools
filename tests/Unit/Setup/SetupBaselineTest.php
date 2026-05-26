@@ -52,7 +52,7 @@ it('informs about missing configuration during setup', function () {
     $output = ob_get_clean();
     Config::$silent = true;
 
-    expect($output)->toContain("run 'composer setup config' to create a new configuration in '.packaging-tools.neon':")
+    expect($output)->toContain("run 'composer pack-to config' to create a new configuration in '.packaging-tools.neon':")
         ->and($output)->toContain('analyse');
 });
 
@@ -76,6 +76,6 @@ it('identifies discrepancies between composer.json and configuration', function 
     $output = ob_get_clean();
     Config::$silent = true;
 
-    expect($output)->toContain("run 'composer setup config' to add these keys to '.packaging-tools.neon':")
+    expect($output)->toContain("run 'composer pack-to config' to add these keys to '.packaging-tools.neon':")
         ->and($output)->toContain('analyse');
 });

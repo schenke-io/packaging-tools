@@ -12,7 +12,7 @@ This is a companion to the `sql-cache` configuration key, which generates the du
 
 ### How it works
 
-1. **Generate the dump** — `sql-cache: true` in `.packaging-tools.neon` makes `composer setup` dump the current SQLite DB to `tests/Data/seeded.sql` (configurable path).
+1. **Generate the dump** — `sql-cache: true` in `.packaging-tools.neon` makes `composer pack-to` dump the current SQLite DB to `tests/Data/seeded.sql` (configurable path).
 2. **Load in tests** — the `LoadsSeededSql` trait loads that dump on first access, detected by checking if the `users` table exists.
 
 ### Usage

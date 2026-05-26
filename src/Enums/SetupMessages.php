@@ -28,7 +28,7 @@ enum SetupMessages: string
     /**
      * @param  string  $configBase
      */
-    case runSetupConfigToCreate = "run 'composer setup config' to create a new configuration in '%s':";
+    case runSetupConfigToCreate = "run 'composer pack-to config' to create a new configuration in '%s':";
 
     /**
      * @param  string  $key
@@ -41,12 +41,12 @@ enum SetupMessages: string
     /**
      * @param  string  $configBase
      */
-    case runSetupConfigToDoChanges = "run 'composer setup config' to add these keys to '%s':";
+    case runSetupConfigToDoChanges = "run 'composer pack-to config' to add these keys to '%s':";
 
     /**
      * @param  string  $composerJson
      */
-    case runSetupUpdateToDoChanges = "run 'composer setup update' to add these elements to 'composer.json':";
+    case runSetupUpdateToDoChanges = "run 'composer pack-to update' to add these elements to 'composer.json':";
 
     /**
      * @param  string  $verb

@@ -13,7 +13,7 @@ Use when you need to generate or update SVG badge files for a project's README, 
 Generate all auto-detected badges at once:
 
 ```bash
-composer setup badges
+composer pack-to badges
 ```
 
 This calls `MakeBadge::auto()`, which scans for known source files (clover.xml, phpstan.neon, infection-report.json, composer.json) and writes SVG files to `resources/md/svg/` (or `workbench/resources/md/svg/`).

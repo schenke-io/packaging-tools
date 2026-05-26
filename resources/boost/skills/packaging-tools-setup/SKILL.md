@@ -28,11 +28,11 @@ Add the setup script to `composer.json`:
 
 | Command | Action |
 |---|---|
-| `composer setup` | Show current config status and any pending changes |
-| `composer setup config` | Create or sync `.packaging-tools.neon` |
-| `composer setup update` | Apply pending composer.json script additions and install missing packages |
-| `composer setup badges` | Generate all auto-detected SVG badges |
-| `composer setup <task>` | Run a specific configured task (e.g., `test`, `pint`, `quick`) |
+| `composer pack-to` | Show current config status and any pending changes |
+| `composer pack-to config` | Create or sync `.packaging-tools.neon` |
+| `composer pack-to update` | Apply pending composer.json script additions and install missing packages |
+| `composer pack-to badges` | Generate all auto-detected SVG badges |
+| `composer pack-to <task>` | Run a specific configured task (e.g., `test`, `pint`, `quick`) |
 
 ### Configuration file: `.packaging-tools.neon`
 
@@ -82,11 +82,11 @@ customTasks:
     my-task: App\Console\Commands\MyTask
 ```
 
-Run with: `composer setup lint` or `composer setup my-task`.
+Run with: `composer pack-to lint` or `composer pack-to my-task`.
 
 ### Concept
 
 - Configuration is the single source of truth — editing `.packaging-tools.neon` controls everything.
 - Manual edits to `composer.json` scripts are preserved; the tool warns before overwriting.
-- `composer setup` (no args) shows a diff of what would change — it never modifies without an explicit subcommand.
+- `composer pack-to` (no args) shows a diff of what would change — it never modifies without an explicit subcommand.
 - All keys define their own schema via `nette/schema`; invalid config produces a clear error with a "did you mean?" suggestion.

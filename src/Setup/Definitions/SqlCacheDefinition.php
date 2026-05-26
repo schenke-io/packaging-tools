@@ -14,6 +14,11 @@ use SchenkeIo\PackagingTools\Setup\Config;
  */
 class SqlCacheDefinition extends BaseDefinition
 {
+    public function __construct()
+    {
+        parent::__construct('sql-cache');
+    }
+
     public function schema(): Schema
     {
         return Expect::anyOf(Expect::null(), Expect::bool(), Expect::string())->default(null);

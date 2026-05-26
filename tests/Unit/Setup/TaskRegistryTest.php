@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use SchenkeIo\PackagingTools\Contracts\SetupDefinitionInterface;
 use SchenkeIo\PackagingTools\Setup\TaskRegistry;
 

@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use Illuminate\Filesystem\Filesystem;
 use PUGX\Poser\Calculator\TextSizeCalculatorInterface;
 use SchenkeIo\PackagingTools\Badges\Drivers\CloverCoverageDriver;

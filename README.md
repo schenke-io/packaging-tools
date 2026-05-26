@@ -25,13 +25,13 @@
 
 <img src="workbench/resources/md/cover.png" alt="cover" />
 
-This package is a collection of tools to simplify the package and project development.
+This package is a collection of tools to simplify package and project development.
 
 The main elements are:
-- **Markdown** Assemble the readme.md file out of small markdown files, class comments and other sources
-- **Badge** build the badge custom or from existing files
-- **Setup** read the `.packaging-tools.neon` configuration file and modify scripts in `composer.json`
-- **Boost Skills & Guidelines** this package supports the [Laravel Boost](https://laravel.com/docs/12.x/boost) standard for AI-ready packages.
+- **Markdown:** Assemble the `README.md` file from small Markdown files, class comments, and other sources.
+- **Badge:** Create custom badges or generate them from existing files.
+- **Setup:** Read the `.packaging-tools.neon` configuration file and modify scripts in `composer.json`.
+- **Boost Skills & Guidelines:** This package supports the [Laravel Boost](https://laravel.com/docs/12.x/boost) standard for AI-ready packages.
 
 ### <a name="skill-based-documentation"></a>Skill-based documentation
 
@@ -573,6 +573,7 @@ customTasks:
 | key        | description                                                                                                  |
 |------------|--------------------------------------------------------------------------------------------------------------|
 | analyse    | false = disabled, true = enabled (uses phpstan/phpstan-phpunit or larastan/larastan)                         |
+| badges     | true = enabled (auto-generate badges), false = disabled                                                      |
 | coverage   | false = disabled, true = enabled (adds --coverage to the test runner)                                        |
 | infection  | false = disabled, true = enabled (requires infection/infection)                                              |
 | markdown   | null = disabled, string = enabled (command to assemble Markdown files)                                       |
@@ -686,7 +687,7 @@ try {
 
 ### <a name="makebadge"></a>MakeBadge
 
-Central class for generating and storing SVG badges.
+Class MakeBadge
 
 #### <a name="public-methods-of-makebadge"></a>Public methods of MakeBadge
 

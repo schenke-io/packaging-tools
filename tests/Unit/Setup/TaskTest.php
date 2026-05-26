@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use Illuminate\Filesystem\Filesystem;
 use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\Definitions\AnalyseDefinition;

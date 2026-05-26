@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Markdown\Pieces;
 
+pest()->group('unit');
+
 use Illuminate\Filesystem\Filesystem;
 use Mockery;
 use SchenkeIo\PackagingTools\Markdown\Pieces\Skills;

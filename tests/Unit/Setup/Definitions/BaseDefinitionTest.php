@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use Illuminate\Filesystem\Filesystem;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;

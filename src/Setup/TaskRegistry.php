@@ -3,21 +3,33 @@
 namespace SchenkeIo\PackagingTools\Setup;
 
 use SchenkeIo\PackagingTools\Contracts\SetupDefinitionInterface;
-use SchenkeIo\PackagingTools\Setup\Definitions\BaseDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\AnalyseDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\BadgeDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\CoverageDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\InfectionDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\MarkdownDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\MigrationsDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\PintDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\QuickDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\ReleaseDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\SqlCacheDefinition;
+use SchenkeIo\PackagingTools\Setup\Definitions\TestDefinition;
 
 /**
+ * Class TaskRegistry
+ *
  * Registry for all available setup tasks.
  *
- * This class handles the discovery and registration of core task definitions
- * and allows for dynamic registration of custom tasks. It scans the 'Definitions'
- * directory to automatically find and instantiate tasks that implement
- * the SetupDefinitionInterface.
+ * Main Responsibilities:
+ * - Registration: Handles both core and custom setup task registration.
+ * - Retrieval: Provides methods to find specific tasks or all registered tasks.
+ * - Discovery: Optionally registers all core tasks on instantiation.
  *
- * Methods:
- * - __construct(): Optionally scans the core Definitions directory to auto-register tasks.
- * - registerTask(): Manually registers a task instance with a specific name.
- * - getAllTasks(): Returns the full list of currently registered task instances.
- * - getTask(): Retrieves a specific task instance by its registration name.
+ * Usage Example:
+ * ```php
+ * $registry = new TaskRegistry();
+ * $task = $registry->getTask('analyse');
+ * ```
  */
 class TaskRegistry
 {
@@ -26,42 +38,39 @@ class TaskRegistry
      */
     protected array $tasks = [];
 
-    public function __construct(bool $scan = true)
+    /**
+     * Initialize the registry and optionally register core tasks.
+     *
+     * @param  bool  $registerCoreTasks  Whether to register core tasks automatically.
+     */
+    public function __construct(bool $registerCoreTasks = true)
     {
-        if (! $scan) {
-            return;
-        }
-        // Register core tasks from the Definitions directory
-        $definitionsDir = __DIR__.'/Definitions';
-        foreach (glob($definitionsDir.'/*Definition.php') ?: [] as $file) {
-            $className = 'SchenkeIo\\PackagingTools\\Setup\\Definitions\\'.basename($file, '.php');
-            if (class_exists($className)) {
-                $reflection = new \ReflectionClass($className);
-                if ($reflection->isInstantiable() && $reflection->implementsInterface(SetupDefinitionInterface::class)) {
-                    try {
-                        $baseName = str_replace('Definition', '', basename($file, '.php'));
-                        $taskName = strtolower((string) preg_replace('/(?<!^)[A-Z]/', '-$0', $baseName));
-                        /** @var SetupDefinitionInterface $task */
-                        $task = new $className;
-                        if ($task instanceof BaseDefinition) {
-                            $task->setTaskName($taskName);
-                        }
-                        $this->registerTask($taskName, $task);
-                    } catch (\ArgumentCountError $e) {
-                        // Skip classes that require arguments in constructor
-                        continue;
-                    }
-                }
-            }
+        if ($registerCoreTasks) {
+            $this->registerTask('analyse', new AnalyseDefinition);
+            $this->registerTask('badges', new BadgeDefinition);
+            $this->registerTask('coverage', new CoverageDefinition);
+            $this->registerTask('infection', new InfectionDefinition);
+            $this->registerTask('markdown', new MarkdownDefinition);
+            $this->registerTask('migrations', new MigrationsDefinition);
+            $this->registerTask('pint', new PintDefinition);
+            $this->registerTask('quick', new QuickDefinition);
+            $this->registerTask('release', new ReleaseDefinition);
+            $this->registerTask('sql-cache', new SqlCacheDefinition);
+            $this->registerTask('test', new TestDefinition);
         }
     }
 
+    /**
+     * Register a specific task instance with a unique name.
+     */
     public function registerTask(string $name, SetupDefinitionInterface $task): void
     {
         $this->tasks[$name] = $task;
     }
 
     /**
+     * Return the full list of currently registered task instances, sorted by name.
+     *
      * @return array<string, SetupDefinitionInterface>
      */
     public function getAllTasks(): array

@@ -13,14 +13,20 @@ use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
 
 /**
- * Central class for generating and storing SVG badges.
+ * Class MakeBadge
  *
- * This class provides a centralized way to generate SVG badges for project metrics
- * such as test coverage, PHPStan level, and mutation score. It supports both
- * automatic detection of configuration files and manual path specification.
- * Badges can be stored as SVG files using various styles like Flat, Plastic, etc.
- * The system is extensible through badge drivers that implement the
- * BadgeDriverInterface to fetch status and color information.
+ * Central class for generating and storing SVG badges for project metrics.
+ *
+ * Main Responsibilities:
+ * - Badge Generation: Creates SVG badges for test coverage, PHPStan, and mutations.
+ * - Auto-Detection: Automatically finds configuration files to derive badge status.
+ * - Storage: Handles saving SVG files to the filesystem with configurable styles.
+ *
+ * Usage Example:
+ * ```php
+ * $badge = MakeBadge::makeCoverageBadge();
+ * $badge->store('badges/coverage.svg', BadgeStyle::Flat);
+ * ```
  */
 class MakeBadge
 {
@@ -30,6 +36,8 @@ class MakeBadge
     protected string $info = '';
 
     /**
+     * Initialize a new badge instance with specific text and color.
+     *
      * @param  string  $subject  The text on the left side of the badge
      * @param  string  $status  The text on the right side of the badge
      * @param  string  $color  The hexadecimal color for the right side

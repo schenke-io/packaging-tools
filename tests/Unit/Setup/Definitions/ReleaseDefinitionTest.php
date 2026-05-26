@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use SchenkeIo\PackagingTools\Setup\Definitions\GroupDefinition;
 use SchenkeIo\PackagingTools\Setup\Definitions\ReleaseDefinition;
 

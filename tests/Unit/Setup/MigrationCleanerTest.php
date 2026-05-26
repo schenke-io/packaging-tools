@@ -2,13 +2,16 @@
 
 namespace SchenkeIo\PackagingTools\Tests\Unit\Setup;
 
-use Illuminate\Support\Facades\File;
+pest()->group('unit');
+
+use Illuminate\Filesystem\Filesystem;
 use Mockery;
 use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\MigrationCleaner;
+use SchenkeIo\PackagingTools\Setup\ProjectContext;
 
 afterEach(function () {
-    File::clearResolvedInstances();
+    Mockery::close();
 });
 
 it('removes connection calls from migration files', function () {
@@ -19,8 +22,12 @@ it('removes connection calls from migration files', function () {
     $mockFile->shouldReceive('getRealPath')->andReturn('/path/to/migration.php');
     $mockFile->shouldReceive('getFilename')->andReturn('migration.php');
 
-    File::shouldReceive('isDirectory')->andReturn(true);
-    File::shouldReceive('allFiles')->andReturn([$mockFile]);
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($path) => str_contains($path, 'composer.json')))
+        ->andReturn(json_encode(['name' => 'test/pkg']));
+    $filesystem->shouldReceive('allFiles')->andReturn([$mockFile]);
 
     // Test multiple regex variations
     $content = "Schema::connection('mysql')->create('users', function (Blueprint \$table) {
@@ -36,11 +43,13 @@ it('removes connection calls from migration files', function () {
             create('another');
     ";
 
-    File::shouldReceive('get')->with('/path/to/migration.php')->andReturn($content);
-    File::shouldReceive('put')->once()->with('/path/to/migration.php', $expected);
-    File::shouldReceive('chmod')->once()->with('/path/to/migration.php', 0444);
+    $filesystem->shouldReceive('get')->with('/path/to/migration.php')->andReturn($content);
+    $filesystem->shouldReceive('put')->once()->with('/path/to/migration.php', $expected);
+    $filesystem->shouldReceive('chmod')->once()->with('/path/to/migration.php', 0444);
 
-    expect(MigrationCleaner::clean())->toBe(1);
+    $projectContext = new ProjectContext($filesystem);
+
+    expect(MigrationCleaner::clean(null, $projectContext))->toBe(1);
 });
 
 it('ignores non-php files', function () {
@@ -49,11 +58,17 @@ it('ignores non-php files', function () {
     $mockFile = Mockery::mock('Symfony\Component\Finder\SplFileInfo');
     $mockFile->shouldReceive('getExtension')->andReturn('txt');
 
-    File::shouldReceive('isDirectory')->andReturn(true);
-    File::shouldReceive('allFiles')->andReturn([$mockFile]);
-    File::shouldReceive('get')->never();
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($path) => str_contains($path, 'composer.json')))
+        ->andReturn(json_encode(['name' => 'test/pkg']));
+    $filesystem->shouldReceive('allFiles')->andReturn([$mockFile]);
+    $filesystem->shouldReceive('get')->never();
 
-    expect(MigrationCleaner::clean())->toBe(0);
+    $projectContext = new ProjectContext($filesystem);
+
+    expect(MigrationCleaner::clean(null, $projectContext))->toBe(0);
 });
 
 it('calls chmod on php files that do not need cleaning', function () {
@@ -64,20 +79,33 @@ it('calls chmod on php files that do not need cleaning', function () {
     $mockFile->shouldReceive('getRealPath')->andReturn('/path/to/clean.php');
     $mockFile->shouldReceive('getFilename')->andReturn('clean.php');
 
-    File::shouldReceive('isDirectory')->andReturn(true);
-    File::shouldReceive('allFiles')->andReturn([$mockFile]);
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($path) => str_contains($path, 'composer.json')))
+        ->andReturn(json_encode(['name' => 'test/pkg']));
+    $filesystem->shouldReceive('allFiles')->andReturn([$mockFile]);
 
     $content = "Schema::create('users', function (Blueprint \$table) {});";
-    File::shouldReceive('get')->with('/path/to/clean.php')->andReturn($content);
-    File::shouldReceive('put')->never();
-    File::shouldReceive('chmod')->once()->with('/path/to/clean.php', 0444);
+    $filesystem->shouldReceive('get')->with('/path/to/clean.php')->andReturn($content);
+    $filesystem->shouldReceive('put')->never();
+    $filesystem->shouldReceive('chmod')->once()->with('/path/to/clean.php', 0444);
 
-    expect(MigrationCleaner::clean())->toBe(0);
+    $projectContext = new ProjectContext($filesystem);
+
+    expect(MigrationCleaner::clean(null, $projectContext))->toBe(0);
 });
 
 it('does nothing if directory does not exist', function () {
-    File::shouldReceive('isDirectory')->andReturn(false);
-    File::shouldReceive('allFiles')->never();
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => ! str_contains($path, 'database/migrations')))->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->with(Mockery::on(fn ($path) => str_contains($path, 'composer.json')))
+        ->andReturn(json_encode(['name' => 'test/pkg']));
+    $filesystem->shouldReceive('isDirectory')->with(Mockery::on(fn ($path) => str_contains($path, 'database/migrations')))->andReturn(false);
+    $filesystem->shouldReceive('allFiles')->never();
 
-    expect(MigrationCleaner::clean())->toBe(0);
+    $projectContext = new ProjectContext($filesystem);
+
+    expect(MigrationCleaner::clean(null, $projectContext))->toBe(0);
 });

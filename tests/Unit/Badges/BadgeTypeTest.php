@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Badges;
 
+pest()->group('unit');
+
 use Illuminate\Filesystem\Filesystem;
 use Mockery;
 use SchenkeIo\PackagingTools\Enums\BadgeType;

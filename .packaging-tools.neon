@@ -43,7 +43,9 @@ release:
 
 
 # null = disabled, true = default path, 'path/to/file.sql' = custom path
-sql-cache: null
+sql-cache: true
+
+badges: true
 
 
 # '' = disabled, 'pest' or 'phpunit' = enabled

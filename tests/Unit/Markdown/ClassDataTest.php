@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use SchenkeIo\PackagingTools\Markdown\ClassData;
 
 it('can be instantiated', function () {

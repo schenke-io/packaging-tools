@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+pest()->group('unit');
+
 use Illuminate\Filesystem\Filesystem;
 use Mockery;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;

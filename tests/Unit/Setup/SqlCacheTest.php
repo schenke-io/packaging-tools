@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use Illuminate\Filesystem\Filesystem;
 use SchenkeIo\PackagingTools\Enums\SetupMessages;
 use SchenkeIo\PackagingTools\Setup\Config;
@@ -15,6 +16,25 @@ describe('SqlCache', function () {
         $filesystem->shouldReceive('get')->with('./composer.json')->andReturn(json_encode(['name' => 'test/test', 'type' => 'library']));
         $filesystem->shouldReceive('exists')->with('./.packaging-tools.neon')->andReturn(true);
         $filesystem->shouldReceive('get')->with('./.packaging-tools.neon')->andReturn('sql-cache: false');
+
+        Config::$outputHandler = function ($message, ...$args) {
+            // should not be called
+        };
+
+        SqlCache::dump(null, $projectContext);
+
+        expect(true)->toBeTrue();
+        Config::$outputHandler = null;
+    });
+
+    it('does nothing if sql-cache is missing from config', function () {
+        $filesystem = Mockery::mock(Filesystem::class);
+        $projectContext = new ProjectContext(['projectRoot' => '.', 'sourceRoot' => 'src'], $filesystem);
+
+        $filesystem->shouldReceive('exists')->with('./composer.json')->andReturn(true);
+        $filesystem->shouldReceive('get')->with('./composer.json')->andReturn(json_encode(['name' => 'test/test', 'type' => 'library']));
+        $filesystem->shouldReceive('exists')->with('./.packaging-tools.neon')->andReturn(true);
+        $filesystem->shouldReceive('get')->with('./.packaging-tools.neon')->andReturn('other-key: true');
 
         Config::$outputHandler = function ($message, ...$args) {
             // should not be called

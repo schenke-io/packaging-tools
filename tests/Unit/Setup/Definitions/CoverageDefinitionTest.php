@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\Definitions\CoverageDefinition;

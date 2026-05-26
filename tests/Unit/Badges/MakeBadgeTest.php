@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Response;

@@ -2,6 +2,8 @@
 
 namespace SchenkeIo\PackagingTools\Tests\Unit\Markdown;
 
+pest()->group('unit');
+
 use Illuminate\Filesystem\Filesystem;
 use SchenkeIo\PackagingTools\Markdown\ClassReader;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;

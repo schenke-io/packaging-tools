@@ -2,6 +2,8 @@
 
 namespace SchenkeIo\PackagingTools\Tests\Unit;
 
+pest()->group('unit');
+
 use Illuminate\Contracts\Foundation\Application;
 use Mockery;
 use SchenkeIo\PackagingTools\PackagingToolsServiceProvider;

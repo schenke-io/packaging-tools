@@ -3,7 +3,6 @@
 namespace SchenkeIo\PackagingTools\Setup;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\File;
 use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 
 /**
@@ -73,6 +72,16 @@ class MigrationHelper
         ];
     }
 
+    public static function clearMigrations(mixed $event = null, ?ProjectContext $projectContext = null): void
+    {
+        $projectContext = $projectContext ?? new ProjectContext;
+        $path = $projectContext->getMigrationPath();
+        $fullPath = $projectContext->fullPath($path);
+        if ($projectContext->filesystem->isDirectory($fullPath)) {
+            $projectContext->filesystem->cleanDirectory($fullPath);
+        }
+    }
+
     /**
      * Scans the model directory and retrieves table names from found Eloquent models.
      *
@@ -87,9 +96,9 @@ class MigrationHelper
         } catch (PackagingToolException) {
             return [];
         }
-        foreach (File::allFiles($modelPath) as $file) {
+        foreach ($projectContext->filesystem->allFiles($modelPath) as $file) {
             if ($file->getExtension() === 'php') {
-                $className = self::getClassNameFromFile($file->getRealPath());
+                $className = self::getClassNameFromFile($file->getRealPath(), $projectContext);
                 if ($className && class_exists($className)) {
                     try {
                         $reflection = new \ReflectionClass($className);
@@ -112,11 +121,12 @@ class MigrationHelper
      * Attempts to resolve the class name from a PHP file by parsing its namespace and class name.
      *
      * @param  string  $path  The absolute path to the PHP file.
+     * @param  ProjectContext  $projectContext  The project context.
      * @return string|null The fully qualified class name or null if not found.
      */
-    public static function getClassNameFromFile(string $path): ?string
+    public static function getClassNameFromFile(string $path, ProjectContext $projectContext): ?string
     {
-        $content = File::get($path);
+        $content = $projectContext->filesystem->get($path);
         $tokens = token_get_all($content);
         $namespace = '';
         $class = '';

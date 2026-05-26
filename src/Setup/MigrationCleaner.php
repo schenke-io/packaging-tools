@@ -2,7 +2,6 @@
 
 namespace SchenkeIo\PackagingTools\Setup;
 
-use Illuminate\Support\Facades\File;
 use SchenkeIo\PackagingTools\Enums\SetupMessages;
 
 /**
@@ -30,25 +29,25 @@ class MigrationCleaner
         $projectContext = $projectContext ?? new ProjectContext;
         $directory = $projectContext->fullPath($projectContext->getMigrationPath());
 
-        if (! File::isDirectory($directory)) {
+        if (! $projectContext->filesystem->isDirectory($directory)) {
             return 0;
         }
 
-        foreach (File::allFiles($directory) as $file) {
+        foreach ($projectContext->filesystem->allFiles($directory) as $file) {
             if ($file->getExtension() !== 'php') {
                 continue;
             }
-            $content = File::get($file->getRealPath());
+            $content = $projectContext->filesystem->get($file->getRealPath());
             /*
              * remove hardcoded connection() calls
              */
             $cleanedContent = preg_replace('/\bconnection\s*\(\s*(["\'])(?:(?!\1).)*\1\s*\)\s*->/', '', $content);
             if (is_string($cleanedContent) && $content !== $cleanedContent) {
-                File::put($file->getRealPath(), $cleanedContent);
+                $projectContext->filesystem->put($file->getRealPath(), $cleanedContent);
                 Config::output(SetupMessages::cleanedConnectionCalls, $file->getFilename());
                 $count++;
             }
-            File::chmod($file->getRealPath(), 0444);
+            $projectContext->filesystem->chmod($file->getRealPath(), 0444);
         }
 
         return $count;

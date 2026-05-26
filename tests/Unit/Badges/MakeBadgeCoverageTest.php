@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use Illuminate\Filesystem\Filesystem;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
 use SchenkeIo\PackagingTools\Enums\BadgeType;

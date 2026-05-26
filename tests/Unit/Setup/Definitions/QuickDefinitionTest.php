@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use SchenkeIo\PackagingTools\Setup\Definitions\QuickDefinition;
 
 test('QuickDefinition constructor initializes with correct values', function () {

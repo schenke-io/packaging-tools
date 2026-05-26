@@ -6,11 +6,20 @@ use SchenkeIo\PackagingTools\Contracts\BadgeDriverInterface;
 use SchenkeIo\PackagingTools\Setup\ProjectContext;
 
 /**
+ * Class PhpVersionDriver
+ *
  * Driver to extract the PHP version from composer.json.
  *
- * This driver looks for the 'php' requirement in the composer.json file
- * and returns the version constraint found. It also provides a link
- * to the Shields.io PHP version badge for the package.
+ * Main Responsibilities:
+ * - Version Extraction: Reads the 'php' requirement from composer.json.
+ * - Remote Badge Link: Provides URLs for Shields.io PHP version badges.
+ * - Detection: Identifies the correct path to the composer.json file.
+ *
+ * Usage Example:
+ * ```php
+ * $driver = new PhpVersionDriver();
+ * $version = $driver->getStatus($projectContext, 'composer.json');
+ * ```
  */
 class PhpVersionDriver implements BadgeDriverInterface
 {

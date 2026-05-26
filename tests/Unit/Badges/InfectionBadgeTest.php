@@ -2,6 +2,8 @@
 
 namespace SchenkeIo\PackagingTools\Tests\Badges;
 
+pest()->group('unit');
+
 use Illuminate\Filesystem\Filesystem;
 use Mockery;
 use SchenkeIo\PackagingTools\Badges\Drivers\InfectionDriver;

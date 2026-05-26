@@ -2,6 +2,8 @@
 
 namespace SchenkeIo\PackagingTools\Tests\Unit\Setup;
 
+pest()->group('unit');
+
 use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Mockery;

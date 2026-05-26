@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use PUGX\Poser\Render\RenderInterface;
 use SchenkeIo\PackagingTools\Enums\BadgeStyle;
 

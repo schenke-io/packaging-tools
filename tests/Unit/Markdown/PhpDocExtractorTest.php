@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use SchenkeIo\PackagingTools\Markdown\PhpDocExtractor;
 
 test('getFrom returns correct summary and description', function () {

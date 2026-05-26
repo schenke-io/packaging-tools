@@ -72,7 +72,16 @@
             "@coverage",
             "@markdown"
         ],
-        "migrations": []
+        "migrations": [],
+        "sql-cache": [
+            "SchenkeIo\\PackagingTools\\Setup\\SqlCache::dump"
+        ],
+        "badges": [
+            "SchenkeIo\\PackagingTools\\Setup\\Config::doConfiguration(null, [\"badges\"])"
+        ],
+        "speed": [
+            "SchenkeIo\\PackagingTools\\Setup\\SqlCache::dump"
+        ]
     },
     "config": {
         "sort-packages": true,

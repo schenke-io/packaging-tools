@@ -2,15 +2,22 @@
 
 namespace SchenkeIo\PackagingTools\Tests\Unit;
 
+pest()->group('unit');
+
 use SchenkeIo\PackagingTools\Setup;
 use SchenkeIo\PackagingTools\Setup\Config;
 
 it('calls Config::doConfiguration in handle', function () {
-    Config::$silent = true;
-    // this will call Config::doConfiguration() which will try to find composer.json
-    // in the current directory. Since we are in the project root, it should find it.
-    // To avoid it actually doing anything, we can rely on it not having any arguments
-    // so it just shows what's pending.
+    $oldArgv = $_SERVER['argv'];
+    $_SERVER['argv'] = ['vendor/bin/packaging-tools', 'setup'];
+
+    Config::$silent = false;
+    ob_start();
     Setup::handle();
-    expect(true)->toBeTrue();
+    $output = ob_get_clean();
+    Config::$silent = true;
+
+    $_SERVER['argv'] = $oldArgv;
+
+    expect($output)->toContain('Everything is up to date.');
 });

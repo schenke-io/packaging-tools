@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
 it('can add requirements', function () {

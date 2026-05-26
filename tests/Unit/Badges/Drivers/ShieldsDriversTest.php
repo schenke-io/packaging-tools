@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use Illuminate\Filesystem\Filesystem;
 use SchenkeIo\PackagingTools\Badges\Drivers\DownloadsDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\GitHubTestDriver;

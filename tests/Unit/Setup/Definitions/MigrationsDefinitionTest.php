@@ -2,6 +2,8 @@
 
 namespace SchenkeIo\PackagingTools\Tests\Unit\Setup\Definitions;
 
+pest()->group('unit');
+
 use Mockery;
 use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;

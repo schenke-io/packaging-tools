@@ -2,6 +2,8 @@
 
 namespace SchenkeIo\PackagingTools\Tests\Unit\Markdown;
 
+pest()->group('unit');
+
 use SchenkeIo\PackagingTools\Markdown\ClassReader;
 
 trait ClassReaderTestTrait

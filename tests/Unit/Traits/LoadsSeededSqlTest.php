@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use SchenkeIo\PackagingTools\Traits\LoadsSeededSql;

@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Exceptions;
 
+pest()->group('unit');
+
 use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 
 it('can create privateRepositoryNotSupported exception', function () {

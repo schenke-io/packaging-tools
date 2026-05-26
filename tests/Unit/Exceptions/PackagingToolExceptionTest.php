@@ -1,5 +1,6 @@
 <?php
 
+pest()->group('unit');
 use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 
 it('throws configError', function () {

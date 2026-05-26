@@ -3,7 +3,6 @@
 namespace SchenkeIo\PackagingTools\Traits;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\MigrationCleaner;
 use SchenkeIo\PackagingTools\Setup\MigrationHelper;
@@ -54,10 +53,9 @@ trait GeneratesPackageMigrations
         /*
          * clean up existing migrations
          */
+        MigrationHelper::clearMigrations(null, $projectContext);
+
         $fullPath = $projectContext->fullPath($path);
-        if (File::isDirectory($fullPath)) {
-            File::cleanDirectory($fullPath);
-        }
 
         $arguments = [
             '--no-interaction' => true,

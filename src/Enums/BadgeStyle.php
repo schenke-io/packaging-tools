@@ -56,9 +56,9 @@ enum BadgeStyle
     {
         return match ($this) {
             self::Flat => 'flat',
+            self::FlatSquare => 'flat-square',
             self::Plastic => 'plastic',
             self::ForTheBadge => 'for-the-badge',
-            self::FlatSquare => 'flat-square',
         };
     }
 }

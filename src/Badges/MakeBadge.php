@@ -217,9 +217,21 @@ class MakeBadge
             $markdownDir = (new Config(null, $this->projectContext))->getMarkdownDir($this->projectContext);
             $filepath = "$markdownDir/svg/$badgeName.svg";
         }
-        $poser = new Poser([$badgeStyle->render($calculator)]);
+        $renderer = $badgeStyle->render($calculator);
+        $poser = new Poser([$renderer]);
 
-        $svg = $poser->generate($this->subject, $this->status, $this->color, $badgeStyle->style());
+        try {
+            $svg = $poser->generate($this->subject, $this->status, $this->color, $renderer->getBadgeStyle());
+        } catch (\InvalidArgumentException $e) {
+            /*
+             * if a template is missing (e.g. for-the-badge in older Poser versions)
+             * we fall back to the Flat style
+             */
+            $renderer = BadgeStyle::Flat->render($calculator);
+            $poser = new Poser([$renderer]);
+            $svg = $poser->generate($this->subject, $this->status, $this->color, $renderer->getBadgeStyle());
+        }
+
         $fullPath = $this->projectContext->fullPath($filepath);
         $directory = dirname($fullPath);
         if (! $this->projectContext->filesystem->isDirectory($directory)) {

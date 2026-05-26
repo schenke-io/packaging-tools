@@ -24,7 +24,10 @@ class SqlCacheDefinition extends BaseDefinition
         return Expect::anyOf(Expect::null(), Expect::bool(), Expect::string())->default(null);
     }
 
-    public function getCommands(Config $config): array
+    /**
+     * @return array<int, string>
+     */
+    protected function getCommands(Config $config): string|array
     {
         return ['SchenkeIo\\PackagingTools\\Setup\\SqlCache::dump'];
     }

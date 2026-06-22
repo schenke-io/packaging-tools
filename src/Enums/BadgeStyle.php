@@ -6,8 +6,8 @@ use PUGX\Poser\Calculator\TextSizeCalculatorInterface;
 use PUGX\Poser\Render\RenderInterface;
 use PUGX\Poser\Render\SvgFlatRender;
 use PUGX\Poser\Render\SvgFlatSquareRender;
-use PUGX\Poser\Render\SvgForTheBadgeRenderer;
 use PUGX\Poser\Render\SvgPlasticRender;
+use SchenkeIo\PackagingTools\Badges\FtbRendererHelper;
 
 /**
  * Enum for supported badge styles
@@ -45,7 +45,7 @@ enum BadgeStyle
             self::Flat => new SvgFlatRender($calculator),
             self::FlatSquare => new SvgFlatSquareRender($calculator),
             self::Plastic => new SvgPlasticRender($calculator),
-            self::ForTheBadge => new SvgForTheBadgeRenderer($calculator)
+            self::ForTheBadge => FtbRendererHelper::render($calculator)
         };
     }
 

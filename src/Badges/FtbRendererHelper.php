@@ -21,7 +21,7 @@ class FtbRendererHelper
             $params = $constructor->getParameters();
             if (count($params) > 0) {
                 $name = $params[0]->getName();
-                if (str_contains($name, 'EasySVG')) {
+                if (stripos($name, 'EasySVG') !== false) {
                     /** @phpstan-ignore-next-line */
                     return new $class(null, $calculator);
                 }

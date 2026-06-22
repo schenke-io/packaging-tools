@@ -8,38 +8,50 @@ use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
 /**
+ * Class InfectionDefinition
+ *
  * Task definition for Infection mutation testing.
  *
- * This class manages the configuration and requirements for Infection. It
- * handles the 'infection/infection' package requirement and provides the
- * command to run mutation tests, helping to measure test effectiveness.
+ * Main Responsibilities:
+ * - Schema Definition: Defines the configuration for enabling Infection mutation testing.
+ * - Dependency Management: Specifies 'infection/infection' as a required dev-package.
+ * - Task Execution: Provides the command to run mutation tests via vendor bin.
+ * - Test Quality: Helps measure the effectiveness of the project's test suite.
  *
- * Implements SetupDefinitionInterface with the following:
- * - schema(): Expects a boolean value to enable/disable mutation testing
- * - explainConfig(): Describes the configuration key purpose
- * - packages(): Returns 'infection/infection' as a dev requirement if enabled
- * - commands(): Provides the CLI command for running Infection
- * - explainTask(): Provides the text shown in the task
+ * Usage Example:
+ * ```php
+ * $infection = new InfectionDefinition();
+ * $command = $infection->commands($config);
+ * ```
  */
 class InfectionDefinition extends BaseDefinition
 {
+    /**
+     * Return the schema of the configuration for this SetupDefinitionInterface.
+     */
     public function schema(): Schema
     {
         return Expect::bool(false);
     }
 
+    /**
+     * Return help text for this config key.
+     */
     public function explainConfig(): string
     {
         return 'false = disabled, true = enabled (requires infection/infection)';
     }
 
+    /**
+     * Return help text for task.
+     */
     public function explainTask(): string
     {
         return 'run mutation tests with Infection';
     }
 
     /**
-     * return the list of required packages
+     * Return the list of required packages.
      */
     protected function getPackages(Config $config): Requirements
     {
@@ -47,13 +59,10 @@ class InfectionDefinition extends BaseDefinition
     }
 
     /**
-     * line or lines which will be executed when the script is called
+     * Line or lines which will be executed when the script is called.
      */
     protected function getCommands(Config $config): string|array
     {
-        /**
-         * return the infection command
-         */
         return './vendor/bin/infection';
     }
 }

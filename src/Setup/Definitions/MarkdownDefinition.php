@@ -7,23 +7,25 @@ use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
 
 /**
+ * Class MarkdownDefinition
+ *
  * Task definition for Markdown documentation assembly.
  *
- * This class defines the configuration and requirements for the Markdown
- * assembly component. It manages the directory settings where documentation
- * parts are stored and where the final README or other files are generated.
+ * Main Responsibilities:
+ * - Schema Definition: Defines the configuration schema for the Markdown assembly command.
+ * - Command Retrieval: Retrieves the configured command from the project configuration.
+ * - Task Explanation: Provides human-readable help text for the task and its configuration.
  *
- * Implements SetupDefinitionInterface with the following:
- * - schema(): Expects a string (command to run) or false to disable
- * - explainConfig(): Describes how to configure the markdown assembly command
- * - packages(): No specific external packages are required by this task itself
- * - commands(): Provides the configured markdown assembly command
- * - explainTask(): Provides the text shown in the task
+ * Usage Example:
+ * ```php
+ * $markdown = new MarkdownDefinition();
+ * $commands = $markdown->commands($config);
+ * ```
  */
 class MarkdownDefinition extends BaseDefinition
 {
     /**
-     * return the schema of the configuration for this SetupDefinitionInterface
+     * Return the schema of the configuration for this SetupDefinitionInterface.
      */
     public function schema(): Schema
     {
@@ -31,7 +33,7 @@ class MarkdownDefinition extends BaseDefinition
     }
 
     /**
-     * return help text for this config key
+     * Return help text for this config key.
      */
     public function explainConfig(): string
     {
@@ -39,18 +41,15 @@ class MarkdownDefinition extends BaseDefinition
     }
 
     /**
-     * line or lines which will be executed when the script is called
+     * Line or lines which will be executed when the script is called.
      */
     protected function getCommands(Config $config): string|array
     {
-        /**
-         * return the configured command
-         */
         return $config->config->markdown ?? [];
     }
 
     /**
-     * return help text for task
+     * Return help text for task.
      */
     public function explainTask(): string
     {

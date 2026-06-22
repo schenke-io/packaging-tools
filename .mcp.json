@@ -1,0 +1,12 @@
+{
+    "mcpServers": {
+        "james": {
+            "command": "php",
+            "args": [
+                "/home/srv/LARAVEL/james.intra.dita.de/artisan",
+                "mcp:start",
+                "james"
+            ]
+        }
+    }
+}

@@ -7,24 +7,26 @@ use Nette\Schema\Schema;
 use SchenkeIo\PackagingTools\Setup\Config;
 
 /**
+ * Class GroupDefinition
+ *
  * Task definition for grouping other tasks.
  *
- * This class allows the definition of named groups of commands in the
- * configuration. This is useful for creating shortcuts for multiple
- * development tasks that should be run together.
+ * Main Responsibilities:
+ * - Task Bundling: Allows the definition of named groups of commands in the configuration.
+ * - Dynamic Schema: Validates that the configuration contains allowed tasks in the group.
+ * - Composer Integration: Resolves group tasks into Composer script references (prefixed with @).
+ * - Configuration Explanation: Lists the scripts included in the group for user feedback.
  *
- * Functional details:
- * - Constructor: Accepts a list of task names to be grouped
- * - schema(): Validates that the configuration contains the allowed tasks in the group
- * - explainConfig(): Lists the scripts included in the group
- * - packages(): Groups typically don't have their own package requirements
- * - commands(): Resolves each task in the group into a Composer script reference (prefixed with @)
- * - explainTask(): Shows which scripts will be run in the task
+ * Usage Example:
+ * ```php
+ * $group = new GroupDefinition(['analyse', 'test', 'pint']);
+ * $schema = $group->schema();
+ * ```
  */
 class GroupDefinition extends BaseDefinition
 {
     /**
-     * @param  array<int, string>  $tasks
+     * @param  array<int, string>  $tasks  List of task names to be grouped.
      */
     public function __construct(protected array $tasks)
     {
@@ -32,6 +34,8 @@ class GroupDefinition extends BaseDefinition
     }
 
     /**
+     * Return the list of tasks in the group.
+     *
      * @return array<int, string>
      */
     public function getTasks(): array
@@ -40,7 +44,7 @@ class GroupDefinition extends BaseDefinition
     }
 
     /**
-     * return the schema of the configuration for this SetupDefinitionInterface
+     * Return the schema of the configuration for this SetupDefinitionInterface.
      */
     public function schema(): Schema
     {
@@ -52,7 +56,7 @@ class GroupDefinition extends BaseDefinition
     }
 
     /**
-     * return help text for this config key
+     * Return help text for this config key.
      */
     public function explainConfig(): string
     {
@@ -60,7 +64,7 @@ class GroupDefinition extends BaseDefinition
     }
 
     /**
-     * line or lines which will be executed when the script is called
+     * Line or lines which will be executed when the script is called.
      */
     protected function getCommands(Config $config): string|array
     {
@@ -69,14 +73,14 @@ class GroupDefinition extends BaseDefinition
         $groupTasks = is_array($val) ? $val : $this->tasks;
 
         $return = [];
-        /**
-         * iterate over tasks in the group and check if they are enabled in config
+        /*
+         * Iterate over tasks in the group and check if they are enabled in config.
          */
         foreach ($groupTasks as $task) {
             if (in_array($task, array_keys((array) $config->config))) {
                 if ($config->config->$task) {
-                    /**
-                     * prefixing with @ tells composer to run another script
+                    /*
+                     * Prefixing with @ tells composer to run another script.
                      */
                     $return[] = '@'.$task;
                 }
@@ -87,7 +91,7 @@ class GroupDefinition extends BaseDefinition
     }
 
     /**
-     * return help text for task
+     * Return help text for task.
      */
     public function explainTask(): string
     {

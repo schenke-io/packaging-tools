@@ -330,7 +330,8 @@ it('does not report discrepancies', function () {
     $_SERVER['argv'] = $oldArgv;
 
     expect($output)->not->toContain('differs from recommendations')
-        ->and($output)->toContain('Everything is up to date.');
+        ->and($output)->toContain("run 'composer pack-to update' to add these elements to 'composer.json':")
+        ->and($output)->toContain('add package schenke-io/test-output-formatter (for task: run the test suite)');
 });
 
 it('suggests adding missing scripts', function () {

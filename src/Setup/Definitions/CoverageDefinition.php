@@ -8,23 +8,25 @@ use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
 /**
+ * Class CoverageDefinition
+ *
  * Task definition for code coverage reporting.
  *
- * This class handles the configuration for generating code coverage reports.
- * It manages the requirements for clover coverage drivers and provides the
- * command to generate coverage data during test execution.
+ * Main Responsibilities:
+ * - Schema Definition: Defines the configuration for enabling code coverage reports.
+ * - Test Runner Integration: Appends coverage flags to the selected test runner (Pest or PHPUnit).
+ * - Command Generation: Provides the CLI command for executing tests with coverage data generation.
  *
- * Implements SetupDefinitionInterface with the following:
- * - schema(): Expects a boolean value to enable/disable coverage
- * - explainConfig(): Describes the configuration key purpose
- * - packages(): Returns dependencies based on the selected test runner (pest or phpunit)
- * - commands(): Provides the CLI command with coverage flags
- * - explainTask(): Provides the text shown in the task
+ * Usage Example:
+ * ```php
+ * $coverage = new CoverageDefinition();
+ * $commands = $coverage->commands($config);
+ * ```
  */
 class CoverageDefinition extends BaseDefinition
 {
     /**
-     * return the schema of the configuration for this SetupDefinitionInterface
+     * Return the schema of the configuration for this SetupDefinitionInterface.
      */
     public function schema(): Schema
     {
@@ -32,7 +34,7 @@ class CoverageDefinition extends BaseDefinition
     }
 
     /**
-     * return help text for this config key
+     * Return help text for this config key.
      */
     public function explainConfig(): string
     {
@@ -40,20 +42,20 @@ class CoverageDefinition extends BaseDefinition
     }
 
     /**
-     * return the list of required packages
+     * Return the list of required packages.
      */
     protected function getPackages(Config $config): Requirements
     {
-        return new Requirements;
+        return Requirements::dev('schenke-io/test-output-formatter');
     }
 
     /**
-     * line or lines which will be executed when the script is called
+     * Line or lines which will be executed when the script is called.
      */
     protected function getCommands(Config $config): string|array
     {
-        /**
-         * return coverage command based on test runner
+        /*
+         * Return coverage command based on test runner.
          */
         return match ($config->config->test) {
             default => [],
@@ -63,7 +65,7 @@ class CoverageDefinition extends BaseDefinition
     }
 
     /**
-     * return help text for task
+     * Return help text for task.
      */
     public function explainTask(): string
     {

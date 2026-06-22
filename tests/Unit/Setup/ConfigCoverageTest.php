@@ -47,7 +47,13 @@ it('outputs message when no missing packages found', function () {
     $filesystem->shouldReceive('exists')->andReturn(true);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('get')->andReturn(
-        json_encode(['name' => 'test/project', 'require-dev' => ['pestphp/pest' => '*']]), // composer.json
+        json_encode([
+            'name' => 'test/project',
+            'require-dev' => [
+                'pestphp/pest' => '*',
+                'schenke-io/test-output-formatter' => '*',
+            ],
+        ]), // composer.json
         'test: pest' // .packaging-tools.neon
     );
     $filesystem->shouldReceive('put')->andReturn(true);

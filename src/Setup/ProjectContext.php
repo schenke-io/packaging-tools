@@ -6,21 +6,22 @@ use Illuminate\Filesystem\Filesystem;
 use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 
 /**
+ * Class ProjectContext
+ *
  * Provides context and metadata for the current project.
  *
- * This class handles the detection of project root, source directory,
- * composer.json content, and repository metadata (owner/name).
- * It also provides helpers for absolute path generation.
- * It centralizes filesystem and project-wide state for other setup tasks.
+ * Main Responsibilities:
+ * - Environment Detection: Identifies project root, source directory, and Laravel status.
+ * - Configuration Management: Reads and parses composer.json and .env files.
+ * - Path Resolution: Provides helpers for absolute and relative path generation for project components.
+ * - Process Execution: Wrapper for running shell commands within the project context.
  *
- * Methods:
- * - __construct(): Detects project root, validates composer.json, and determines repo metadata.
- * - fullPath(): Converts a relative path to an absolute path within the project.
- * - getModelPath(): Finds the directory where models are stored.
- * - isLaravel(): Checks if the project is a Laravel project.
- * - isWorkbench(): Checks if the project has a workbench directory.
- * - getEnv(): Retrieves an environment variable.
- * - runProcess(): Executes a shell command.
+ * Usage Example:
+ * ```php
+ * $context = new ProjectContext(new Filesystem(), '/path/to/project');
+ * $isLaravel = $context->isLaravel();
+ * $absPath = $context->fullPath('src/MyClass.php');
+ * ```
  */
 class ProjectContext
 {

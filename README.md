@@ -41,6 +41,8 @@ By using these skills, the package ensures that both human developers and AI ass
 
 * [Packaging Tools](#packaging-tools)
     * [Skill-based documentation](#skill-based-documentation)
+  * [Packaging Tools](#packaging-tools)
+    * [Sub-skills](#sub-skills)
   * [Badges](#badges)
     * [When to use this skill](#when-to-use-this-skill)
     * [Quick start](#quick-start)
@@ -97,14 +99,23 @@ By using these skills, the package ensures that both human developers and AI ass
     * [Config](#config)
       * [Public methods of Config](#public-methods-of-config)
 
-| Title                                                                                                      | Description                                                                      |
-|------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| [packaging-tools-badges](resources/boost/skills/packaging-tools-badges/SKILL.md)                           | Generate SVG badges for project metrics                                          |
-| [packaging-tools-guidelines](resources/boost/skills/packaging-tools-guidelines/SKILL.md)                   | Write AI guidelines and skills for projects based on Laravel Boost standards     |
-| [packaging-tools-imported-migrations](resources/boost/skills/packaging-tools-imported-migrations/SKILL.md) | Regenerate package migrations from a live database schema                        |
-| [packaging-tools-markdown-assembly](resources/boost/skills/packaging-tools-markdown-assembly/SKILL.md)     | Assemble modular documentation and class references into a README                |
-| [packaging-tools-setup](resources/boost/skills/packaging-tools-setup/SKILL.md)                             | Install, configure, and run packaging tools via composer scripts                 |
-| [packaging-tools-speed-seeding](resources/boost/skills/packaging-tools-speed-seeding/SKILL.md)             | Speed up tests by loading a pre-generated SQL dump instead of running migrations |
+| Title                                                              | Description                                  |
+|--------------------------------------------------------------------|----------------------------------------------|
+| [packaging-tools](resources/boost/skills/packaging-tools/SKILL.md) | Tools to simplify publishing github packages |
+
+## <a name="packaging-tools"></a>Packaging Tools
+
+This skill provides a set of tools to simplify publishing GitHub packages, including badge generation, AI guidelines, migration management, markdown assembly, setup, and speed seeding.
+
+### <a name="sub-skills"></a>Sub-skills
+
+- [packaging-tools-badges](sub-skills/packaging-tools-badges.md): Generate SVG badges for project metrics
+- [packaging-tools-guidelines](sub-skills/packaging-tools-guidelines.md): Write AI guidelines and skills for projects based on Laravel Boost standards
+- [packaging-tools-imported-migrations](sub-skills/packaging-tools-imported-migrations.md): Regenerate package migrations from a live database schema
+- [packaging-tools-markdown-assembly](sub-skills/packaging-tools-markdown-assembly.md): Assemble modular documentation and class references into a README
+- [packaging-tools-setup](sub-skills/packaging-tools-setup.md): Install, configure, and run packaging tools via composer scripts
+- [packaging-tools-speed-seeding](sub-skills/packaging-tools-speed-seeding.md): Speed up tests by loading a pre-generated SQL dump instead of running migrations
+
 
 ## <a name="badges"></a>Badges
 
@@ -705,7 +716,7 @@ Class MakeBadge
 
 ### <a name="config"></a>Config
 
-Handles the configuration for the packaging tools.
+Class Config
 
 #### <a name="public-methods-of-config"></a>Public methods of Config
 

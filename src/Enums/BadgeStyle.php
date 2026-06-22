@@ -45,7 +45,7 @@ enum BadgeStyle
             self::Flat => new SvgFlatRender($calculator),
             self::FlatSquare => new SvgFlatSquareRender($calculator),
             self::Plastic => new SvgPlasticRender($calculator),
-            self::ForTheBadge => new SvgForTheBadgeRenderer(null, $calculator)
+            self::ForTheBadge => new SvgForTheBadgeRenderer($calculator)
         };
     }
 

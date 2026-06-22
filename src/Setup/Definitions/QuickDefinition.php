@@ -3,22 +3,32 @@
 namespace SchenkeIo\PackagingTools\Setup\Definitions;
 
 /**
+ * Class QuickDefinition
+ *
  * Definition for the 'quick' task.
  *
- * This task combines several other tasks to perform a full project check.
- * It extends GroupDefinition to execute 'pint', 'test', and 'markdown' tasks
- * in sequence, providing a comprehensive verification of code style,
- * functional correctness, and documentation status.
+ * Main Responsibilities:
+ * - Task Aggregation: Combines 'pint', 'test', and 'markdown' tasks into a single group.
+ * - Project Check: Facilitates a comprehensive verification of code style, correctness, and documentation.
+ *
+ * Usage Example:
+ * ```php
+ * $quick = new QuickDefinition();
+ * $tasks = $quick->getTasks();
+ * ```
  */
 class QuickDefinition extends GroupDefinition
 {
+    /**
+     * Initialize the quick task group with its component tasks.
+     */
     public function __construct()
     {
         parent::__construct(['pint', 'test', 'markdown']);
     }
 
     /**
-     * return help text for this config key
+     * Return help text for this config key.
      */
     public function explainConfig(): string
     {

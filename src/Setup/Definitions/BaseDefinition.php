@@ -7,21 +7,34 @@ use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
 /**
+ * Class BaseDefinition
+ *
  * Base class for all task definitions to reduce boilerplate.
  *
- * This abstract class provides a common foundation for defining setup tasks.
- * It handles the task naming convention (derived from the class name),
- * manages whether a task is enabled based on the project configuration,
- * and provides default implementations for package requirements and commands.
+ * Main Responsibilities:
+ * - Naming Convention: Derives the task name from the class name (e.g., PintDefinition -> pint).
+ * - Activation Logic: Determines if a task is enabled based on project configuration.
+ * - Contract Implementation: Provides the skeletal implementation for SetupDefinitionInterface.
+ * - Extension Point: Defines protected methods for subclasses to specify packages and commands.
  *
- * Usage:
- * Inherit from this class and implement getPackages() and/or getCommands()
- * to define the specific requirements and actions for a new setup task.
+ * Usage Example:
+ * ```php
+ * class MyTaskDefinition extends BaseDefinition {
+ *     protected function getCommands(Config $config): string|array {
+ *         return 'do-something';
+ *     }
+ * }
+ * ```
  */
 abstract class BaseDefinition implements SetupDefinitionInterface
 {
     protected string $taskName;
 
+    /**
+     * Initialize the task definition and resolve its name.
+     *
+     * @param  string|null  $taskName  Optional explicit task name.
+     */
     public function __construct(?string $taskName = null)
     {
         if ($taskName === null) {
@@ -35,11 +48,17 @@ abstract class BaseDefinition implements SetupDefinitionInterface
         }
     }
 
+    /**
+     * Explicitly set the task name.
+     */
     public function setTaskName(string $taskName): void
     {
         $this->taskName = $taskName;
     }
 
+    /**
+     * Return required packages if the task is enabled.
+     */
     public function packages(Config $config): Requirements
     {
         if ($this->isEnabled($config)) {
@@ -49,6 +68,9 @@ abstract class BaseDefinition implements SetupDefinitionInterface
         return new Requirements;
     }
 
+    /**
+     * Return execution commands if the task is enabled.
+     */
     public function commands(Config $config): string|array
     {
         if ($this->isEnabled($config)) {
@@ -58,6 +80,9 @@ abstract class BaseDefinition implements SetupDefinitionInterface
         return [];
     }
 
+    /**
+     * Check if the task is enabled in the configuration.
+     */
     protected function isEnabled(Config $config): bool
     {
         $taskName = $this->taskName;
@@ -70,12 +95,17 @@ abstract class BaseDefinition implements SetupDefinitionInterface
         return ! is_null($val) && $val !== false;
     }
 
+    /**
+     * Internal method for subclasses to define their required packages.
+     */
     protected function getPackages(Config $config): Requirements
     {
         return new Requirements;
     }
 
     /**
+     * Internal method for subclasses to define their execution commands.
+     *
      * @return string|array<int,string>
      */
     protected function getCommands(Config $config): string|array

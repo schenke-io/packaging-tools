@@ -3,21 +3,20 @@
 namespace SchenkeIo\PackagingTools\Setup;
 
 /**
+ * Class Requirements
+ *
  * Manages package requirements for the setup process.
  *
- * This class collects and organizes composer packages that need to be installed
- * either in the 'require' or 'require-dev' sections. It provides methods to
- * add, remove, and merge requirements, facilitating the automated installation
- * of dependencies during the package setup phase.
+ * Main Responsibilities:
+ * - Collection: Organizes composer packages that need to be installed.
+ * - Sectioning: Handles both 'require' and 'require-dev' sections.
+ * - Manipulation: Provides methods to add, remove, and merge requirements.
  *
- * Methods:
- * - dev(): Static helper to create a requirements object with a dev package.
- * - require(): Static helper to create a requirements object with a required package.
- * - addRequire(): Adds a package to the production 'require' section.
- * - addRequireDev(): Adds a package to the 'require-dev' section.
- * - addRequirements(): Merges another Requirements instance into the current one.
- * - data(): Returns the raw requirements data as an array.
- * - removeRequire(): Removes a specific package from both require and require-dev lists.
+ * Usage Example:
+ * ```php
+ * $reqs = Requirements::require('spatie/laravel-package-tools');
+ * $reqs->addRequireDev('pestphp/pest');
+ * ```
  */
 class Requirements
 {
@@ -27,7 +26,7 @@ class Requirements
     protected array $data = [];
 
     /**
-     * helper to create a requirements object with a dev package
+     * Helper to create a requirements object with a dev package.
      */
     public static function dev(string $name): self
     {
@@ -38,7 +37,7 @@ class Requirements
     }
 
     /**
-     * helper to create a requirements object with a required package
+     * Helper to create a requirements object with a required package.
      */
     public static function require(string $name): self
     {
@@ -49,7 +48,7 @@ class Requirements
     }
 
     /**
-     * adds a package to the require section
+     * Add a package to the require section.
      */
     public function addRequire(string $name): void
     {
@@ -57,7 +56,7 @@ class Requirements
     }
 
     /**
-     * adds a package to the require-dev section
+     * Add a package to the require-dev section.
      */
     public function addRequireDev(string $name): void
     {
@@ -65,7 +64,7 @@ class Requirements
     }
 
     /**
-     * merges another requirements object into this one
+     * Merge another requirements object into this one.
      */
     public function addRequirements(Requirements $requirements): void
     {
@@ -75,7 +74,7 @@ class Requirements
     }
 
     /**
-     * returns the collected requirements data
+     * Return the collected requirements data.
      *
      * @return array<string, array<int, string>>
      */
@@ -84,6 +83,9 @@ class Requirements
         return $this->data;
     }
 
+    /**
+     * Get property dynamically.
+     */
     public function __get(string $name): mixed
     {
         return match ($name) {
@@ -94,7 +96,7 @@ class Requirements
     }
 
     /**
-     * removes a package from requirements if it exists
+     * Remove a package from requirements if it exists.
      */
     public function removeRequire(string $name): void
     {

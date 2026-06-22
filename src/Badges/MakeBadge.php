@@ -4,6 +4,7 @@ namespace SchenkeIo\PackagingTools\Badges;
 
 use PUGX\Poser\Calculator\TextSizeCalculatorInterface;
 use PUGX\Poser\Poser;
+use PUGX\Poser\Render\RenderInterface;
 use SchenkeIo\PackagingTools\Contracts\BadgeDriverInterface;
 use SchenkeIo\PackagingTools\Enums\BadgeStyle;
 use SchenkeIo\PackagingTools\Enums\BadgeType;
@@ -218,7 +219,7 @@ class MakeBadge
             $filepath = "$markdownDir/svg/$badgeName.svg";
         }
         $renderer = $badgeStyle->render($calculator);
-        $poser = new Poser([$renderer]);
+        $poser = $this->getPoser([$renderer]);
 
         try {
             $svg = $poser->generate($this->subject, $this->status, $this->color, $renderer->getBadgeStyle());
@@ -228,7 +229,7 @@ class MakeBadge
              * we fall back to the Flat style
              */
             $renderer = BadgeStyle::Flat->render($calculator);
-            $poser = new Poser([$renderer]);
+            $poser = $this->getPoser([$renderer]);
             $svg = $poser->generate($this->subject, $this->status, $this->color, $renderer->getBadgeStyle());
         }
 
@@ -240,5 +241,13 @@ class MakeBadge
         $this->projectContext->filesystem->put($fullPath, $svg);
 
         return $this;
+    }
+
+    /**
+     * @param  array<int, RenderInterface>  $renderers
+     */
+    protected function getPoser(array $renderers): Poser
+    {
+        return new Poser($renderers);
     }
 }

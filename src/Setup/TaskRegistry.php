@@ -83,7 +83,7 @@ class TaskRegistry
     }
 
     /**
-     * returns a specific task by name, or null if it's not found
+     * Return a specific task by name, or null if it's not found.
      */
     public function getTask(string $name): ?SetupDefinitionInterface
     {

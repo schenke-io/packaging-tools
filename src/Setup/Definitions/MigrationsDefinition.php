@@ -9,13 +9,27 @@ use SchenkeIo\PackagingTools\Setup\MigrationHelper;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
 /**
+ * Class MigrationsDefinition
+ *
  * Task definition for Migration generation and cleaning.
  *
- * This task integrates kitloong/laravel-migrations-generator and
- * applies a cleaning step to remove hardcoded database connections.
+ * Main Responsibilities:
+ * - Schema Definition: Defines the configuration for database connection and table selection.
+ * - Command Generation: Constructs the Artisan command for generating migrations.
+ * - Integration: Incorporates kitloong/laravel-migrations-generator and a custom cleaning step.
+ * - Verification: Checks if the required generator package is installed.
+ *
+ * Usage Example:
+ * ```php
+ * $migrations = new MigrationsDefinition();
+ * $commands = $migrations->commands($config);
+ * ```
  */
 class MigrationsDefinition extends BaseDefinition
 {
+    /**
+     * Return the schema of the configuration for this SetupDefinitionInterface.
+     */
     public function schema(): Schema
     {
         return Expect::anyOf(
@@ -24,16 +38,25 @@ class MigrationsDefinition extends BaseDefinition
         )->default(null);
     }
 
+    /**
+     * Return help text for this config key.
+     */
     public function explainConfig(): string
     {
         return 'null = disabled, connection:* = auto-detect, connection:table1,table2 = enabled (with connection and tables)';
     }
 
+    /**
+     * Return the list of required packages.
+     */
     protected function getPackages(Config $config): Requirements
     {
         return new Requirements;
     }
 
+    /**
+     * Line or lines which will be executed when the script is called.
+     */
     protected function getCommands(Config $config): string|array
     {
         if (($config->config->migrations ?? null) === null) {
@@ -64,11 +87,17 @@ class MigrationsDefinition extends BaseDefinition
         ];
     }
 
+    /**
+     * Return help text for task.
+     */
     public function explainTask(): string
     {
         return 'generate and clean migrations from existing database';
     }
 
+    /**
+     * Check if the migrations generator package is installed.
+     */
     protected function isMigrationsGeneratorInstalled(): bool
     {
         return class_exists('KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider');

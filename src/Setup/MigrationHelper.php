@@ -6,20 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 
 /**
+ * Class MigrationHelper
+ *
  * Helper class for migration-related tasks.
  *
- * This helper centralizes the logic for determining which tables and
- * connections should be used when generating migrations, ensuring
- * consistency between Artisan commands and setup tasks.
- * PHPDoc density requirement (3% rule):
- * This class provides static methods to resolve database connections
- * and tables by scanning model directories and reading configuration.
- * It ensures that system-level tables are always included in the
- * migration generation process to maintain a stable package environment.
+ * Main Responsibilities:
+ * - Target Resolution: Determines which tables and connections should be used for migration generation.
+ * - Table Discovery: Scans model directories to identify Eloquent model tables.
+ * - Migration Cleanup: Provides methods to clear existing migration files.
+ * - Class Discovery: Helper to resolve fully qualified class names from PHP files.
+ *
+ * Usage Example:
+ * ```php
+ * $targets = MigrationHelper::resolveMigrationTargets($config, $projectContext);
+ * $tables = MigrationHelper::getTablesFromModels($projectContext);
+ * ```
  */
 class MigrationHelper
 {
     /**
+     * List of system tables that are always included in migration generation.
+     *
      * @var array<int, string>
      */
     public static array $systemTables = [
@@ -72,6 +79,12 @@ class MigrationHelper
         ];
     }
 
+    /**
+     * Clears existing migration files from the migrations directory.
+     *
+     * @param  mixed  $event  Optional event context.
+     * @param  ProjectContext|null  $projectContext  Optional override for project context.
+     */
     public static function clearMigrations(mixed $event = null, ?ProjectContext $projectContext = null): void
     {
         $projectContext = $projectContext ?? new ProjectContext;

@@ -5,6 +5,8 @@ namespace SchenkeIo\PackagingTools\Setup;
 use SchenkeIo\PackagingTools\Enums\SetupMessages;
 
 /**
+ * Class MigrationCleaner
+ *
  * Cleans up generated migration files.
  *
  * This class provides a utility to post-process migrations generated
@@ -13,8 +15,16 @@ use SchenkeIo\PackagingTools\Enums\SetupMessages;
  * `connection('mysql')->` to ensure migrations remain environment-agnostic
  * and use the default connection of the application where they are run.
  *
- * The `clean()` method scans the `database/migrations` directory and
- * applies a regex-based replacement to all PHP files found there.
+ * Main Responsibilities:
+ * - Scanning: Identifies all PHP migration files in the project's migration path.
+ * - Regex Filtering: Removes `connection('...')` calls using regular expressions.
+ * - File Protection: Sets file permissions to read-only (0444) after cleaning.
+ * - Feedback: Outputs names of cleaned files to the console.
+ *
+ * Usage Example:
+ * ```php
+ * MigrationCleaner::clean();
+ * ```
  */
 class MigrationCleaner
 {

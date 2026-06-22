@@ -13,6 +13,7 @@ it('can add a specific skill', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('files')->andReturn([]);
     $filesystem->shouldReceive('get')->with(Mockery::pattern('/composer\.json$/'))->andReturn(json_encode(['name' => 'test/test']));
     $projectContext = new ProjectContext($filesystem);
 
@@ -34,6 +35,7 @@ it('can register all skills', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('files')->andReturn([]);
     $filesystem->shouldReceive('get')->with(Mockery::pattern('/composer\.json$/'))->andReturn(json_encode(['name' => 'test/test']));
     $projectContext = new ProjectContext($filesystem);
 
@@ -61,6 +63,7 @@ it('strips YAML frontmatter', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('files')->andReturn([]);
     $filesystem->shouldReceive('get')->with(Mockery::pattern('/composer\.json$/'))->andReturn(json_encode(['name' => 'test/test']));
     $projectContext = new ProjectContext($filesystem);
     $skills->add('setup');
@@ -83,6 +86,7 @@ EOD;
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('files')->andReturn([]);
     $filesystem->shouldReceive('get')->with(Mockery::pattern('/composer\.json$/'))->andReturn(json_encode(['name' => 'test/test']));
     $projectContext = new ProjectContext($filesystem);
     $skills->add('setup');
@@ -182,6 +186,7 @@ it('can generate overview content', function () {
     $filesystem = Mockery::mock(Filesystem::class);
     $filesystem->shouldReceive('isDirectory')->andReturn(true);
     $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('files')->andReturn([]);
     $filesystem->shouldReceive('get')->with(Mockery::pattern('/composer\.json$/'))->andReturn(json_encode(['name' => 'test/test']));
     $projectContext = new ProjectContext($filesystem);
 
@@ -198,4 +203,36 @@ it('can generate overview content', function () {
         ->and($content)->toContain('Description')
         ->and($content)->toContain('[setup](resources/boost/skills/setup/SKILL.md)')
         ->and($content)->toContain('Basic setup');
+});
+
+it('includes sub-skills', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->with(Mockery::pattern('/composer\.json$/'))->andReturn(json_encode(['name' => 'test/test']));
+    $projectContext = new ProjectContext($filesystem);
+
+    $skills = new Skills;
+    $skills->add('setup');
+
+    $filesystem->shouldReceive('exists')
+        ->with(Mockery::pattern('/resources\/boost\/skills\/setup\/SKILL.md$/'))
+        ->andReturn(true);
+    $filesystem->shouldReceive('get')
+        ->with(Mockery::pattern('/resources\/boost\/skills\/setup\/SKILL.md$/'))
+        ->andReturn("---\nname: setup\n---\nSetup content");
+
+    $filesystem->shouldReceive('isDirectory')
+        ->with(Mockery::pattern('/resources\/boost\/skills\/setup\/sub-skills$/'))
+        ->andReturn(true);
+    $filesystem->shouldReceive('files')
+        ->with(Mockery::pattern('/resources\/boost\/skills\/setup\/sub-skills$/'))
+        ->andReturn(['/root/resources/boost/skills/setup/sub-skills/part1.md']);
+    $filesystem->shouldReceive('get')
+        ->with('/root/resources/boost/skills/setup/sub-skills/part1.md')
+        ->andReturn('Sub-skill content');
+
+    $content = $skills->getContent($projectContext, 'resources/md');
+    expect($content)->toContain('Setup content')
+        ->and($content)->toContain('Sub-skill content');
 });

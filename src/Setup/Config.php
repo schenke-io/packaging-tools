@@ -14,6 +14,8 @@ use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 use stdClass;
 
 /**
+ * Class Config
+ *
  * Handles the configuration for the packaging tools.
  *
  * This class is responsible for loading, parsing, and validating the
@@ -21,15 +23,19 @@ use stdClass;
  * validation and manages the registration of
  * setup tasks and provides methods to access configuration values.
  *
- * Key responsibilities:
- * - Constructor: Loads Neon config and handles initial validation/processing
- * - getC2pDeltas(): Identifies tools in composer.json missing from the config
- * - updateComposerJson(): Orchestrates sync between config and composer.json
- * - applyScripts(): Applies pending script changes to composer.json
- * - runInstallCommands(): Installs missing packages via composer
- * - init(): Performs full initialization of a new project configuration
- * - writeConfig(): Persists configuration changes or merges deltas back to the Neon file
- * - getSchema(): Defines the structure and validation rules for all configuration keys
+ * Main Responsibilities:
+ * - Configuration Management: Loads Neon config and handles initial validation/processing.
+ * - Tool Synchronization: Identifies tools in composer.json missing from the config and syncs them.
+ * - Composer Integration: Orchestrates sync between config and composer.json, applying script changes.
+ * - Package Installation: Automatically installs missing packages via composer as required by tasks.
+ * - File Persistence: Persists configuration changes or merges deltas back to the Neon file.
+ * - Schema Definition: Defines structure and validation rules for all configuration keys including custom tasks.
+ *
+ * Usage Example:
+ * ```php
+ * $config = new Config();
+ * $testRunner = $config->config->test;
+ * ```
  */
 class Config
 {

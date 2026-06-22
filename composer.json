@@ -35,6 +35,7 @@
         "pestphp/pest-plugin-mutate": "^4.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^12.3",
+        "schenke-io/test-output-formatter": "^0.0.4",
         "spatie/ray": "^1.40"
     },
     "autoload": {

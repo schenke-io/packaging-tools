@@ -8,23 +8,25 @@ use SchenkeIo\PackagingTools\Setup\Config;
 use SchenkeIo\PackagingTools\Setup\Requirements;
 
 /**
+ * Class PintDefinition
+ *
  * Task definition for Laravel Pint code styling.
  *
- * This class implements the SetupDefinitionInterface to provide configuration schema,
- * package requirements, and execution commands for Laravel Pint. It allows
- * the packaging tool to automate code formatting setup and execution.
+ * Main Responsibilities:
+ * - Schema Definition: Defines the configuration schema for enabling/disabling Pint.
+ * - Dependency Management: Specifies 'laravel/pint' as a required dev-package.
+ * - Task Execution: Provides the command to run Pint for code formatting.
  *
- * Methods:
- * - schema(): Returns the boolean schema for enabling Pint.
- * - explainConfig(): Explains how to enable Pint in the config.
- * - packages(): Returns 'laravel/pint' dev-requirement if enabled.
- * - commands(): Returns the command to run Pint from the vendor bin.
- * - explainTask(): Provides help text for the Pint command.
+ * Usage Example:
+ * ```php
+ * $pint = new PintDefinition();
+ * $schema = $pint->schema();
+ * ```
  */
 class PintDefinition extends BaseDefinition
 {
     /**
-     * return the schema of the configuration for this SetupDefinitionInterface
+     * Return the schema of the configuration for this SetupDefinitionInterface.
      */
     public function schema(): Schema
     {
@@ -32,7 +34,7 @@ class PintDefinition extends BaseDefinition
     }
 
     /**
-     * return help text for this config key
+     * Return help text for this config key.
      */
     public function explainConfig(): string
     {
@@ -40,7 +42,7 @@ class PintDefinition extends BaseDefinition
     }
 
     /**
-     * return the list of required packages
+     * Return the list of required packages.
      */
     protected function getPackages(Config $config): Requirements
     {
@@ -48,18 +50,15 @@ class PintDefinition extends BaseDefinition
     }
 
     /**
-     * line or lines which will be executed when the script is called
+     * Line or lines which will be executed when the script is called.
      */
     protected function getCommands(Config $config): string|array
     {
-        /**
-         * returns the pint command
-         */
         return 'vendor/bin/pint';
     }
 
     /**
-     * return help text for task
+     * Return help text for task.
      */
     public function explainTask(): string
     {

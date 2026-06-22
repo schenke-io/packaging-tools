@@ -6,21 +6,30 @@ use SchenkeIo\PackagingTools\Contracts\SetupDefinitionInterface;
 use SchenkeIo\PackagingTools\Exceptions\PackagingToolException;
 
 /**
+ * Class Composer
+ *
  * Handles interactions with composer.json.
  *
  * This class provides methods to read, modify, and save the composer.json file.
  * It manages script entries, package requirements, and identifies available
  * commands for the task.
  *
- * Key functionalities include:
- * - Loading and decoding composer.json in the constructor
- * - Saving modifications back to the filesystem with save()
- * - Checking if specific packages are installed using hasPackage() or packageFound()
- * - Detecting known tool packages from composer.json with getToolsFromComposer()
- * - Setting script commands via setCommands()
- * - Identifying pending script and package changes with getPendingScripts() and getPendingPackages()
- * - Collecting and adding required packages for tasks using setPackages() and setAddPackages()
- * - Managing standard update scripts ('low' and 'stable')
+ * Main Responsibilities:
+ * - Loading and decoding composer.json in the constructor.
+ * - Saving modifications back to the filesystem with save().
+ * - Checking if specific packages are installed using hasPackage() or packageFound().
+ * - Detecting known tool packages from composer.json with getToolsFromComposer().
+ * - Setting script commands via setCommands().
+ * - Identifying pending script and package changes with getPendingScripts() and getPendingPackages().
+ * - Collecting and adding required packages for tasks using setPackages() and setAddPackages().
+ * - Managing standard update scripts ('low' and 'stable').
+ *
+ * Usage Example:
+ * ```php
+ * $composer = new Composer($projectContext);
+ * $composer->setCommands('test', $testDefinition, $config);
+ * $composer->save();
+ * ```
  */
 class Composer
 {

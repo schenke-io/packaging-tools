@@ -5,12 +5,25 @@ namespace SchenkeIo\PackagingTools\Setup;
 use SchenkeIo\PackagingTools\Enums\SetupMessages;
 
 /**
+ * Class SqlCache
+ *
  * Handles the dumping of SQLite databases to SQL files for test caching.
  *
  * This class provides a static method to dump the current SQLite database
  * to a specified SQL file. This can significantly speed up test execution
  * by allowing tests to load a pre-seeded database state instead of
  * running migrations and seeders repeatedly.
+ *
+ * Main Responsibilities:
+ * - Database Discovery: Identifies the current SQLite database path from environment or common locations.
+ * - Directory Management: Ensures the target directory for the SQL dump exists.
+ * - SQL Dumping: Executes the `sqlite3` command to dump the database schema and data.
+ * - Feedback: Outputs a success message when the dump is successfully created.
+ *
+ * Usage Example:
+ * ```php
+ * SqlCache::dump();
+ * ```
  */
 class SqlCache
 {

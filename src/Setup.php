@@ -7,14 +7,22 @@ require_once 'vendor/autoload.php';  // important
 use SchenkeIo\PackagingTools\Setup\Config;
 
 /**
+ * Class Setup
+ *
  * Main entry point for the composer-driven setup process.
  *
  * This class handles the initialization and configuration of the packaging tools
  * when triggered by composer events. It serves as a bridge to the Config
  * class which performs the actual configuration logic.
  *
- * Methods:
- * - handle(): Static method called by composer to initiate the setup or update process.
+ * Main Responsibilities:
+ * - Event Handling: Provides a static `handle()` method for Composer scripts.
+ * - Initialization: Triggers the full configuration process through the Config class.
+ *
+ * Usage Example:
+ * ```php
+ * SchenkeIo\PackagingTools\Setup::handle();
+ * ```
  */
 class Setup
 {

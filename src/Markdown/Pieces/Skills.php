@@ -73,7 +73,7 @@ class Skills implements MarkdownPieceInterface
             $filePath = $projectContext->fullPath("resources/boost/skills/$skillName/SKILL.md");
             if ($projectContext->filesystem->exists($filePath)) {
                 $skillContent = $projectContext->filesystem->get($filePath);
-                $contents[] = $this->processContent($skillContent);
+                $contents[] = $this->processContent($skillContent, $projectContext, $skillName);
             }
         }
 
@@ -170,7 +170,7 @@ class Skills implements MarkdownPieceInterface
     /**
      * Process skill content: strip YAML frontmatter and transform tags.
      */
-    protected function processContent(string $content): string
+    protected function processContent(string $content, ProjectContext $projectContext, string $skillName): string
     {
         // Strip YAML frontmatter
         $content = preg_replace('/^---\s*\n.*?\n---\s*\n(.*)$/s', '$1', $content) ?? $content;
@@ -186,6 +186,19 @@ class Skills implements MarkdownPieceInterface
             },
             $content
         ) ?? $content;
+
+        // include sub-skills if they exist
+        if (! str_ends_with($skillName, '-none')) {
+            $subSkillsDir = $projectContext->fullPath("resources/boost/skills/$skillName/sub-skills");
+            if ($projectContext->filesystem->isDirectory($subSkillsDir)) {
+                $files = $projectContext->filesystem->files($subSkillsDir);
+                foreach ($files as $file) {
+                    $subSkillContent = $projectContext->filesystem->get($file);
+                    $processedSubSkill = $this->processContent($subSkillContent, $projectContext, $skillName.'/sub-skills-none'); // prevent infinite loop
+                    $content .= "\n\n".$processedSubSkill;
+                }
+            }
+        }
 
         return trim($content);
     }

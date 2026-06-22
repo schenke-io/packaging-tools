@@ -9,6 +9,8 @@ use PUGX\Poser\Calculator\TextSizeCalculatorInterface;
 use SchenkeIo\PackagingTools\Badges\Drivers\DownloadsDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\GitHubTestDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\LaravelVersionDriver;
+use SchenkeIo\PackagingTools\Badges\Drivers\LicenseDriver;
+use SchenkeIo\PackagingTools\Badges\Drivers\PhpVersionDriver;
 use SchenkeIo\PackagingTools\Badges\Drivers\ReleaseVersionDriver;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
 use SchenkeIo\PackagingTools\Enums\BadgeStyle;
@@ -201,6 +203,8 @@ it('can test various drivers', function () {
         new ReleaseVersionDriver,
         new LaravelVersionDriver,
         new GitHubTestDriver,
+        new LicenseDriver,
+        new PhpVersionDriver,
     ];
 
     foreach ($drivers as $driver) {

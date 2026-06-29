@@ -41,53 +41,62 @@ By using these skills, the package ensures that both human developers and AI ass
 
 * [Packaging Tools](#packaging-tools)
     * [Skill-based documentation](#skill-based-documentation)
-  * [Packaging Tools](#packaging-tools)
-    * [Sub-skills](#sub-skills)
-  * [Badges](#badges)
-    * [When to use this skill](#when-to-use-this-skill)
-    * [Quick start](#quick-start)
-    * [Auto-detected badge types](#auto-detected-badge-types)
-    * [PHP API](#php-api)
-    * [Badge styles](#badge-styles)
-    * [Forge badge (requires explicit parameters)](#forge-badge-requires-explicit-parameters)
-  * [AI Guidelines and Skills for Boost](#ai-guidelines-and-skills-for-boost)
-    * [When to use this skill](#when-to-use-this-skill)
-    * [AI Guidelines](#ai-guidelines)
+* [Packaging Tools](#packaging-tools)
+  * [Purpose](#purpose)
+  * [When to Use](#when-to-use)
+  * [Sub-skills](#sub-skills)
+* [Badges](#badges)
+  * [Purpose](#purpose)
+  * [When to Use](#when-to-use)
+  * [Quick start](#quick-start)
+  * [Auto-detected badge types](#auto-detected-badge-types)
+  * [PHP API](#php-api)
+  * [Badge styles](#badge-styles)
+  * [Forge badge (requires explicit parameters)](#forge-badge-requires-explicit-parameters)
+* [AI Guidelines and Skills for Boost](#ai-guidelines-and-skills-for-boost)
+  * [Purpose](#purpose)
+  * [When to Use](#when-to-use)
+  * [AI Guidelines](#ai-guidelines)
       * [Example `core.blade.php`](#example-core-blade-php)
-    * [AI Skills](#ai-skills)
+  * [AI Skills](#ai-skills)
+    * [Open Knowledge Format (OKF)](#open-knowledge-format-okf)
       * [Example `SKILL.md`](#example-skill-md)
-    * [Including skills in Markdown assembly](#including-skills-in-markdown-assembly)
-  * [Database Migrations](#database-migrations)
-    * [When to use this skill](#when-to-use-this-skill)
-    * [Quick start](#quick-start)
-    * [Configuration (`.packaging-tools.neon`)](#configuration-packaging-tools-neon)
-    * [Process](#process)
-    * [Workbench support](#workbench-support)
-    * [Using the trait in an Artisan command](#using-the-trait-in-an-artisan-command)
-  * [Markdown Assembler](#markdown-assembler)
-    * [When to use this skill](#when-to-use-this-skill)
-    * [Script location](#script-location)
-    * [Minimal example](#minimal-example)
-    * [Assembler methods](#assembler-methods)
-    * [Badges: `badges()`](#badges-badges)
-    * [Classes: `classes()`](#classes-classes)
-    * [Tables: `tables()`](#tables-tables)
-    * [Skills: `skills()`](#skills-skills)
-    * [Table of Contents](#table-of-contents)
-  * [Setup](#setup)
-    * [When to use this skill](#when-to-use-this-skill)
-    * [Installation](#installation)
-    * [Commands](#commands)
-    * [Configuration file: `.packaging-tools.neon`](#configuration-file-packaging-tools-neon)
-    * [Configuration keys](#configuration-keys)
-    * [Custom tasks](#custom-tasks)
-    * [Concept](#concept)
-  * [Speed Seeding](#speed-seeding)
-    * [When to use this skill](#when-to-use-this-skill)
-    * [How it works](#how-it-works)
-    * [Usage](#usage)
-    * [Generating the SQL dump](#generating-the-sql-dump)
-    * [Important](#important)
+  * [Including skills in Markdown assembly](#including-skills-in-markdown-assembly)
+* [Database Migrations](#database-migrations)
+  * [Purpose](#purpose)
+  * [When to Use](#when-to-use)
+  * [Quick start](#quick-start)
+  * [Configuration (`.packaging-tools.neon`)](#configuration-packaging-tools-neon)
+  * [Process](#process)
+  * [Workbench support](#workbench-support)
+  * [Using the trait in an Artisan command](#using-the-trait-in-an-artisan-command)
+* [Markdown Assembler](#markdown-assembler)
+  * [Purpose](#purpose)
+  * [When to Use](#when-to-use)
+  * [Script location](#script-location)
+  * [Minimal example](#minimal-example)
+  * [Assembler methods](#assembler-methods)
+  * [Badges: `badges()`](#badges-badges)
+  * [Classes: `classes()`](#classes-classes)
+  * [Tables: `tables()`](#tables-tables)
+  * [Skills: `skills()`](#skills-skills)
+  * [Table of Contents](#table-of-contents)
+* [Setup](#setup)
+  * [Purpose](#purpose)
+  * [When to Use](#when-to-use)
+  * [Installation](#installation)
+  * [Commands](#commands)
+  * [Configuration file: `.packaging-tools.neon`](#configuration-file-packaging-tools-neon)
+  * [Configuration keys](#configuration-keys)
+  * [Custom tasks](#custom-tasks)
+  * [Concept](#concept)
+* [Speed Seeding](#speed-seeding)
+  * [Purpose](#purpose)
+  * [When to Use](#when-to-use)
+  * [How it works](#how-it-works)
+  * [Usage](#usage)
+  * [Generating the SQL dump](#generating-the-sql-dump)
+  * [Important](#important)
     * [MarkdownAssembler](#markdownassembler)
       * [How to assemble a markdown](#how-to-assemble-a-markdown)
         * [Bootstrapping](#bootstrapping)
@@ -103,26 +112,35 @@ By using these skills, the package ensures that both human developers and AI ass
 |--------------------------------------------------------------------|----------------------------------------------|
 | [packaging-tools](resources/boost/skills/packaging-tools/SKILL.md) | Tools to simplify publishing github packages |
 
-## <a name="packaging-tools"></a>Packaging Tools
+# <a name="packaging-tools"></a>Packaging Tools
 
+## <a name="purpose"></a>Purpose
 This skill provides a set of tools to simplify publishing GitHub packages, including badge generation, AI guidelines, migration management, markdown assembly, setup, and speed seeding.
 
-### <a name="sub-skills"></a>Sub-skills
+## <a name="when-to-use"></a>When to Use
+Use when developing Laravel packages and wanting to automate documentation, badges, migrations, or testing setup.
 
-- [packaging-tools-badges](sub-skills/packaging-tools-badges.md): Generate SVG badges for project metrics
-- [packaging-tools-guidelines](sub-skills/packaging-tools-guidelines.md): Write AI guidelines and skills for projects based on Laravel Boost standards
-- [packaging-tools-imported-migrations](sub-skills/packaging-tools-imported-migrations.md): Regenerate package migrations from a live database schema
-- [packaging-tools-markdown-assembly](sub-skills/packaging-tools-markdown-assembly.md): Assemble modular documentation and class references into a README
-- [packaging-tools-setup](sub-skills/packaging-tools-setup.md): Install, configure, and run packaging tools via composer scripts
-- [packaging-tools-speed-seeding](sub-skills/packaging-tools-speed-seeding.md): Speed up tests by loading a pre-generated SQL dump instead of running migrations
+## <a name="sub-skills"></a>Sub-skills
+
+| Skill | Description |
+|---|---|
+| [packaging-tools-badges](sub-skills/packaging-tools-badges.md) | Generate SVG badges for project metrics |
+| [packaging-tools-guidelines](sub-skills/packaging-tools-guidelines.md) | Write AI guidelines and skills for projects based on Laravel Boost standards |
+| [packaging-tools-imported-migrations](sub-skills/packaging-tools-imported-migrations.md) | Regenerate package migrations from a live database schema |
+| [packaging-tools-markdown-assembly](sub-skills/packaging-tools-markdown-assembly.md) | Assemble modular documentation and class references into a README |
+| [packaging-tools-setup](sub-skills/packaging-tools-setup.md) | Install, configure, and run packaging tools via composer scripts |
+| [packaging-tools-speed-seeding](sub-skills/packaging-tools-speed-seeding.md) | Speed up tests by loading a pre-generated SQL dump instead of running migrations |
 
 
-## <a name="badges"></a>Badges
+# <a name="badges"></a>Badges
 
-### <a name="when-to-use-this-skill"></a>When to use this skill
+## <a name="purpose"></a>Purpose
+Generate SVG badges for project metrics including coverage, PHP version, and more.
+
+## <a name="when-to-use"></a>When to Use
 Use when you need to generate or update SVG badge files for a project's README, or when adding badge configuration to a Markdown assembler script.
 
-### <a name="quick-start"></a>Quick start
+## <a name="quick-start"></a>Quick start
 
 Generate all auto-detected badges at once:
 
@@ -132,7 +150,7 @@ composer pack-to badges
 
 This calls `MakeBadge::auto()`, which scans for known source files (clover.xml, phpstan.neon, infection-report.json, composer.json) and writes SVG files to `resources/md/svg/` (or `workbench/resources/md/svg/`).
 
-### <a name="auto-detected-badge-types"></a>Auto-detected badge types
+## <a name="auto-detected-badge-types"></a>Auto-detected badge types
 
 | Badge | Source | Detection |
 |---|---|---|
@@ -146,7 +164,7 @@ This calls `MakeBadge::auto()`, which scans for known source files (clover.xml, 
 | Tests | composer.json | GitHub repo → Actions |
 | License | composer.json | `license` field |
 
-### <a name="php-api"></a>PHP API
+## <a name="php-api"></a>PHP API
 
 ```php
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
@@ -171,7 +189,7 @@ MakeBadge::define('My Label', 'passing', '27AE60')
 
 `store()` signature: `store(?string $filepath = null, ?BadgeStyle $style = null)`. When `$filepath` is null, the badge is stored at `$markdownDir/svg/{subject-slug}.svg`.
 
-### <a name="badge-styles"></a>Badge styles
+## <a name="badge-styles"></a>Badge styles
 
 ```php
 use SchenkeIo\PackagingTools\Enums\BadgeStyle;
@@ -182,7 +200,7 @@ BadgeStyle::Plastic       // plastic
 BadgeStyle::ForTheBadge   // for-the-badge
 ```
 
-### <a name="forge-badge-requires-explicit-parameters"></a>Forge badge (requires explicit parameters)
+## <a name="forge-badge-requires-explicit-parameters"></a>Forge badge (requires explicit parameters)
 
 The Forge deployment badge is not auto-detected and must be added via the Markdown assembler:
 
@@ -196,12 +214,15 @@ $assembler->badges()->forge(
 );
 ```
 
-## <a name="ai-guidelines-and-skills-for-boost"></a>AI Guidelines and Skills for Boost
+# <a name="ai-guidelines-and-skills-for-boost"></a>AI Guidelines and Skills for Boost
 
-### <a name="when-to-use-this-skill"></a>When to use this skill
+## <a name="purpose"></a>Purpose
+Provide a standardized way to write AI guidelines and skills so they can be automatically loaded by Boost-compatible projects and integrated into package documentation.
+
+## <a name="when-to-use"></a>When to Use
 Use when creating or updating AI guidelines (`core.blade.php`) or skill files (`SKILL.md`) for a Laravel package so that Boost-compatible projects can load them automatically.
 
-### <a name="ai-guidelines"></a>AI Guidelines
+## <a name="ai-guidelines"></a>AI Guidelines
 
 Add a `resources/boost/guidelines/core.blade.php` file to your package. When users run `php artisan boost:install`, Boost loads it automatically as AI context.
 
@@ -230,19 +251,36 @@ $result = PackageName::featureTwo($param1, $param2);
 
 The `@verbatim` / `<code-snippet>` wrapper is processed by the Skills assembler into a plain fenced code block when included in Markdown output.
 
-### <a name="ai-skills"></a>AI Skills
+## <a name="ai-skills"></a>AI Skills
 
-Add a `resources/boost/skills/{skill-name}/SKILL.md` file. Required frontmatter: `name` and `description`. The folder name is used as the skill identifier.
+Add a `resources/boost/skills/{skill-name}/SKILL.md` file. Boost skills follow the [Open Knowledge Format (OKF)](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) specification.
+
+### <a name="open-knowledge-format-okf"></a>Open Knowledge Format (OKF)
+
+OKF is a minimal, agent-friendly format for representing knowledge as Markdown files with YAML frontmatter. Every concept (skill) requires exactly one frontmatter field: `type`. Other fields like `title`, `description`, and `timestamp` are highly recommended.
+
+Required and recommended frontmatter keys for Boost skills:
+- `type`: (Required) For Boost skills, use `Agent Skill`.
+- `title`: (Recommended) The display name of the skill.
+- `description`: (Recommended) A short summary of what the skill does.
+- `timestamp`: (Recommended) Last update date in `YYYY-MM-DD` format.
 
 #### <a name="example-skill-md"></a>Example `SKILL.md`
 
 ```markdown
 ---
-name: package-name-feature
+type: Agent Skill
+title: package-name-feature
 description: Build and work with PackageName features.
+timestamp: 2026-06-29
 ---
 
-## When to use this skill
+# Feature Title
+
+## Purpose
+Briefly describe the purpose of this feature.
+
+## When to Use
 Use when working with PackageName features...
 
 ## Features
@@ -250,10 +288,12 @@ Use when working with PackageName features...
 - Feature 1: description.
 - Feature 2: description. Example:
 
+```php
 $result = PackageName::featureTwo($param1, $param2);
 ```
+```
 
-### <a name="including-skills-in-markdown-assembly"></a>Including skills in Markdown assembly
+## <a name="including-skills-in-markdown-assembly"></a>Including skills in Markdown assembly
 
 The `MarkdownAssembler` can embed skill content or render a summary table:
 
@@ -274,14 +314,17 @@ $assembler->skillOverview();
 
 `skillOverview()` generates a Markdown table with linked skill names and their descriptions, sourced from each SKILL.md's frontmatter.
 
-## <a name="database-migrations"></a>Database Migrations
+# <a name="database-migrations"></a>Database Migrations
 
-### <a name="when-to-use-this-skill"></a>When to use this skill
+## <a name="purpose"></a>Purpose
+Maintain package migration files in sync with a live development database using a database-first workflow.
+
+## <a name="when-to-use"></a>When to Use
 Use when you want to keep your package's migration files in sync with a development database. This is a "database-first" workflow: you modify the database manually, then regenerate the migrations from it.
 
 Requires `kitloong/laravel-migrations-generator` to be installed (not included by default).
 
-### <a name="quick-start"></a>Quick start
+## <a name="quick-start"></a>Quick start
 
 ```bash
 composer migrations
@@ -289,7 +332,7 @@ composer migrations
 
 This runs the full migration regeneration cycle: deletes old migrations, generates new ones from the configured database connection, then cleans environment-specific connection calls from the files.
 
-### <a name="configuration-packaging-tools-neon"></a>Configuration (`.packaging-tools.neon`)
+## <a name="configuration-packaging-tools-neon"></a>Configuration (`.packaging-tools.neon`)
 
 ```neon
 migrations: mysql:*
@@ -302,7 +345,7 @@ Examples:
 - `sqlite:users,posts` — use `sqlite` connection, only those tables
 - `null` — disable migration generation
 
-### <a name="process"></a>Process
+## <a name="process"></a>Process
 
 1. Checks that `kitloong/laravel-migrations-generator` is installed. If missing, it outputs an error message with installation instructions.
 2. Reads the connection and table list from `.packaging-tools.neon`.
@@ -315,11 +358,11 @@ Examples:
 6. Strips environment-specific `connection()` calls from generated files.
 7. Sets generated files to read-only (mode 444) to prevent manual edits.
 
-### <a name="workbench-support"></a>Workbench support
+## <a name="workbench-support"></a>Workbench support
 
 If `workbench/database/migrations` exists, it is used as the migration output path instead of `database/migrations`.
 
-### <a name="using-the-trait-in-an-artisan-command"></a>Using the trait in an Artisan command
+## <a name="using-the-trait-in-an-artisan-command"></a>Using the trait in an Artisan command
 
 ```php
 use SchenkeIo\PackagingTools\Traits\GeneratesPackageMigrations;
@@ -338,12 +381,15 @@ class MyMigrationCommand extends Command
 
 The trait must be used inside a class that extends `Illuminate\Console\Command` (it calls `$this->call()`). It reads `.packaging-tools.neon` automatically and performs the same steps as `composer migrations`.
 
-## <a name="markdown-assembler"></a>Markdown Assembler
+# <a name="markdown-assembler"></a>Markdown Assembler
 
-### <a name="when-to-use-this-skill"></a>When to use this skill
+## <a name="purpose"></a>Purpose
+Assemble modular documentation, class references, badges, and tables into a single README file.
+
+## <a name="when-to-use"></a>When to Use
 Use when building or editing the script that generates `README.md` from modular source files. The assembler compiles badges, markdown partials, class docs, tables, and a table of contents into a single output file.
 
-### <a name="script-location"></a>Script location
+## <a name="script-location"></a>Script location
 
 The assembler script is auto-generated by `composer pack-to`. Depending on the project structure:
 
@@ -356,7 +402,7 @@ Initialize source markdown files (creates `resources/md/` with placeholder files
 MarkdownAssembler::init('resources/md');
 ```
 
-### <a name="minimal-example"></a>Minimal example
+## <a name="minimal-example"></a>Minimal example
 
 ```php
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
@@ -375,7 +421,7 @@ $assembler
 
 `MarkdownAssembler` takes the markdown source directory as its first argument. All `addMarkdown()` paths are relative to that directory.
 
-### <a name="assembler-methods"></a>Assembler methods
+## <a name="assembler-methods"></a>Assembler methods
 
 | Method | Purpose |
 |---|---|
@@ -388,7 +434,7 @@ $assembler
 | `addContentProvider(MarkdownPieceInterface $provider)` | Adds a custom content block |
 | `writeMarkdown(string $filepath)` | Assembles and writes the final file |
 
-### <a name="badges-badges"></a>Badges: `badges()`
+## <a name="badges-badges"></a>Badges: `badges()`
 
 ```php
 $assembler->badges()->all();                             // all auto-detected badges
@@ -402,7 +448,7 @@ $assembler->badges()->forge(hash: 'abc', server: 1, site: 2, date: 1, label: 1);
 
 `all()` automatically includes local SVG badges from `$markdownDir/svg/` and remote badges (version, downloads, tests, php) detected from `composer.json`.
 
-### <a name="classes-classes"></a>Classes: `classes()`
+## <a name="classes-classes"></a>Classes: `classes()`
 
 Documents PHP classes by extracting PHPDoc and method signatures:
 
@@ -415,7 +461,7 @@ $assembler->classes()->custom(MyClass::class, fn($data) => "## {$data->name}");
 
 Only classes with `@markdown` in their PHPDoc or significant documentation are rendered.
 
-### <a name="tables-tables"></a>Tables: `tables()`
+## <a name="tables-tables"></a>Tables: `tables()`
 
 ```php
 $assembler->tables()->fromFile('data/table.csv');
@@ -423,7 +469,7 @@ $assembler->tables()->fromCsvString($csv, ',');
 $assembler->tables()->fromArray([['Col1', 'Col2'], ['a', 'b']]);
 ```
 
-### <a name="skills-skills"></a>Skills: `skills()`
+## <a name="skills-skills"></a>Skills: `skills()`
 
 ```php
 $assembler->skills()->all();                             // all skills in resources/boost/skills/
@@ -431,16 +477,19 @@ $assembler->skills()->add('my-skill-name');              // specific skill
 $assembler->skillOverview();                             // summary table (name + description)
 ```
 
-### <a name="table-of-contents"></a>Table of Contents
+## <a name="table-of-contents"></a>Table of Contents
 
 The TOC is auto-built from all `#` headings across all assembled blocks. Use `addTableOfContents()` to place a placeholder; it is replaced with the full linked TOC at write time. Heading anchors (`<a name="...">`) are injected automatically.
 
-## <a name="setup"></a>Setup
+# <a name="setup"></a>Setup
 
-### <a name="when-to-use-this-skill"></a>When to use this skill
+## <a name="purpose"></a>Purpose
+Simplify the installation and configuration of packaging tools, providing a single source of truth via `.packaging-tools.neon`.
+
+## <a name="when-to-use"></a>When to Use
 Use when installing the package for the first time, updating the configuration, or running any of the built-in task commands (`test`, `analyse`, `coverage`, `markdown`, etc.).
 
-### <a name="installation"></a>Installation
+## <a name="installation"></a>Installation
 
 ```bash
 composer require schenke-io/packaging-tools
@@ -456,7 +505,7 @@ Add the setup script to `composer.json`:
 }
 ```
 
-### <a name="commands"></a>Commands
+## <a name="commands"></a>Commands
 
 | Command | Action |
 |---|---|
@@ -466,7 +515,7 @@ Add the setup script to `composer.json`:
 | `composer pack-to badges` | Generate all auto-detected SVG badges |
 | `composer pack-to <task>` | Run a specific configured task (e.g., `test`, `pint`, `quick`) |
 
-### <a name="configuration-file-packaging-tools-neon"></a>Configuration file: `.packaging-tools.neon`
+## <a name="configuration-file-packaging-tools-neon"></a>Configuration file: `.packaging-tools.neon`
 
 ```neon
 analyse: true
@@ -490,7 +539,7 @@ sql-cache: true
 customTasks: {}
 ```
 
-### <a name="configuration-keys"></a>Configuration keys
+## <a name="configuration-keys"></a>Configuration keys
 
 | Key | Type | Description |
 |---|---|---|
@@ -506,7 +555,7 @@ customTasks: {}
 | `sql-cache` | `bool\|string\|null` | Dump SQLite DB to SQL file; `true` = `tests/Data/seeded.sql` |
 | `customTasks` | `array` | Map of custom task names to shell commands or class names |
 
-### <a name="custom-tasks"></a>Custom tasks
+## <a name="custom-tasks"></a>Custom tasks
 
 ```neon
 customTasks:
@@ -516,26 +565,29 @@ customTasks:
 
 Run with: `composer pack-to lint` or `composer pack-to my-task`.
 
-### <a name="concept"></a>Concept
+## <a name="concept"></a>Concept
 
 - Configuration is the single source of truth — editing `.packaging-tools.neon` controls everything.
 - Manual edits to `composer.json` scripts are preserved; the tool warns before overwriting.
 - `composer pack-to` (no args) shows a diff of what would change — it never modifies without an explicit subcommand.
 - All keys define their own schema via `nette/schema`; invalid config produces a clear error with a "did you mean?" suggestion.
 
-## <a name="speed-seeding"></a>Speed Seeding
+# <a name="speed-seeding"></a>Speed Seeding
 
-### <a name="when-to-use-this-skill"></a>When to use this skill
+## <a name="purpose"></a>Purpose
+Optimize test suite execution time by loading a pre-generated SQL dump instead of re-running migrations and seeders for every test run.
+
+## <a name="when-to-use"></a>When to Use
 Use in test suites where running full migrations and seeders on every test is too slow. Load a pre-generated SQL dump once per test run instead.
 
 This is a companion to the `sql-cache` configuration key, which generates the dump.
 
-### <a name="how-it-works"></a>How it works
+## <a name="how-it-works"></a>How it works
 
 1. **Generate the dump** — `sql-cache: true` in `.packaging-tools.neon` makes `composer pack-to` dump the current SQLite DB to `tests/Data/seeded.sql` (configurable path).
 2. **Load in tests** — the `LoadsSeededSql` trait loads that dump on first access, detected by checking if the `users` table exists.
 
-### <a name="usage"></a>Usage
+## <a name="usage"></a>Usage
 
 ```php
 use SchenkeIo\PackagingTools\Traits\LoadsSeededSql;
@@ -558,7 +610,7 @@ class MyFeatureTest extends TestCase
 
 `loadSeededSql()` is a no-op if the `users` table already exists in the current connection, so it is safe to call in every test without redundant reloads.
 
-### <a name="generating-the-sql-dump"></a>Generating the SQL dump
+## <a name="generating-the-sql-dump"></a>Generating the SQL dump
 
 In `.packaging-tools.neon`:
 
@@ -575,7 +627,7 @@ customTasks:
     seed: "@sql-cache"
 ```
 
-### <a name="important"></a>Important
+## <a name="important"></a>Important
 
 - Use `DatabaseTransactions`, **not** `RefreshDatabase`. `RefreshDatabase` re-runs migrations and undoes the seeded state.
 - The SQL file must be committed to the repository so CI can load it without running seeders.

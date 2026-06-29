@@ -1,14 +1,19 @@
 ---
-name: packaging-tools-badges
+type: Agent Skill
+title: packaging-tools-badges
 description: Generate SVG badges for project metrics
+timestamp: 2026-06-29
 ---
 
-## Badges
+# Badges
 
-### When to use this skill
+## Purpose
+Generate SVG badges for project metrics including coverage, PHP version, and more.
+
+## When to Use
 Use when you need to generate or update SVG badge files for a project's README, or when adding badge configuration to a Markdown assembler script.
 
-### Quick start
+## Quick start
 
 Generate all auto-detected badges at once:
 
@@ -18,7 +23,7 @@ composer pack-to badges
 
 This calls `MakeBadge::auto()`, which scans for known source files (clover.xml, phpstan.neon, infection-report.json, composer.json) and writes SVG files to `resources/md/svg/` (or `workbench/resources/md/svg/`).
 
-### Auto-detected badge types
+## Auto-detected badge types
 
 | Badge | Source | Detection |
 |---|---|---|
@@ -32,7 +37,7 @@ This calls `MakeBadge::auto()`, which scans for known source files (clover.xml, 
 | Tests | composer.json | GitHub repo → Actions |
 | License | composer.json | `license` field |
 
-### PHP API
+## PHP API
 
 ```php
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
@@ -57,7 +62,7 @@ MakeBadge::define('My Label', 'passing', '27AE60')
 
 `store()` signature: `store(?string $filepath = null, ?BadgeStyle $style = null)`. When `$filepath` is null, the badge is stored at `$markdownDir/svg/{subject-slug}.svg`.
 
-### Badge styles
+## Badge styles
 
 ```php
 use SchenkeIo\PackagingTools\Enums\BadgeStyle;
@@ -68,7 +73,7 @@ BadgeStyle::Plastic       // plastic
 BadgeStyle::ForTheBadge   // for-the-badge
 ```
 
-### Forge badge (requires explicit parameters)
+## Forge badge (requires explicit parameters)
 
 The Forge deployment badge is not auto-detected and must be added via the Markdown assembler:
 

@@ -90,7 +90,7 @@ class Skills implements MarkdownPieceInterface
                 $skillContent = $projectContext->filesystem->get($filePath);
                 $metadata = $this->getMetadata($skillContent);
                 if ($metadata) {
-                    $title = sprintf('[%s](%s)', $metadata['name'], $relativeSkillPath);
+                    $title = sprintf('[%s](%s)', $metadata['title'], $relativeSkillPath);
                     $data[] = [$title, $metadata['description']];
                 }
             }
@@ -138,7 +138,7 @@ class Skills implements MarkdownPieceInterface
                 $skillContent = $projectContext->filesystem->get($filePath);
                 $metadata = $this->getMetadata($skillContent);
                 if ($metadata) {
-                    $content .= "- {$metadata['name']}: {$metadata['description']}\n";
+                    $content .= "- {$metadata['title']}: {$metadata['description']}\n";
                 }
             }
         }
@@ -154,11 +154,21 @@ class Skills implements MarkdownPieceInterface
         if (preg_match('/^---\s*\n(.*?)\n---\s*\n/s', $content, $matches)) {
             $yaml = $matches[1];
             $metadata = [];
-            if (preg_match('/^name:\s*(.*)$/m', $yaml, $nameMatches)) {
-                $metadata['name'] = trim($nameMatches[1]);
+
+            if (preg_match('/^type:\s*(.*)$/m', $yaml, $typeMatches)) {
+                $metadata['type'] = trim($typeMatches[1]);
             }
+            if (preg_match('/^title:\s*(.*)$/m', $yaml, $titleMatches)) {
+                $metadata['title'] = trim($titleMatches[1]);
+            } elseif (preg_match('/^name:\s*(.*)$/m', $yaml, $nameMatches)) {
+                $metadata['title'] = trim($nameMatches[1]);
+            }
+
             if (preg_match('/^description:\s*(.*)$/m', $yaml, $descMatches)) {
                 $metadata['description'] = trim($descMatches[1]);
+            }
+            if (preg_match('/^timestamp:\s*(.*)$/m', $yaml, $tsMatches)) {
+                $metadata['timestamp'] = trim($tsMatches[1]);
             }
 
             return $metadata;

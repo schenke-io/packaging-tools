@@ -1,16 +1,21 @@
 ---
-name: packaging-tools-imported-migrations
+type: Agent Skill
+title: packaging-tools-imported-migrations
 description: Regenerate package migrations from a live database schema
+timestamp: 2026-06-29
 ---
 
-## Database Migrations
+# Database Migrations
 
-### When to use this skill
+## Purpose
+Maintain package migration files in sync with a live development database using a database-first workflow.
+
+## When to Use
 Use when you want to keep your package's migration files in sync with a development database. This is a "database-first" workflow: you modify the database manually, then regenerate the migrations from it.
 
 Requires `kitloong/laravel-migrations-generator` to be installed (not included by default).
 
-### Quick start
+## Quick start
 
 ```bash
 composer migrations
@@ -18,7 +23,7 @@ composer migrations
 
 This runs the full migration regeneration cycle: deletes old migrations, generates new ones from the configured database connection, then cleans environment-specific connection calls from the files.
 
-### Configuration (`.packaging-tools.neon`)
+## Configuration (`.packaging-tools.neon`)
 
 ```neon
 migrations: mysql:*
@@ -31,7 +36,7 @@ Examples:
 - `sqlite:users,posts` — use `sqlite` connection, only those tables
 - `null` — disable migration generation
 
-### Process
+## Process
 
 1. Checks that `kitloong/laravel-migrations-generator` is installed. If missing, it outputs an error message with installation instructions.
 2. Reads the connection and table list from `.packaging-tools.neon`.
@@ -44,11 +49,11 @@ Examples:
 6. Strips environment-specific `connection()` calls from generated files.
 7. Sets generated files to read-only (mode 444) to prevent manual edits.
 
-### Workbench support
+## Workbench support
 
 If `workbench/database/migrations` exists, it is used as the migration output path instead of `database/migrations`.
 
-### Using the trait in an Artisan command
+## Using the trait in an Artisan command
 
 ```php
 use SchenkeIo\PackagingTools\Traits\GeneratesPackageMigrations;

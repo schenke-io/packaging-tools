@@ -1,14 +1,19 @@
 ---
-name: packaging-tools-guidelines
+type: Agent Skill
+title: packaging-tools-guidelines
 description: Write AI guidelines and skills for projects based on Laravel Boost standards
+timestamp: 2026-06-29
 ---
 
-## AI Guidelines and Skills for Boost
+# AI Guidelines and Skills for Boost
 
-### When to use this skill
+## Purpose
+Provide a standardized way to write AI guidelines and skills so they can be automatically loaded by Boost-compatible projects and integrated into package documentation.
+
+## When to Use
 Use when creating or updating AI guidelines (`core.blade.php`) or skill files (`SKILL.md`) for a Laravel package so that Boost-compatible projects can load them automatically.
 
-### AI Guidelines
+## AI Guidelines
 
 Add a `resources/boost/guidelines/core.blade.php` file to your package. When users run `php artisan boost:install`, Boost loads it automatically as AI context.
 
@@ -39,19 +44,36 @@ $result = PackageName::featureTwo($param1, $param2);
 
 The `@verbatim` / `<code-snippet>` wrapper is processed by the Skills assembler into a plain fenced code block when included in Markdown output.
 
-### AI Skills
+## AI Skills
 
-Add a `resources/boost/skills/{skill-name}/SKILL.md` file. Required frontmatter: `name` and `description`. The folder name is used as the skill identifier.
+Add a `resources/boost/skills/{skill-name}/SKILL.md` file. Boost skills follow the [Open Knowledge Format (OKF)](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) specification.
+
+### Open Knowledge Format (OKF)
+
+OKF is a minimal, agent-friendly format for representing knowledge as Markdown files with YAML frontmatter. Every concept (skill) requires exactly one frontmatter field: `type`. Other fields like `title`, `description`, and `timestamp` are highly recommended.
+
+Required and recommended frontmatter keys for Boost skills:
+- `type`: (Required) For Boost skills, use `Agent Skill`.
+- `title`: (Recommended) The display name of the skill.
+- `description`: (Recommended) A short summary of what the skill does.
+- `timestamp`: (Recommended) Last update date in `YYYY-MM-DD` format.
 
 #### Example `SKILL.md`
 
 ```markdown
 ---
-name: package-name-feature
+type: Agent Skill
+title: package-name-feature
 description: Build and work with PackageName features.
+timestamp: 2026-06-29
 ---
 
-## When to use this skill
+# Feature Title
+
+## Purpose
+Briefly describe the purpose of this feature.
+
+## When to Use
 Use when working with PackageName features...
 
 ## Features
@@ -59,10 +81,12 @@ Use when working with PackageName features...
 - Feature 1: description.
 - Feature 2: description. Example:
 
+```php
 $result = PackageName::featureTwo($param1, $param2);
 ```
+```
 
-### Including skills in Markdown assembly
+## Including skills in Markdown assembly
 
 The `MarkdownAssembler` can embed skill content or render a summary table:
 

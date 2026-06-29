@@ -1,14 +1,19 @@
 ---
-name: packaging-tools-setup
+type: Agent Skill
+title: packaging-tools-setup
 description: Install, configure, and run packaging tools via composer scripts
+timestamp: 2026-06-29
 ---
 
-## Setup
+# Setup
 
-### When to use this skill
+## Purpose
+Simplify the installation and configuration of packaging tools, providing a single source of truth via `.packaging-tools.neon`.
+
+## When to Use
 Use when installing the package for the first time, updating the configuration, or running any of the built-in task commands (`test`, `analyse`, `coverage`, `markdown`, etc.).
 
-### Installation
+## Installation
 
 ```bash
 composer require schenke-io/packaging-tools
@@ -24,7 +29,7 @@ Add the setup script to `composer.json`:
 }
 ```
 
-### Commands
+## Commands
 
 | Command | Action |
 |---|---|
@@ -34,7 +39,7 @@ Add the setup script to `composer.json`:
 | `composer pack-to badges` | Generate all auto-detected SVG badges |
 | `composer pack-to <task>` | Run a specific configured task (e.g., `test`, `pint`, `quick`) |
 
-### Configuration file: `.packaging-tools.neon`
+## Configuration file: `.packaging-tools.neon`
 
 ```neon
 analyse: true
@@ -58,7 +63,7 @@ sql-cache: true
 customTasks: {}
 ```
 
-### Configuration keys
+## Configuration keys
 
 | Key | Type | Description |
 |---|---|---|
@@ -74,7 +79,7 @@ customTasks: {}
 | `sql-cache` | `bool\|string\|null` | Dump SQLite DB to SQL file; `true` = `tests/Data/seeded.sql` |
 | `customTasks` | `array` | Map of custom task names to shell commands or class names |
 
-### Custom tasks
+## Custom tasks
 
 ```neon
 customTasks:
@@ -84,7 +89,7 @@ customTasks:
 
 Run with: `composer pack-to lint` or `composer pack-to my-task`.
 
-### Concept
+## Concept
 
 - Configuration is the single source of truth — editing `.packaging-tools.neon` controls everything.
 - Manual edits to `composer.json` scripts are preserved; the tool warns before overwriting.

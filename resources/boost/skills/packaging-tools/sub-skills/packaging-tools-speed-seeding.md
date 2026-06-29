@@ -1,21 +1,26 @@
 ---
-name: packaging-tools-speed-seeding
+type: Agent Skill
+title: packaging-tools-speed-seeding
 description: Speed up tests by loading a pre-generated SQL dump instead of running migrations
+timestamp: 2026-06-29
 ---
 
-## Speed Seeding
+# Speed Seeding
 
-### When to use this skill
+## Purpose
+Optimize test suite execution time by loading a pre-generated SQL dump instead of re-running migrations and seeders for every test run.
+
+## When to Use
 Use in test suites where running full migrations and seeders on every test is too slow. Load a pre-generated SQL dump once per test run instead.
 
 This is a companion to the `sql-cache` configuration key, which generates the dump.
 
-### How it works
+## How it works
 
 1. **Generate the dump** — `sql-cache: true` in `.packaging-tools.neon` makes `composer pack-to` dump the current SQLite DB to `tests/Data/seeded.sql` (configurable path).
 2. **Load in tests** — the `LoadsSeededSql` trait loads that dump on first access, detected by checking if the `users` table exists.
 
-### Usage
+## Usage
 
 ```php
 use SchenkeIo\PackagingTools\Traits\LoadsSeededSql;
@@ -38,7 +43,7 @@ class MyFeatureTest extends TestCase
 
 `loadSeededSql()` is a no-op if the `users` table already exists in the current connection, so it is safe to call in every test without redundant reloads.
 
-### Generating the SQL dump
+## Generating the SQL dump
 
 In `.packaging-tools.neon`:
 
@@ -55,7 +60,7 @@ customTasks:
     seed: "@sql-cache"
 ```
 
-### Important
+## Important
 
 - Use `DatabaseTransactions`, **not** `RefreshDatabase`. `RefreshDatabase` re-runs migrations and undoes the seeded state.
 - The SQL file must be committed to the repository so CI can load it without running seeders.

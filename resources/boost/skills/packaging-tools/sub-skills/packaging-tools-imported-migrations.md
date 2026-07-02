@@ -1,4 +1,5 @@
 ---
+name: packaging-tools-imported-migrations
 type: Agent Skill
 title: packaging-tools-imported-migrations
 description: Regenerate package migrations from a live database schema

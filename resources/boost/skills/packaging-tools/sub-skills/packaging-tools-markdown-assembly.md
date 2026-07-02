@@ -1,4 +1,5 @@
 ---
+name: packaging-tools-markdown-assembly
 type: Agent Skill
 title: packaging-tools-markdown-assembly
 description: Assemble modular documentation and class references into a README

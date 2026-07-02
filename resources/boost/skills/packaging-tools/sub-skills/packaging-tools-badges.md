@@ -1,4 +1,5 @@
 ---
+name: packaging-tools-badges
 type: Agent Skill
 title: packaging-tools-badges
 description: Generate SVG badges for project metrics

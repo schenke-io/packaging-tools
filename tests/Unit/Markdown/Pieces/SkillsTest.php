@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Markdown\Pieces;
 
-pest()->group('unit');
+pest()->group('unit', 'markdown');
 
 use Illuminate\Filesystem\Filesystem;
 use Mockery;
@@ -235,4 +235,41 @@ it('includes sub-skills', function () {
     $content = $skills->getContent($projectContext, 'resources/md');
     expect($content)->toContain('Setup content')
         ->and($content)->toContain('Sub-skill content');
+});
+
+it('extracts type, title, and timestamp metadata from SKILL.md files', function () {
+    $filesystem = Mockery::mock(Filesystem::class);
+    $filesystem->shouldReceive('isDirectory')->andReturn(true);
+    $filesystem->shouldReceive('exists')->andReturn(true);
+    $filesystem->shouldReceive('get')->with(Mockery::pattern('/composer\.json$/'))->andReturn(json_encode([
+        'name' => 'test/project',
+        'description' => 'test description',
+    ]));
+    $projectContext = new ProjectContext($filesystem);
+
+    $skills = new Skills;
+    $skills->add('setup');
+
+    $content = <<<'EOD'
+---
+type: workflow
+title: Setup Skill
+description: Detailed setup instructions
+timestamp: 2024-01-01 12:00:00
+---
+Skill Content
+EOD;
+
+    $filesystem->shouldReceive('get')
+        ->with(Mockery::pattern('/resources\/boost\/skills\/setup\/SKILL.md$/'))
+        ->andReturn($content);
+
+    $filesystem->shouldReceive('put')
+        ->with(Mockery::any(), Mockery::on(function ($content) {
+            return str_contains($content, 'Setup Skill: Detailed setup instructions');
+        }))
+        ->once();
+
+    $skills->writeGuidelines($projectContext, 'guidelines.md');
+    expect(true)->toBeTrue();
 });

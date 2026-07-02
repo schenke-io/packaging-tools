@@ -90,6 +90,15 @@ By using these skills, the package ensures that both human developers and AI ass
   * [Configuration keys](#configuration-keys)
   * [Custom tasks](#custom-tasks)
   * [Concept](#concept)
+* [Skill Design and Specification](#skill-design-and-specification)
+  * [Purpose](#purpose)
+  * [Agent Skills Specification (agentskills.io)](#agent-skills-specification-agentskills-io)
+    * [Directory Structure](#directory-structure)
+    * [Progressive Disclosure](#progressive-disclosure)
+  * [Open Knowledge Format (OKF)](#open-knowledge-format-okf)
+    * [Core Concepts](#core-concepts)
+    * [Synthesis Rule (Centralized Synthesis)](#synthesis-rule-centralized-synthesis)
+  * [Design Best Practices](#design-best-practices)
 * [Speed Seeding](#speed-seeding)
   * [Purpose](#purpose)
   * [When to Use](#when-to-use)
@@ -129,6 +138,7 @@ Use when developing Laravel packages and wanting to automate documentation, badg
 | [packaging-tools-imported-migrations](sub-skills/packaging-tools-imported-migrations.md) | Regenerate package migrations from a live database schema |
 | [packaging-tools-markdown-assembly](sub-skills/packaging-tools-markdown-assembly.md) | Assemble modular documentation and class references into a README |
 | [packaging-tools-setup](sub-skills/packaging-tools-setup.md) | Install, configure, and run packaging tools via composer scripts |
+| [packaging-tools-skill-design](sub-skills/packaging-tools-skill-design.md) | Detailed explanation of how agent skills are designed based on the Agent Skills and OKF specifications |
 | [packaging-tools-speed-seeding](sub-skills/packaging-tools-speed-seeding.md) | Speed up tests by loading a pre-generated SQL dump instead of running migrations |
 
 
@@ -257,9 +267,10 @@ Add a `resources/boost/skills/{skill-name}/SKILL.md` file. Boost skills follow t
 
 ### <a name="open-knowledge-format-okf"></a>Open Knowledge Format (OKF)
 
-OKF is a minimal, agent-friendly format for representing knowledge as Markdown files with YAML frontmatter. Every concept (skill) requires exactly one frontmatter field: `type`. Other fields like `title`, `description`, and `timestamp` are highly recommended.
+OKF is a minimal, agent-friendly format for representing knowledge as Markdown files with YAML frontmatter. Every concept (skill) requires two frontmatter fields: `name` and `type`. Other fields like `title`, `description`, and `timestamp` are highly recommended.
 
 Required and recommended frontmatter keys for Boost skills:
+- `name`: (Required) A unique identifier for the skill.
 - `type`: (Required) For Boost skills, use `Agent Skill`.
 - `title`: (Recommended) The display name of the skill.
 - `description`: (Recommended) A short summary of what the skill does.
@@ -269,6 +280,7 @@ Required and recommended frontmatter keys for Boost skills:
 
 ```markdown
 ---
+name: package-name-feature
 type: Agent Skill
 title: package-name-feature
 description: Build and work with PackageName features.
@@ -571,6 +583,48 @@ Run with: `composer pack-to lint` or `composer pack-to my-task`.
 - Manual edits to `composer.json` scripts are preserved; the tool warns before overwriting.
 - `composer pack-to` (no args) shows a diff of what would change — it never modifies without an explicit subcommand.
 - All keys define their own schema via `nette/schema`; invalid config produces a clear error with a "did you mean?" suggestion.
+
+# <a name="skill-design-and-specification"></a>Skill Design and Specification
+
+## <a name="purpose"></a>Purpose
+This sub-skill explains the architectural principles and design specifications for creating Agent Skills, ensuring they are portable, human-readable, and agent-friendly. It draws from the Agent Skills open standard and the Open Knowledge Format (OKF).
+
+## <a name="agent-skills-specification-agentskills-io"></a>Agent Skills Specification (agentskills.io)
+
+The Agent Skills specification defines a lightweight format for extending AI agent capabilities.
+
+### <a name="directory-structure"></a>Directory Structure
+A skill is a self-contained directory with the following structure:
+- `SKILL.md` (Required): Metadata and primary instructions.
+- `scripts/` (Optional): Executable code that agents can run.
+- `references/` (Optional): Additional documentation like `REFERENCE.md` or `FORMS.md`.
+- `assets/` (Optional): Static resources such as templates, images, or data files.
+
+### <a name="progressive-disclosure"></a>Progressive Disclosure
+To minimize context bloat, skills are loaded in stages:
+1. **Metadata (~100 tokens)**: `name` and `description` from YAML frontmatter are loaded at startup for discovery.
+2. **Instructions (< 5000 tokens)**: The full `SKILL.md` body is loaded only when the skill is activated by a matching task.
+3. **Resources (on-demand)**: Files in `scripts/`, `references/`, or `assets/` are loaded only when explicitly required.
+
+## <a name="open-knowledge-format-okf"></a>Open Knowledge Format (OKF)
+
+The Open Knowledge Format (OKF) is a minimal, vendor-neutral specification for representing curated context.
+
+### <a name="core-concepts"></a>Core Concepts
+- **Knowledge Bundle**: A hierarchical collection of knowledge documents (the unit of distribution).
+- **Concept**: A single Markdown document representing one unit of knowledge.
+- **Concept ID**: The path of the file without the `.md` suffix (e.g., `tables/users`).
+- **Frontmatter**: Every concept MUST have a YAML block at the top containing at least the `type` field.
+
+### <a name="synthesis-rule-centralized-synthesis"></a>Synthesis Rule (Centralized Synthesis)
+To prevent "index clutter," summaries of directory contents are stored in the parent directory. For any directory `D`, a file `D.md` must exist in its parent directory as its synthesis and navigation entry point.
+
+## <a name="design-best-practices"></a>Design Best Practices
+
+- **Conciseness**: Keep `SKILL.md` under 500 lines. Move details to `references/`.
+- **Actionability**: Write instructions for agents, focusing on "what to do" and "how to do it."
+- **Standardization**: Use standard Markdown and common YAML keys to ensure portability across different AI products.
+- **Links**: Use absolute bundle-relative links or standard Markdown links to express relationships between concepts.
 
 # <a name="speed-seeding"></a>Speed Seeding
 

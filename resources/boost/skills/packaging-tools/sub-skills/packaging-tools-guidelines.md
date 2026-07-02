@@ -1,4 +1,5 @@
 ---
+name: packaging-tools-guidelines
 type: Agent Skill
 title: packaging-tools-guidelines
 description: Write AI guidelines and skills for projects based on Laravel Boost standards
@@ -50,9 +51,10 @@ Add a `resources/boost/skills/{skill-name}/SKILL.md` file. Boost skills follow t
 
 ### Open Knowledge Format (OKF)
 
-OKF is a minimal, agent-friendly format for representing knowledge as Markdown files with YAML frontmatter. Every concept (skill) requires exactly one frontmatter field: `type`. Other fields like `title`, `description`, and `timestamp` are highly recommended.
+OKF is a minimal, agent-friendly format for representing knowledge as Markdown files with YAML frontmatter. Every concept (skill) requires two frontmatter fields: `name` and `type`. Other fields like `title`, `description`, and `timestamp` are highly recommended.
 
 Required and recommended frontmatter keys for Boost skills:
+- `name`: (Required) A unique identifier for the skill.
 - `type`: (Required) For Boost skills, use `Agent Skill`.
 - `title`: (Recommended) The display name of the skill.
 - `description`: (Recommended) A short summary of what the skill does.
@@ -62,6 +64,7 @@ Required and recommended frontmatter keys for Boost skills:
 
 ```markdown
 ---
+name: package-name-feature
 type: Agent Skill
 title: package-name-feature
 description: Build and work with PackageName features.

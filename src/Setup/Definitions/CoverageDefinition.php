@@ -46,7 +46,7 @@ class CoverageDefinition extends BaseDefinition
      */
     protected function getPackages(Config $config): Requirements
     {
-        return Requirements::dev('schenke-io/test-output-formatter');
+        return new Requirements;
     }
 
     /**

@@ -21,11 +21,11 @@ test('explainTask returns a string', function () {
     expect($definition->explainTask())->toBeString();
 });
 
-test('packages returns formatter requirements', function () {
+test('packages returns empty requirements', function () {
     $config = new Config(['coverage' => true, 'test' => 'pest'], new ProjectContext);
     $definition = new CoverageDefinition;
     $requirements = $definition->packages($config);
-    expect($requirements->devPackages)->toContain('schenke-io/test-output-formatter');
+    expect($requirements->devPackages)->toBeEmpty();
 });
 
 test('commands returns pest coverage command if test is pest', function () {

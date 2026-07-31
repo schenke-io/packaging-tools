@@ -28,16 +28,14 @@ describe('packages method', function () {
         $definition = new TestDefinition;
         $config = new Config(['test' => 'pest']);
         $requirements = $definition->packages($config);
-        expect($requirements->devPackages)->toContain('pestphp/pest')
-            ->and($requirements->devPackages)->toContain('schenke-io/test-output-formatter');
+        expect($requirements->devPackages)->toContain('pestphp/pest');
     });
 
     it('returns phpunit requirements', function () {
         $definition = new TestDefinition;
         $config = new Config(['test' => 'phpunit']);
         $requirements = $definition->packages($config);
-        expect($requirements->devPackages)->toContain('phpunit/phpunit')
-            ->and($requirements->devPackages)->toContain('schenke-io/test-output-formatter');
+        expect($requirements->devPackages)->toContain('phpunit/phpunit');
     });
 
     it('returns empty requirements for empty string', function () {

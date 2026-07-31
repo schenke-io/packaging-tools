@@ -56,7 +56,6 @@ class TestDefinition extends BaseDefinition
             default => new Requirements,
         };
         if ($config->config->test !== '') {
-            $requirements->addRequireDev('schenke-io/test-output-formatter');
         }
 
         return $requirements;

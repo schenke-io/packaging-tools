@@ -306,7 +306,7 @@ it('does not report discrepancies', function () {
             return json_encode([
                 'name' => 'test/project',
                 'scripts' => ['test' => 'old-command'],
-                'require-dev' => ['pestphp/pest' => '^3.0'],
+                'require-dev' => ['pestphp/pest' => '^5.0'],
             ]);
         }
         if (str_ends_with($path, '.packaging-tools.neon')) {
@@ -330,8 +330,7 @@ it('does not report discrepancies', function () {
     $_SERVER['argv'] = $oldArgv;
 
     expect($output)->not->toContain('differs from recommendations')
-        ->and($output)->toContain("run 'composer pack-to update' to add these elements to 'composer.json':")
-        ->and($output)->toContain('add package schenke-io/test-output-formatter (for task: run the test suite)');
+        ->and($output)->toContain('Everything is up to date.');
 });
 
 it('suggests adding missing scripts', function () {

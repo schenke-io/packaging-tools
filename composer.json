@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "php": "^8.3 || ^8.4",
+        "php": "^8.4",
         "ext-curl": "*",
         "ext-gd": "*",
         "ext-json": "*",
@@ -32,12 +32,11 @@
         "larastan/larastan": "^3.5",
         "laravel/pint": "^1.24",
         "mockery/mockery": "^1.5",
-        "pestphp/pest": "^4.7",
-        "pestphp/pest-plugin-faker": "^4.0",
-        "pestphp/pest-plugin-mutate": "^3.0 || ^4.0",
+        "pestphp/pest": "^5.0",
+        "pestphp/pest-plugin-faker": "^5.0",
+        "pestphp/pest-plugin-mutate": "^5.0",
         "phpstan/phpstan-phpunit": "^2.0",
-        "phpunit/phpunit": "^12.3",
-        "schenke-io/test-output-formatter": "^0.0.4",
+        "phpunit/phpunit": "^13.0",
         "spatie/ray": "^1.40"
     },
     "autoload": {
